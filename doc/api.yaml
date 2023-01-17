@@ -1,0 +1,399 @@
+
+openapi: 3.0.1
+info:
+  title: WASAPhoto
+  description: |
+    This API allows to manage an instagram-like web application
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /session:
+    post:
+      tags: ["login"]
+      summary: Logs in the user
+      security: [] # No security here
+      description: |-
+        If the user does not exist, it will be created,
+        and an identifier is returned.
+        If the user exists, the user identifier is returned.
+      operationId: doLogin
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Maria
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+        required: true
+      responses:
+        '201':
+          description: User log-in action successful
+          content:
+           application/json:
+            schema:
+              type: object
+              properties:
+                identifier:
+                  type: string
+                  example: "abcdef012345"
+  /profiles/{userId}:
+    get:
+      tags: ["user"]
+      operationId: getUserProfile
+      summary: Return one user profile
+      description: |
+        Get the user profile with associated userId
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "200":
+          description: Downloaded the specified user profile page
+          content:
+            application/json:
+              schema:
+                description: |
+                  An object with the user photo number, follower list, following list and thumbnail objects list
+                type: object
+                properties:
+                  nPhoto:
+                    type: integer
+                  followers:
+                    type: array
+                    items:
+                      type: string
+                  following:
+                    type: array
+                    items:
+                      type: string
+                  thumbnails:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/thumbnailImage"
+        "404":
+          description: User not found
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags: ["user"]
+      operationId: setMyUserName
+      summary: set the user name
+      description: Allow to set a new username
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: The new username
+              type: string
+      responses:
+        "200":
+          description: Username updated, everything fine
+        "400":
+          description: The username is not allowed
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        
+  /myStream:
+    get:
+      tags: ["user"]
+      operationId: getMyStream
+      summary: Return logged user stream
+      description: |
+        Get the user stream
+      responses:
+        "200":
+          description: Downloaded the user stream
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/thumbnailImage"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+  
+  /profiles/{userId}/photos/{idPhoto}:
+    get:
+      tags: ["photo"]
+      operationId: getPhoto
+      summary: get a user photo
+      description: |
+        Get a full user photo (not thumbnail)
+        with likes number and comments list
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/idPhoto"
+      responses:
+        "202":
+          description: Photo, likes and comments downloaded
+          content:           
+            application/json:
+              schema:
+                $ref: "#/components/schemas/photoObject"
+        "404":
+          description: Photo not found
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags: ["photo"]
+      operationId: uploadPhoto
+      summary: Upload a user photo
+      description: |
+        Upload a photo from the current user logged in
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/idPhoto"
+      requestBody:
+        content:
+          image/*:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "202":
+          description: Photo uploaded, everything ok
+        "400":
+          description: Photo format/photo id/user id not valid
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags: ["photo"]
+      operationId: deletePhoto
+      summary: Delete a user photo
+      description: |
+        Upload a photo from the current user logged in
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/idPhoto"
+      responses:
+        "202":
+          description: Photo deleted
+        "400":
+          description: Invalid user id or photo id
+        "404":
+          description: Photo not found
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+          
+  /profiles/{userId}/follows:
+    post:
+      tags: ["user"]
+      operationId: followUser
+      summary: Follow one user
+      description: |
+        Allow to follow the visitng user
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: boolean
+      responses:
+        "202":
+          description: User followed
+        "400":
+          description: Invalid user id
+    delete:
+      tags: ["user"]
+      operationId: unfollowUser
+      summary: Unfollow one user
+      description: |
+        Allow to unfollow on user
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "202":
+          description: User unfollowed
+        "400":
+          description: Invalid user id
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+          
+  /profiles/{userId}/photos/{idPhoto}/like:
+    post: 
+      tags: ["photo"]
+      operationId: likePhoto
+      summary: Give a like to a photo
+      description: |
+        Allow to post a like on a user photo
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/idPhoto"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: boolean
+      responses:
+        "202":
+          description: Like done
+        "400":
+          description: Photo format/photo id/user id not valid
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"  
+    delete:
+      tags: ["photo"]
+      operationId: unlikePhoto  
+      summary: unLike a photo
+      description: |
+        Allow to unlike one user photo
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/idPhoto"
+      responses:
+        "202":
+          description: Like done
+        "400":
+          description: Photo format/photo id/user id not valid
+          
+  /profiles/{userId}/photos/{idPhoto}/comments:
+    post: 
+      tags: ["photo"]
+      operationId: commentPhoto
+      summary: Give a comment to a photo
+      description: |
+        Allow to post a comment on a user photo
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/idPhoto"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        "202":
+          description: comment done
+        "400":
+          description: Photo format/photo id/user id not valid
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"  
+    delete:
+      tags: ["photo"]
+      operationId: uncommentPhoto  
+      summary: uncomment a photo
+      description: |
+        Allow to uncomment one user photo
+      parameters:
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/idPhoto"
+      responses:
+        "202":
+          description: comment erased
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+          
+  /profiles/{userId}/bans:        
+    post: 
+      tags: ["photo"]
+      operationId: banUser
+      summary: ban one user
+      description: |
+        Allow to ban a user photo
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: boolean
+      responses:
+        "202":
+          description: ban done
+        "400":
+          description: user id not valid
+        "401":
+          $ref: "#/components/responses/UnauthorizedError" 
+    delete:
+      tags: ["photo"]
+      operationId: unbanUser  
+      summary: unban a user
+      description: |
+        Allow to unban one user photo
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "202":
+          description: user unbanned
+        "400":
+          description: Photo format/photo id/user id not valid
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+          
+components:
+  securitySchemes:
+    bearerAuth:   
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    userId:
+      name: userId
+      in: path
+      required: true
+      description: an user Id to identify a user
+      schema:
+        type: string
+    idPhoto:
+      name: idPhoto
+      in: path
+      required: true
+      description: a photo Id to identify a photo
+      schema:
+        type: string
+  schemas:
+    thumbnailImage:
+      description: |
+        A rappresentation of a thumnail pic with other informations
+      type: object
+      properties:
+        thumbnailUrl:
+          # image url
+          type: string
+        dateTime:
+          type: string
+          format: date-time
+        nLikes:
+          type: integer
+        nComments:
+          type: integer
+    photoObject:
+      description: |
+        An object with the original photo (not thumbnail), likes number
+        and comment list
+      type: object
+      properties:
+        originalImage:
+          # image url
+          type: string
+        nLikes:
+          type: integer
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/comment"
+    comment:
+      description: |
+        A comment by one user to one image, it contains che userId of the
+        comment owner and the comment itself
+      type: object
+      properties:
+        userId:
+          type: string
+        commentList:
+          type: array
+          items:
+            type: string
+  responses:
+    UnauthorizedError:
+      description: Access identifier is missing or invalid
+      
+security:
+ - bearerAuth: []

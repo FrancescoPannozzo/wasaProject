@@ -386,10 +386,8 @@ components:
       properties:
         userId:
           type: string
-        commentList:
-          type: array
-          items:
-            type: string
+        comment:
+          type: string
   responses:
     UnauthorizedError:
       description: Access identifier is missing or invalid

@@ -34,18 +34,27 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"io/ioutil"
 )
+
+var DBcon AppDatabase
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	GetName() (string, error)
 	SetName(name string) error
 
+	CheckUser(name string) (string, error)
+
 	Ping() error
 }
 
 type appdbimpl struct {
 	c *sql.DB
+}
+
+func check(err error){
+	fmt.Printf("Err is type of %T and the value is: %v\n", err, err)
 }
 
 // New returns a new instance of AppDatabase based on the SQLite connection `db`.
@@ -56,10 +65,24 @@ func New(db *sql.DB) (AppDatabase, error) {
 	}
 
 	// Check if table exists. If not, the database is empty, and we need to create the structure
+	
 	var tableName string
-	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='example_table';`).Scan(&tableName)
-	if errors.Is(err, sql.ErrNoRows) {
-		sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
+	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='User';`).Scan(&tableName)
+
+	fmt.Printf("Err is type of %T and the value is: %v\n", err, err)
+
+	if  errors.Is(err, sql.ErrNoRows) {
+		fmt.Println("NOW IN THE IF")
+		dat , errFile := ioutil.ReadFile("/home/wasa/Desktop/wasaProject/wasaProject/fantastic-coffee-decaffeinated/service/database/db_schema.txt")
+		check(errFile)
+
+		if errFile != nil {
+			return nil, fmt.Errorf("error reading database structure from file: %v", err)
+		}
+		sqlStmt := string(dat)
+
+		fmt.Printf("DEBUG - sqlStmt is:\n%s",sqlStmt)
+
 		_, err = db.Exec(sqlStmt)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)

@@ -35,6 +35,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
 )
 
 var DBcon AppDatabase
@@ -73,7 +74,15 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 	if  errors.Is(err, sql.ErrNoRows) {
 		fmt.Println("NOW IN THE IF")
-		dat , errFile := ioutil.ReadFile("/home/wasa/Desktop/wasaProject/wasaProject/fantastic-coffee-decaffeinated/service/database/db_schema.txt")
+		// Getting absolute path of db_schema.txt
+		abs, err := filepath.Abs("./service/database/db_schema.txt")
+
+		// Printing if there is no error
+		if err == nil {
+			fmt.Println("Absolute path is:", abs)
+		}
+
+		dat , errFile := ioutil.ReadFile(abs)
 		check(errFile)
 
 		if errFile != nil {

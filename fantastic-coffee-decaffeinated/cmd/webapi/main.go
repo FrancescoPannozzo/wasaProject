@@ -91,17 +91,18 @@ func run() error {
 		logger.Debug("database stopping")
 		_ = dbconn.Close()
 	}()
-	db, err := database.New(dbconn)
+	var errDB error
+	database.DBcon, errDB = database.New(dbconn)
+	fmt.Println("DEBUG:", database.DBcon)
 	if err != nil {
-		logger.WithError(err).Error("error creating AppDatabase")
-		return fmt.Errorf("creating AppDatabase: %w", err)
+		logger.WithError(errDB).Error("error creating AppDatabase")
+		return fmt.Errorf("creating AppDatabase: %w", errDB)
 	}
 
 	// Start (main) API server
 	logger.Info("initializing API server")
 
-	// Make a channel to listen for an interrupt or terminate signal from the OS.
-	// Use a buffered channel because the signal package requires it.
+	// Make a channel to listen for an interrupt or terminate signal from the OS.test
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
@@ -112,7 +113,7 @@ func run() error {
 	// Create the API router
 	apirouter, err := api.New(api.Config{
 		Logger:   logger,
-		Database: db,
+		Database: database.DBcon,
 	})
 	if err != nil {
 		logger.WithError(err).Error("error creating the API server instance")

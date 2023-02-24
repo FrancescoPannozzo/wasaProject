@@ -43,14 +43,14 @@ paths:
                   type: string
                   example: "abcdef012345"
   /profiles/{userId}:
+    parameters:
+      - $ref: "#/components/parameters/userId"
     get:
       tags: ["user"]
       operationId: getUserProfile
       summary: Return one user profile
       description: |
         Get the user profile with associated userId
-      parameters:
-        - $ref: "#/components/parameters/userId"
       responses:
         "200":
           description: Downloaded the specified user profile page
@@ -77,6 +77,10 @@ paths:
                       $ref: "#/components/schemas/thumbnailImage"
         "404":
           description: User not found
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
     post:
@@ -84,8 +88,6 @@ paths:
       operationId: setMyUserName
       summary: set the user name
       description: Allow to set a new username
-      parameters:
-        - $ref: "#/components/parameters/userId"
       requestBody:
         content:
           application/json:
@@ -95,8 +97,16 @@ paths:
       responses:
         "200":
           description: Username updated, everything fine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: The username is not allowed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         
@@ -118,6 +128,9 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
   
   /profiles/{userId}/photos/{idPhoto}:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/idPhoto"
     get:
       tags: ["photo"]
       operationId: getPhoto
@@ -125,9 +138,6 @@ paths:
       description: |
         Get a full user photo (not thumbnail)
         with likes number and comments list
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       responses:
         "202":
           description: Photo, likes and comments downloaded
@@ -137,6 +147,10 @@ paths:
                 $ref: "#/components/schemas/photoObject"
         "404":
           description: Photo not found
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
     post:
@@ -145,9 +159,6 @@ paths:
       summary: Upload a user photo
       description: |
         Upload a photo from the current user logged in
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       requestBody:
         content:
           image/*:
@@ -157,8 +168,16 @@ paths:
       responses:
         "202":
           description: Photo uploaded, everything ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: Photo format/photo id/user id not valid
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
     delete:
@@ -173,22 +192,34 @@ paths:
       responses:
         "202":
           description: Photo deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: Invalid user id or photo id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "404":
           description: Photo not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
           
   /profiles/{userId}/follows:
+    parameters:
+      - $ref: "#/components/parameters/userId"
     post:
       tags: ["user"]
       operationId: followUser
       summary: Follow one user
       description: |
         Allow to follow the visitng user
-      parameters:
-        - $ref: "#/components/parameters/userId"
       requestBody:
         content:
           application/json:
@@ -196,35 +227,49 @@ paths:
               type: boolean
       responses:
         "202":
-          description: User followed
+          description: User followed\
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: Invalid user id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
     delete:
       tags: ["user"]
       operationId: unfollowUser
       summary: Unfollow one user
       description: |
         Allow to unfollow on user
-      parameters:
-        - $ref: "#/components/parameters/userId"
       responses:
         "202":
           description: User unfollowed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: Invalid user id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
           
   /profiles/{userId}/photos/{idPhoto}/like:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/idPhoto"
     post: 
       tags: ["photo"]
       operationId: likePhoto
       summary: Give a like to a photo
       description: |
         Allow to post a like on a user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       requestBody:
         content:
           application/json:
@@ -233,8 +278,16 @@ paths:
       responses:
         "202":
           description: Like done
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: Photo format/photo id/user id not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"  
     delete:
@@ -243,25 +296,30 @@ paths:
       summary: unLike a photo
       description: |
         Allow to unlike one user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       responses:
         "202":
           description: Like done
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: Photo format/photo id/user id not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
           
   /profiles/{userId}/photos/{idPhoto}/comments:
+    parameters:
+      - $ref: "#/components/parameters/userId"
+      - $ref: "#/components/parameters/idPhoto"
     post: 
       tags: ["photo"]
       operationId: commentPhoto
       summary: Give a comment to a photo
       description: |
         Allow to post a comment on a user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       requestBody:
         content:
           application/json:
@@ -270,8 +328,16 @@ paths:
       responses:
         "202":
           description: comment done
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: Photo format/photo id/user id not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"  
     delete:
@@ -280,24 +346,25 @@ paths:
       summary: uncomment a photo
       description: |
         Allow to uncomment one user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       responses:
         "202":
           description: comment erased
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
           
-  /profiles/{userId}/bans:        
+  /profiles/{userId}/bans:
+    parameters:
+      - $ref: "#/components/parameters/userId"
     post: 
       tags: ["photo"]
       operationId: banUser
       summary: ban one user
       description: |
         Allow to ban a user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
       requestBody:
         content:
           application/json:
@@ -306,8 +373,16 @@ paths:
       responses:
         "202":
           description: ban done
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: user id not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError" 
     delete:
@@ -316,13 +391,19 @@ paths:
       summary: unban a user
       description: |
         Allow to unban one user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
       responses:
         "202":
           description: user unbanned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: Photo format/photo id/user id not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
           
@@ -388,9 +469,27 @@ components:
           type: string
         comment:
           type: string
+    generalError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "error description"
+    generalFeedback:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "feedback description"
+
   responses:
     UnauthorizedError:
       description: Access identifier is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/generalError"
+
       
 security:
  - bearerAuth: []

@@ -1,18 +1,18 @@
 package api
 
 import (
-	"github.com/julienschmidt/httprouter"
-	"net/http"
 	"bytes"
-	"fmt"
-	"io"
 	"encoding/json"
 	"fantastic-coffee-decaffeinated/service/database"
+	"fmt"
+	"io"
+	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 )
 
-
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set("content-type", "application/json") //si setta quello che mandi
 
 	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -20,28 +20,28 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		fmt.Println(errBody)
 		return
 	}
-	fmt.Println("reqBody content is:/n", bytes.NewBuffer(reqBody).String())
+	fmt.Println("reqBody content is:", bytes.NewBuffer(reqBody).String())
 	_, _ = w.Write(reqBody)
 
 	isValid := json.Valid(reqBody)
-	fmt.Println("/nIs reqBody content a valid json format?: ", isValid)
+	fmt.Println("Is reqBody content a valid json format?: ", isValid)
 
-	type Username struct{
+	type Username struct {
 		Name string `json:"name"`
 	}
 
 	var username Username
 	errConv := json.Unmarshal(reqBody, &username)
-	fmt.Println("errConv is:", errConv)
+
 	if errConv != nil {
-		fmt.Println("error with unmarshal.. err: %v", errConv)
+		fmt.Printf("error with unmarshal.. err: %v", errConv)
 		return
 	}
 
 	fmt.Println("username to store in db is:", username.Name)
 
-	testUsername, _ := database.DBcon.CheckUser(username.Name)
+	testToken, _ := database.DBcon.GetOrInsertUser(username.Name)
 
-	fmt.Println("Username from CheckUser:", testUsername)
+	fmt.Printf("Token for user %s is %s", username.Name, testToken)
 
 }

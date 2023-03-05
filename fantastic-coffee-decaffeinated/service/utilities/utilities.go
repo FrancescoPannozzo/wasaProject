@@ -10,49 +10,57 @@ import (
 	"strings"
 )
 
-// Verify the token from a request
-func VerifyTokenController(w http.ResponseWriter, r *http.Request) bool {
-	prefix := "Baerer "
-	authHeader := r.Header.Get(("Authorization"))
-	log.Println(authHeader)
-
-	reqToken := strings.TrimPrefix(authHeader, prefix)
-	log.Println(reqToken)
-
-	username, errName := GetUserFromReq(r)
-
-	if errName != nil {
-		errToken := fmt.Errorf("error while reading the body request: %w", errName)
-		fmt.Println(errToken)
-		return false
-	}
-
-	token, errToken := database.DBcon.GetIdByName(username)
-
-	if errToken != nil {
-		fmt.Println(errToken)
-		return false
-	}
-
-	if authHeader == "" || reqToken == authHeader || reqToken != token {
-		//return error4XX and payload message
-		return false
-	}
-
-	if reqToken == token {
-		//return response 2XX and payload message
-		return true
-	}
-
-	return true
-}
-
 type Username struct {
 	Name string `json:"name"`
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type FeedbackResponse struct {
+	Feedback string `json:"feedback"`
+}
+
+// Verify the user id from a request
+func VerifyUseridController(w http.ResponseWriter, r *http.Request) (int, string) {
+	prefix := "Baerer "
+	authHeader := r.Header.Get(("Authorization"))
+	log.Println(authHeader)
+
+	reqUserid := strings.TrimPrefix(authHeader, prefix)
+	log.Println(reqUserid)
+
+	username := r.URL.Query().Get("username")
+
+	fmt.Println("In VerifyUseridController(), username parameter is:", username)
+
+	userid, errUserid := database.DBcon.GetIdByName(username)
+
+	if errUserid == nil && reqUserid == userid {
+		return 200, "Successfull Authorization, Access allowed"
+	}
+
+	if errUserid != nil {
+		fmt.Println(errUserid)
+		return 400, "Error while retriving the username identifier from the DB"
+	}
+
+	if authHeader == "" || reqUserid == authHeader || reqUserid != userid {
+		//return error4XX and payload message
+		return 400, "User ID not valid"
+	}
+
+	if reqUserid == userid {
+		//return response 2XX and payload message
+		return 200, "Successfull Authorization, Access allowed"
+	}
+
+	return 400, "Error, cannot detect the error origin"
+}
+
 // Get the username from a request
-func GetUserFromReq(r *http.Request) (string, error) {
+func GetNameFromReq(r *http.Request) (string, error) {
 	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		errBody := fmt.Errorf("error while reading the body request: %v", err)
@@ -68,4 +76,17 @@ func GetUserFromReq(r *http.Request) (string, error) {
 	}
 
 	return username.Name, nil
+}
+
+func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
+	w.WriteHeader(httpStatus)
+	w.Header().Set("Content-type", "application/json")
+	response := FeedbackResponse{Feedback: payload}
+	jsonResp, err := json.Marshal(response)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	w.Write(jsonResp)
+	return
 }

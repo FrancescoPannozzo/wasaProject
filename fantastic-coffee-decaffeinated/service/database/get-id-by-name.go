@@ -26,6 +26,6 @@ func (db *appdbimpl) GetIdByName(name string) (string, error) {
 		return "", errUser
 	}
 
-	logrus.Infoln("User: %s already in the db\n", username)
+	logrus.Infof("User: %s already in the db\n", username)
 	return userID, nil
 }

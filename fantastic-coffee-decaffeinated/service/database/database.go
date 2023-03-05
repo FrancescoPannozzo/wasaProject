@@ -50,6 +50,8 @@ type AppDatabase interface {
 	InsertUser(name string) (string, error)
 	GetIdByName(name string) (string, error)
 
+	ModifyUsername(oldName string, newName string) error
+
 	Ping() error
 }
 

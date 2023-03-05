@@ -21,11 +21,11 @@ func (db *appdbimpl) GetIdByName(name string) (string, error) {
 
 	rows := db.c.QueryRow("SELECT Id_user, Nickname FROM User WHERE Nickname=?", name).Scan(&userID, &username)
 	if errors.Is(rows, sql.ErrNoRows) {
-		var errUser error
-		userID, errUser = DBcon.InsertUser(name)
-		return userID, errUser
+		logrus.Infoln("User not in the db")
+		errUser := fmt.Errorf("error execution query: %w", rows)
+		return "", errUser
 	}
 
-	fmt.Printf("User: %s already in the db\n", username)
+	logrus.Infoln("User: %s already in the db\n", username)
 	return userID, nil
 }

@@ -76,7 +76,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 	fmt.Printf("Err is type of %T and the value is: %v\n", err, err)
 
 	if errors.Is(err, sql.ErrNoRows) {
-		fmt.Println("NOW IN THE IF")
 		// Getting absolute path of db_schema.txt
 		abs, err := filepath.Abs("./service/database/db_schema.sql")
 
@@ -87,14 +86,10 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 		dat, errFile := ioutil.ReadFile(abs)
 		check(errFile)
-
 		if errFile != nil {
 			return nil, fmt.Errorf("error reading database structure from file: %v", err)
 		}
 		sqlStmt := string(dat)
-
-		fmt.Printf("DEBUG - sqlStmt is:\n%s", sqlStmt)
-
 		_, err = db.Exec(sqlStmt)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)

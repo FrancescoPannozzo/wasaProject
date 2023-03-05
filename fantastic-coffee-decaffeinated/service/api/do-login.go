@@ -65,8 +65,6 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	fmt.Printf("jsonResult = %v\n", string(jsonResp))
-
 	w.Write(jsonResp)
 
 	return

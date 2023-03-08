@@ -27,18 +27,19 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"fantastic-coffee-decaffeinated/service/api"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/globaltime"
-	"github.com/ardanlabs/conf"
-	_ "github.com/mattn/go-sqlite3"
-	"github.com/sirupsen/logrus"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/ardanlabs/conf"
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/sirupsen/logrus"
 )
 
 // main is the program entry point. The only purpose of this function is to call run() and set the exit code if there is
@@ -93,7 +94,6 @@ func run() error {
 	}()
 	var errDB error
 	database.DBcon, errDB = database.New(dbconn)
-	fmt.Println("DEBUG:", database.DBcon)
 	if err != nil {
 		logger.WithError(errDB).Error("error creating AppDatabase")
 		return fmt.Errorf("creating AppDatabase: %w", errDB)

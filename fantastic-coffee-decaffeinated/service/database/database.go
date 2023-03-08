@@ -59,10 +59,6 @@ type appdbimpl struct {
 	c *sql.DB
 }
 
-func check(err error) {
-	fmt.Printf("Err is type of %T and the value is: %v\n", err, err)
-}
-
 // New returns a new instance of AppDatabase based on the SQLite connection `db`.
 // `db` is required - an error will be returned if `db` is `nil`.
 func New(db *sql.DB) (AppDatabase, error) {
@@ -75,22 +71,15 @@ func New(db *sql.DB) (AppDatabase, error) {
 	var tableName string
 	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='User';`).Scan(&tableName)
 
-	fmt.Printf("Err is type of %T and the value is: %v\n", err, err)
-
 	if errors.Is(err, sql.ErrNoRows) {
 		// Getting absolute path of db_schema.txt
 		abs, err := filepath.Abs("./service/database/db_schema.sql")
 
-		// Printing if there is no error
-		if err == nil {
-			fmt.Println("Absolute path is:", abs)
-		}
-
 		dat, errFile := ioutil.ReadFile(abs)
-		check(errFile)
 		if errFile != nil {
 			return nil, fmt.Errorf("error reading database structure from file: %v", err)
 		}
+
 		sqlStmt := string(dat)
 		_, err = db.Exec(sqlStmt)
 		if err != nil {

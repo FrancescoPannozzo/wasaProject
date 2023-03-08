@@ -7,8 +7,10 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/sirupsen/logrus"
 )
 
+// Update an existing username
 func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	statusNumber, payloadMessage := utilities.VerifyUseridController(w, r)
 
@@ -22,11 +24,16 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	newUsername, errName := utilities.GetNameFromReq(r)
 
 	if errName != nil {
-		fmt.Println(errName)
+		logrus.Infof("Error in setMyUsername() while getting the username from the client request %v", errName)
 		return
 	}
 
-	userid, _ := database.DBcon.GetIdByName(oldUsername)
+	userid, errDb := database.DBcon.GetIdByName(oldUsername)
+
+	if errDb != nil {
+		logrus.Infof("Error in setMyUsername() while getting the user id from the client request %v", errName)
+		return
+	}
 
 	err := database.DBcon.ModifyUsername(userid, newUsername)
 

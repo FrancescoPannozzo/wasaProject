@@ -9,7 +9,7 @@ import (
 // Modify the user in the DB
 func (db *appdbimpl) ModifyUsername(userid string, newName string) error {
 
-	logrus.Info("Modifing the username in the db..")
+	logrus.Info("Updating the username in the db..")
 
 	sqlStmt := fmt.Sprintf("UPDATE User SET Nickname = '%s' WHERE Id_user = '%s'", newName, userid)
 
@@ -19,6 +19,6 @@ func (db *appdbimpl) ModifyUsername(userid string, newName string) error {
 		return fmt.Errorf("error execution query: %w", err)
 	}
 
-	logrus.Info("Modification done!")
+	logrus.Info("Update done!")
 	return nil
 }

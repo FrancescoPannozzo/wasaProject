@@ -10,10 +10,12 @@ import (
 	"strings"
 )
 
+// A rappresentation of the username
 type Username struct {
 	Name string `json:"name"`
 }
 
+// A rappresentation of a 4XX message error in string format
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
@@ -22,7 +24,7 @@ type FeedbackResponse struct {
 	Feedback string `json:"feedback"`
 }
 
-// Verify the user id from a request
+// Verify the user id from a request, return the http status number and the message related to it
 func VerifyUseridController(w http.ResponseWriter, r *http.Request) (int, string) {
 	prefix := "Baerer "
 	authHeader := r.Header.Get(("Authorization"))
@@ -32,8 +34,6 @@ func VerifyUseridController(w http.ResponseWriter, r *http.Request) (int, string
 	log.Println(reqUserid)
 
 	username := r.URL.Query().Get("username")
-
-	fmt.Println("In VerifyUseridController(), username parameter is:", username)
 
 	userid, errUserid := database.DBcon.GetIdByName(username)
 
@@ -47,19 +47,14 @@ func VerifyUseridController(w http.ResponseWriter, r *http.Request) (int, string
 	}
 
 	if authHeader == "" || reqUserid == authHeader || reqUserid != userid {
-		//return error4XX and payload message
 		return 400, "User ID not valid"
 	}
 
-	if reqUserid == userid {
-		//return response 2XX and payload message
-		return 200, "Successfull Authorization, Access allowed"
-	}
-
-	return 400, "Error, cannot detect the error origin"
+	return 400, "Error in authentication"
 }
 
-// Get the username from a request
+// Get the username from a request, return the username and nil.
+// If an error has occurred return an empty string and the error
 func GetNameFromReq(r *http.Request) (string, error) {
 	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -67,6 +62,7 @@ func GetNameFromReq(r *http.Request) (string, error) {
 		fmt.Println(errBody)
 		return "", errBody
 	}
+
 	var username Username
 	errConv := json.Unmarshal(reqBody, &username)
 
@@ -78,6 +74,7 @@ func GetNameFromReq(r *http.Request) (string, error) {
 	return username.Name, nil
 }
 
+// It sent a payload response with a http status code and a message related to it
 func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	w.WriteHeader(httpStatus)
 	w.Header().Set("Content-type", "application/json")

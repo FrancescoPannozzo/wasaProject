@@ -46,11 +46,12 @@ type AppDatabase interface {
 	SetName(name string) error
 
 	//CheckUser(name string) (string, error)
-	GetOrInsertUser(name string) (string, error)
-	InsertUser(name string) (string, error)
-	GetIdByName(name string) (string, error)
+	GetOrInsertUser(name string) (string, error, int)
+	InsertUser(name string) (string, error, int)
+	GetIdByName(name string) (string, error, int)
 
 	ModifyUsername(oldName string, newName string) error
+	//UploadPhoto()
 
 	Ping() error
 }

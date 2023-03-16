@@ -14,6 +14,8 @@ func (rt *_router) Handler() http.Handler {
 
 	rt.router.POST("/profiles", rt.setMyUsername)
 
+	rt.router.POST("/profiles/:username/photos/:idPhoto", rt.uploadPhoto)
+
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)
 

@@ -14,7 +14,7 @@ import (
 func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	statusNumber, payloadMessage := utilities.VerifyUseridController(w, r)
 
-	if statusNumber == 400 {
+	if statusNumber == http.StatusBadRequest {
 		utilities.WriteResponse(http.StatusBadRequest, payloadMessage, w)
 		return
 	}
@@ -28,7 +28,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	userid, errDb := database.DBcon.GetIdByName(oldUsername)
+	userid, errDb, httpResponse := database.DBcon.GetIdByName(oldUsername)
 
 	if errDb != nil {
 		logrus.Infof("Error in setMyUsername() while getting the user id from the client request %v", errName)
@@ -39,11 +39,11 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 
 	if err != nil {
 		fmt.Println(err)
-		utilities.WriteResponse(http.StatusBadRequest, err.Error(), w)
+		utilities.WriteResponse(httpResponse, err.Error(), w)
 		return
 	}
 
-	utilities.WriteResponse(http.StatusCreated, "Username successfully updated", w)
+	utilities.WriteResponse(httpResponse, "Username successfully updated", w)
 	return
 
 	//verifica l'auth, verificandol'auth ottengo token, estrapola nuovo username dalla

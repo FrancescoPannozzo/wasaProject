@@ -64,6 +64,19 @@ paths:
                 summary: maria-user-id
                 value:
                   name: maria1234
+        '500':
+          description: The server cannot elaborate the request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "404":
+          description: The content of the request is not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+          
   /profiles/{username}:
     parameters:
       - $ref: "#/components/parameters/username"
@@ -198,7 +211,7 @@ paths:
             schema:
               description: The photo file
               type: string
-              format: binary
+              format: base64
       responses:
         "202":
           description: Photo uploaded, everything ok

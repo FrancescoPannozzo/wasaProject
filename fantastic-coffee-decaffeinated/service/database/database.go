@@ -48,7 +48,7 @@ type AppDatabase interface {
 	//CheckUser(name string) (string, error)
 	GetOrInsertUser(name string) (string, error, int)
 	InsertUser(name string) (string, error, int)
-	GetIdByName(name string) (string, error, int)
+	GetIdByName(name string) (string, error)
 
 	ModifyUsername(oldName string, newName string) error
 	//UploadPhoto()

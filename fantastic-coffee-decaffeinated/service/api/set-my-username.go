@@ -12,10 +12,11 @@ import (
 
 // Update an existing username
 func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	statusNumber, payloadMessage := utilities.VerifyUseridController(w, r)
+	statusNumber, payloadMessage := database.VerifyUseridController(w, r)
 
-	if statusNumber == http.StatusBadRequest {
-		utilities.WriteResponse(http.StatusBadRequest, payloadMessage, w)
+	if statusNumber == http.StatusBadRequest || statusNumber == http.StatusUnauthorized {
+		logrus.Infof("Error with the authentication, httpStatus is '%v', %s", statusNumber, payloadMessage)
+		utilities.WriteResponse(statusNumber, payloadMessage, w)
 		return
 	}
 
@@ -28,10 +29,26 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	userid, errDb, httpResponse := database.DBcon.GetIdByName(oldUsername)
+	statusNumber, payloadMessage = utilities.CheckUsername(newUsername)
+	if statusNumber == http.StatusBadRequest {
+		utilities.WriteResponse(statusNumber, payloadMessage, w)
+		return
+	}
+
+	userid, errDb := database.DBcon.GetIdByName(newUsername)
+	if errDb == nil {
+		message := fmt.Sprintf("WARNING, the username %s is already taken, please choose another one", newUsername)
+		logrus.Println(message)
+		utilities.WriteResponse(http.StatusBadRequest, message, w)
+		return
+	}
+
+	userid, errDb = database.DBcon.GetIdByName(oldUsername)
 
 	if errDb != nil {
+		// POTENZIALE ERRORE 500 INTERNAL SERVER ERROR
 		logrus.Infof("Error in setMyUsername() while getting the user id from the client request %v", errName)
+		utilities.WriteResponse(http.StatusInternalServerError, "Error while getting the user id from the client request", w)
 		return
 	}
 
@@ -39,11 +56,12 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 
 	if err != nil {
 		fmt.Println(err)
-		utilities.WriteResponse(httpResponse, err.Error(), w)
+		//OCCHIO QUI A RITORNARE GLI HTTP STATUS NUMBERS - AGGIORNARE API
+		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
-
-	utilities.WriteResponse(httpResponse, "Username successfully updated", w)
+	//OCCHIO QUI A RITORNARE GLI HTTP STATUS NUMBERS
+	utilities.WriteResponse(http.StatusCreated, "Username successfully updated", w)
 	return
 
 	//verifica l'auth, verificandol'auth ottengo token, estrapola nuovo username dalla

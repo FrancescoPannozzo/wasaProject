@@ -2,11 +2,12 @@ package utilities
 
 import (
 	"encoding/json"
-	"fantastic-coffee-decaffeinated/service/database"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
-	"strings"
+	"strconv"
+	"time"
 )
 
 // A rappresentation of the username
@@ -36,36 +37,6 @@ func (er *ErrorResponse) PrintFeedback(s string) string {
 func (fr *FeedbackResponse) PrintFeedback(s string) string {
 	response := fmt.Sprint("Feedback response:", s)
 	return response
-}
-
-// Verify the user id from a request with a Baerer Authorization Header, return the http status number and the message related to it
-func VerifyUseridController(w http.ResponseWriter, r *http.Request) (int, string) {
-	prefix := "Baerer "
-	authHeader := r.Header.Get(("Authorization"))
-	//log.Println(authHeader)
-
-	reqUserid := strings.TrimPrefix(authHeader, prefix)
-	//log.Println(reqUserid)
-
-	username := r.URL.Query().Get("username")
-
-	// Searching the username in the database
-	userid, errUserid, _ := database.DBcon.GetIdByName(username)
-
-	if errUserid == nil && reqUserid == userid {
-		return http.StatusOK, "Successfull Authorization, Access allowed"
-	}
-
-	if errUserid != nil {
-		fmt.Println(errUserid)
-		return http.StatusBadRequest, "Error while retriving the username identifier from the DB"
-	}
-
-	if authHeader == "" || reqUserid == authHeader || reqUserid != userid {
-		return http.StatusUnauthorized, "User ID not valid"
-	}
-
-	return http.StatusBadRequest, "Error in authentication"
 }
 
 // Get the username from a request, return the username and nil if successful.
@@ -115,4 +86,14 @@ func CheckUsername(name string) (httpStatus int, feedback string) {
 		return http.StatusBadRequest, "Username not valid, size must be in range [3-13] characters"
 	}
 	return http.StatusOK, "Correct username type"
+}
+
+// Create an user id of type 'username + a random number'
+func GenerateUserID(name string) string {
+	//create user id
+	s1 := rand.NewSource(time.Now().UnixNano())
+	r1 := rand.New(s1)
+	n := r1.Intn(1000)
+	s := strconv.Itoa(n)
+	return name + s
 }

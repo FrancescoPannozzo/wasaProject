@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
 	"net/http"
@@ -12,7 +13,7 @@ import (
 func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Info("Uploading photo")
 
-	httpStatus, message := utilities.VerifyUseridController(w, r)
+	httpStatus, message := database.VerifyUseridController(w, r)
 
 	if httpStatus == 400 {
 		utilities.WriteResponse(http.StatusBadRequest, message, w)

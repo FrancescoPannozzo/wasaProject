@@ -63,9 +63,9 @@ paths:
               user:
                 summary: maria-user-id
                 value:
-                  name: maria1234
+                  name: "abcdef012345"
         '500':
-          description: The server cannot elaborate the request
+          description: The server cannot elaborate the loggin request
           content:
             application/json:
               schema:
@@ -155,6 +155,12 @@ paths:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        '500':
+          description: The server cannot elaborate the username update request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         
   /my-stream:
     get:
@@ -199,6 +205,9 @@ paths:
               $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+  /profiles/{username}/photos:
+    parameters:
+      - $ref: "#/components/parameters/username"
     post:
       tags: ["photo"]
       operationId: uploadPhoto
@@ -213,7 +222,7 @@ paths:
               type: string
               format: base64
       responses:
-        "202":
+        "201":
           description: Photo uploaded, everything ok
           content:
             application/json:
@@ -222,11 +231,17 @@ paths:
         "400":
           description: Photo format/photo id/user id not valid for uploadPhoto operation
           content:
-           application/json:
-            schema:
-              $ref: "#/components/schemas/generalError"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        '500':
+          description: The server cannot elaborate deconding photo file request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
     delete:
       tags: ["photo"]
       operationId: deletePhoto

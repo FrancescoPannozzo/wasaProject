@@ -6,7 +6,6 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -75,6 +74,7 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	jsonResp, err := json.Marshal(response)
 	if err != nil {
 		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	w.Write(jsonResp)
@@ -88,12 +88,26 @@ func CheckUsername(name string) (httpStatus int, feedback string) {
 	return http.StatusOK, "Correct username type"
 }
 
-// Create an user id of type 'username + a random number'
+// Create an user id composed by characters + timestamp
 func GenerateUserID(name string) string {
 	//create user id
 	s1 := rand.NewSource(time.Now().UnixNano())
 	r1 := rand.New(s1)
-	n := r1.Intn(1000)
-	s := strconv.Itoa(n)
-	return name + s
+	var s string
+	for i := 0; i < 4; i++ {
+		n := r1.Intn(25) + 1
+		s += string(toChar(n))
+	}
+
+	s += GenerateTimestamp()
+	return s
+}
+
+func GenerateTimestamp() string {
+	now := time.Now()
+	return now.Format("20060102150405")
+}
+
+func toChar(i int) rune {
+	return rune('a' - 1 + i)
 }

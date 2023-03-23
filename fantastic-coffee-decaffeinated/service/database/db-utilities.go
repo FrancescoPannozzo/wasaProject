@@ -5,10 +5,12 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 // Verify the user id from a request with a Baerer Authorization Header, return the http status number and the message related to it
-func VerifyUseridController(w http.ResponseWriter, r *http.Request) (int, string) {
+func VerifyUseridController(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (int, string) {
 	prefix := "Baerer "
 	authHeader := r.Header.Get(("Authorization"))
 	log.Println(authHeader)
@@ -16,7 +18,8 @@ func VerifyUseridController(w http.ResponseWriter, r *http.Request) (int, string
 	reqUserid := strings.TrimPrefix(authHeader, prefix)
 	log.Println(reqUserid)
 
-	username := r.URL.Query().Get("username")
+	//username := r.URL.Query().Get("username")
+	username := ps.ByName("username")
 
 	// Searching the username in the database
 	userid, errUserid := DBcon.GetIdByName(username)

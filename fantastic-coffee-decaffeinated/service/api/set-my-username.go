@@ -12,7 +12,7 @@ import (
 
 // Update an existing username
 func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	statusNumber, payloadMessage := database.VerifyUseridController(w, r)
+	statusNumber, payloadMessage := database.VerifyUseridController(w, r, ps)
 
 	if statusNumber == http.StatusBadRequest || statusNumber == http.StatusUnauthorized {
 		logrus.Infof("Error with the authentication, httpStatus is '%v', %s", statusNumber, payloadMessage)
@@ -20,12 +20,14 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	oldUsername := r.URL.Query().Get("username")
+	//oldUsername := r.URL.Query().Get("username")
+	oldUsername := ps.ByName("username")
 
 	newUsername, errName := utilities.GetNameFromReq(r)
 
 	if errName != nil {
 		logrus.Infof("Error in setMyUsername() while getting the username from the client request %v", errName)
+		utilities.WriteResponse(http.StatusBadRequest, "Error: requestBody not valid", w)
 		return
 	}
 
@@ -55,15 +57,10 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	err := database.DBcon.ModifyUsername(userid, newUsername)
 
 	if err != nil {
-		fmt.Println(err)
-		//OCCHIO QUI A RITORNARE GLI HTTP STATUS NUMBERS - AGGIORNARE API
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
-	//OCCHIO QUI A RITORNARE GLI HTTP STATUS NUMBERS
+
 	utilities.WriteResponse(http.StatusCreated, "Username successfully updated", w)
 	return
-
-	//verifica l'auth, verificandol'auth ottengo token, estrapola nuovo username dalla
-	// request, cerca record con il token e modifica lo username ad esso associato
 }

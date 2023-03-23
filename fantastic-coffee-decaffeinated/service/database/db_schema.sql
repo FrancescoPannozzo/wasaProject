@@ -2,6 +2,7 @@ CREATE TABLE User
 (
 Id_user TEXT PRIMARY KEY, 
 Nickname TEXT CHECK(length(Nickname) >= 3 AND length(Nickname) <= 13)
+
 );
 
 CREATE TABLE Photo

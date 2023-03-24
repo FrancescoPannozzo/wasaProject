@@ -49,9 +49,10 @@ type AppDatabase interface {
 	GetOrInsertUser(name string) (string, error, int)
 	InsertUser(name string) (string, error, int)
 	GetIdByName(name string) (string, error)
-
 	ModifyUsername(oldName string, newName string) error
-	//UploadPhoto()
+	InsertPhoto(name string, idphoto string) (string, error, int)
+	DeletePhoto(name string, idphoto string) (string, error, int)
+	//GetPhoto(name string, idphoto)
 
 	Ping() error
 }

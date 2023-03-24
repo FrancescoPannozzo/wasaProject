@@ -1,0 +1,31 @@
+doLogin
+    post: ok
+getUserProfile
+    get:
+setMyUserName
+    post: ok
+getMyStream:
+    get:
+getPhoto
+    get:
+deletePhoto
+    delete: ok
+uploadPhoto:
+    post: ok
+followUser:
+    post:
+unfollowUser
+    delete:
+likePhoto:
+    post:
+unlikePhoto:
+    delete:
+commentPhoto:
+    post:
+uncommentPhoto:
+    delete:
+banUser:
+    post:
+unbanUser:
+    delete:        
+

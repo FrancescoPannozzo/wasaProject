@@ -16,6 +16,7 @@ func (rt *_router) Handler() http.Handler {
 
 	//rt.router.POST("/profiles/:username/photos/:idPhoto", rt.uploadPhoto)
 	rt.router.POST("/profiles/:username/photos", rt.uploadPhoto)
+	rt.router.DELETE("/profiles/:username/photos/:idPhoto", rt.deletePhoto)
 
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)

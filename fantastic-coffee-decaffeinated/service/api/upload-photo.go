@@ -48,7 +48,8 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	//generating the file name
 	userId, _ := database.DBcon.GetIdByName(ps.ByName("username"))
 
-	fileName := userId[:4] + utilities.GenerateTimestamp() + ".png"
+	idphoto := userId[:4] + utilities.GenerateTimestamp()
+	fileName := idphoto + ".png"
 
 	filePath := "storage/" + fileName
 
@@ -74,6 +75,16 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	utilities.WriteResponse(http.StatusCreated, "Photo uploaded", w)
+	//Adding a DB record
+	feedback, err, httpStatus := database.DBcon.InsertPhoto(ps.ByName("username"), idphoto)
+	if err != nil {
+		utilities.WriteResponse(httpStatus, feedback, w)
+		return
+	}
+
+	//utilities.WriteResponse(http.StatusCreated, "Photo uploaded", w)
+	//w.WriteHeader(http.StatusCreated)
+	response := fmt.Sprintf("{\"idphoto\":\"%s\"}", idphoto)
+	w.Write([]byte(response))
 	return
 }

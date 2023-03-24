@@ -7,7 +7,7 @@ Nickname TEXT CHECK(length(Nickname) >= 3 AND length(Nickname) <= 13)
 
 CREATE TABLE Photo
 (
-Id_photo INTEGER PRIMARY KEY AUTOINCREMENT,
+Id_photo TEXT PRIMARY KEY,
 User TEXT NOT NULL,
 Date TEXT NOT NULL,
 Time TEXT NOT NULL,

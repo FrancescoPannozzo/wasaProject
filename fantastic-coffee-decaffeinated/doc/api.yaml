@@ -205,43 +205,6 @@ paths:
               $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-  /profiles/{username}/photos:
-    parameters:
-      - $ref: "#/components/parameters/username"
-    post:
-      tags: ["photo"]
-      operationId: uploadPhoto
-      summary: Upload a user photo
-      description: |
-        Upload a photo from the current user logged in
-      requestBody:
-        content:
-          image/*:
-            schema:
-              description: The photo file
-              type: string
-              format: base64
-      responses:
-        "201":
-          description: Photo uploaded, everything ok
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalFeedback"
-        "400":
-          description: Photo format/photo id/user id not valid for uploadPhoto operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalError"
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
-        '500':
-          description: The server cannot elaborate deconding photo file request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalError"
     delete:
       tags: ["photo"]
       operationId: deletePhoto
@@ -252,7 +215,7 @@ paths:
         - $ref: "#/components/parameters/username"
         - $ref: "#/components/parameters/idPhoto"
       responses:
-        "202":
+        "200":
           description: Photo deleted
           content:
             application/json:
@@ -272,6 +235,53 @@ paths:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+  /profiles/{username}/photos:
+    parameters:
+      - $ref: "#/components/parameters/username"
+    post:
+      tags: ["photo"]
+      operationId: uploadPhoto
+      summary: Upload a user photo
+      description: |
+        Upload a photo from the current user logged in
+      requestBody:
+        content:
+          image/*:
+            schema:
+              description: The photo file base64 rappresentation
+              type: string
+              format: base64
+      responses:
+        "201":
+          description: Photo uploaded, everything ok
+          content:
+            application/json:
+              schema:
+                description: A json object with one property containing the photo id
+                type: object
+                properties:
+                  idphoto:
+                    description: The photo id
+                    type: string
+              examples:
+                photouser:
+                  summary: maria-photo
+                  value:
+                    idphoto: abcd20232303151010
+        "400":
+          description: Photo format/photo id/user id not valid for uploadPhoto operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        '500':
+          description: The server cannot elaborate deconding photo file request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
           
   /profiles/{username}/follows:
     parameters:
@@ -594,8 +604,8 @@ components:
       description: The feedback provided from a response
       type: object
       properties:
-        error:
-          description: The content of the feedback error
+        feedback:
+          description: The content of the feedback
           type: string
           example: "feedback description"
 

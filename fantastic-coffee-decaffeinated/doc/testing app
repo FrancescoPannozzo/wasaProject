@@ -1,0 +1,27 @@
+curl http://0.0.0.0:3000/
+
+Insert or login an user
+curl -d '{"name":"pan"}' -H "Content-type:application/json" http://0.0.0.0:3000/session
+curl -d '{"name":"zoppo"}' -H "Content-type:application/json" http://0.0.0.0:3000/session
+curl -d '{"name":"fraffolo"}' -H "Content-type:application/json" http://0.0.0.0:3000/session
+
+NO
+curl --user pan:pan182 -d '{"name":"panJson"}' -H "Content-type:application/json" http://0.0.0.0:3000/profiles?username=punk
+
+Modifica username
+curl http://0.0.0.0:3000/profiles?username=pan -H "Accept: application/json" -H "Authorization: Baerer pan182" -d '{"name":"newPanNickname"}'
+curl -d '{"name":"newPanNickname"}' -H "Accept: application/json" -H "Authorization: Baerer pan182" http://0.0.0.0:3000/profiles/pan 
+
+per vedere header di risposta
+curl -i --user pan:pan182 -d '{"name":"newPanNickname"}' -H "Content-type:application/json" http://0.0.0.0:3000/profiles?userid=pan
+
+curl -d '{"name":"pan"}' -H "Content-type:application/json" http://0.0.0.0:3000/profiles?userid=punk
+
+Authorization test
+curl -i http://0.0.0.0:3000/profiles?username=pan -H "Accept: application/json" -H "Authorization: Baerer pan164" -d '{"name":"fraffolo"}'
+
+Run application
+go run ./cmd/webapi/.
+
+Upload a photo
+curl -XPOST --data @image.txt -H "Authorization: Baerer mspv20230322163441" http://localhost:3000/profiles/pan/photos

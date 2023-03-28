@@ -18,11 +18,10 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	//name is the user to unfollow
-	name, errReq := utilities.GetNameFromReq(r)
+	name, errUser := database.DBcon.GetNameByID(database.GetBaererID(r))
 
-	if errReq != nil {
-		rt.baseLogger.WithError(errReq).Warning("error JSON format")
+	if errUser != nil {
+		rt.baseLogger.WithError(errUser).Warning("error JSON format")
 		utilities.WriteResponse(http.StatusInternalServerError, "error JSON format", w)
 	}
 

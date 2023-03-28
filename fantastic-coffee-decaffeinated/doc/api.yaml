@@ -88,7 +88,7 @@ paths:
         Get the user profile with associated username
       responses:
         "200":
-          description: Downloaded the specified user profile page
+          description: Download the specified user profile page
           content:
             application/json:
               schema:
@@ -323,12 +323,6 @@ paths:
       summary: Unfollow one user
       description: |
         Allow to unfollow on user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: The user to unfollow
-              type: string
       responses:
         "200":
           description: User unfollowed
@@ -338,6 +332,12 @@ paths:
                 $ref: "#/components/schemas/generalFeedback"
         "400":
           description: Invalid user id unfollowUser
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the unfollowUser request
           content:
             application/json:
               schema:
@@ -355,12 +355,6 @@ paths:
       summary: Give a like to a photo
       description: |
         Allow to post a like on a user photo, so username is the visited user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: The user wich is giving the like
-              type: string
       responses:
         "201":
           description: Like done on likePhoto operation
@@ -524,7 +518,7 @@ components:
       name: username
       in: path
       required: true
-      description: an user Id to identify a user
+      description: an username
       schema:
         type: string
     idPhoto:

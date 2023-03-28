@@ -42,25 +42,6 @@ func (fr *FeedbackResponse) PrintFeedback(s string) string {
 // Get the username from a request, return the username and nil if successful.
 // If an error has occurred return an empty string and the error
 func GetNameFromReq(r *http.Request) (string, error) {
-	/*
-		reqBody, err := io.ReadAll(r.Body)
-		_ = r.Body.Close()
-		if err != nil {
-			errBody := fmt.Errorf("error while reading the body request: %v", err)
-			fmt.Println(errBody)
-			return "", errBody
-		}
-
-		var username Username
-		errConv := json.Unmarshal(reqBody, &username)
-
-		if errConv != nil {
-			fmt.Printf("error with unmarshal.. err: %v", errConv)
-			return "", errConv
-		}
-
-		return username.Name, nil
-	*/
 	var username Username
 	err := json.NewDecoder(r.Body).Decode(&username)
 	_ = r.Body.Close()

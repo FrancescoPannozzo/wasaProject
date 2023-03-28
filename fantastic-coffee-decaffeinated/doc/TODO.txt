@@ -15,7 +15,7 @@ uploadPhoto:
 followUser:
     post: ok
 unfollowUser
-    delete:
+    delete: ok
 likePhoto:
     post:
 unlikePhoto:
@@ -29,3 +29,11 @@ banUser:
 unbanUser:
     delete:        
 
+
+NOTES:
+Il ban oscura un utente all'altro
+Un utente puo' cercare un altro utente tramite ricerca
+Lo stream dell' user e' composto dalle foto degli utenti seguiti (i followed)
+
+AGGIUNGERE
+operationId: search user

@@ -19,10 +19,13 @@ func checkFileExists(filepath string) {
 }
 
 // Delete an user photo
+// return a payload feedback message, an error and a http status code
 func (db *appdbimpl) DeletePhoto(name string, idphoto string) (string, error, int) {
 
 	abs, errPath := filepath.Abs(".")
-
+	if errPath != nil {
+		return "error processing abs path", errPath, http.StatusInternalServerError
+	}
 	fmt.Printf("abs for . is:%s\nerr:%v\n", abs, errPath)
 
 	filepath := filepath.Join(abs, "storage", idphoto+".png")
@@ -41,7 +44,6 @@ func (db *appdbimpl) DeletePhoto(name string, idphoto string) (string, error, in
 	_, err := db.c.Exec(sqlStmt)
 
 	if err != nil {
-		// 500 Internal server error
 		return "error execution query", fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
 	}
 

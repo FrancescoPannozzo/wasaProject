@@ -8,11 +8,12 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// Delete an user photo
 func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
-	if httpStatus == 400 {
-		utilities.WriteResponse(http.StatusBadRequest, message, w)
+	if httpStatus == http.StatusBadRequest || httpStatus == http.StatusUnauthorized {
+		utilities.WriteResponse(httpStatus, message, w)
 		return
 	}
 

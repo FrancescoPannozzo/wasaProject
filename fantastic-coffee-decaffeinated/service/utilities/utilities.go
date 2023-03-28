@@ -3,10 +3,11 @@ package utilities
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // A rappresentation of the username
@@ -41,28 +42,40 @@ func (fr *FeedbackResponse) PrintFeedback(s string) string {
 // Get the username from a request, return the username and nil if successful.
 // If an error has occurred return an empty string and the error
 func GetNameFromReq(r *http.Request) (string, error) {
-	reqBody, err := io.ReadAll(r.Body)
-	if err != nil {
-		errBody := fmt.Errorf("error while reading the body request: %v", err)
-		fmt.Println(errBody)
-		return "", errBody
-	}
+	/*
+		reqBody, err := io.ReadAll(r.Body)
+		_ = r.Body.Close()
+		if err != nil {
+			errBody := fmt.Errorf("error while reading the body request: %v", err)
+			fmt.Println(errBody)
+			return "", errBody
+		}
 
+		var username Username
+		errConv := json.Unmarshal(reqBody, &username)
+
+		if errConv != nil {
+			fmt.Printf("error with unmarshal.. err: %v", errConv)
+			return "", errConv
+		}
+
+		return username.Name, nil
+	*/
 	var username Username
-	errConv := json.Unmarshal(reqBody, &username)
-
-	if errConv != nil {
-		fmt.Printf("error with unmarshal.. err: %v", errConv)
-		return "", errConv
+	err := json.NewDecoder(r.Body).Decode(&username)
+	_ = r.Body.Close()
+	if err != nil {
+		logrus.Errorln("wrong JSON received")
+		return "wrong JSON received", err
 	}
 
 	return username.Name, nil
 }
 
-// It send a payload response json object with a http status code and a message related to it
+// It sends a payload response json object with a http status code and a message related to it
 func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
-	w.WriteHeader(httpStatus)
 	w.Header().Set("Content-type", "application/json")
+	w.WriteHeader(httpStatus)
 	var response PayloadFeedback
 	switch httpStatus {
 	case 401, 400, 404, 500:
@@ -71,14 +84,22 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 		response = &FeedbackResponse{Feedback: payload}
 	}
 
-	jsonResp, err := json.Marshal(response)
+	/*
+		jsonResp, err := json.Marshal(response)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	*/
+	err := json.NewEncoder(w).Encode(&response)
 	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		logrus.Errorln("wrong JSON processed")
+		json.NewEncoder(w).Encode(&response)
 		return
 	}
-	w.Write(jsonResp)
-	return
+	//w.Write(jsonResp)
+	//return
 }
 
 func CheckUsername(name string) (httpStatus int, feedback string) {

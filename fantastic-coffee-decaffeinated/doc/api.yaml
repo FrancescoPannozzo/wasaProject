@@ -29,7 +29,7 @@ paths:
         content:
           application/json:
             schema:
-              description: A json object with one property
+              description: The username of the user for the login
               type: object
               properties:
                 name:
@@ -191,7 +191,7 @@ paths:
         Get a full user photo (not thumbnail)
         with likes number and comments list
       responses:
-        "202":
+        "201":
           description: Photo, likes and comments downloaded
           content:           
             application/json:
@@ -267,7 +267,7 @@ paths:
                 photouser:
                   summary: maria-photo
                   value:
-                    idphoto: abcd20232303151010
+                    idphoto: abcd20132303151010
         "400":
           description: Photo format/photo id/user id not valid for uploadPhoto operation
           content:
@@ -291,15 +291,15 @@ paths:
       operationId: followUser
       summary: Follow one user
       description: |
-        Allow to follow the visited user
+        Allow to follow an user
       requestBody:
         content:
           application/json:
             schema:
-              description: The user wich is giving the follow
+              description: The user to follow
               type: string
       responses:
-        "202":
+        "201":
           description: User followed
           content:
             application/json:
@@ -311,14 +311,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the followUser request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
     delete:
       tags: ["user"]
       operationId: unfollowUser
       summary: Unfollow one user
       description: |
         Allow to unfollow on user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: The user to unfollow
+              type: string
       responses:
-        "202":
+        "200":
           description: User unfollowed
           content:
             application/json:
@@ -350,7 +362,7 @@ paths:
               description: The user wich is giving the like
               type: string
       responses:
-        "202":
+        "201":
           description: Like done on likePhoto operation
           content:
             application/json:
@@ -371,8 +383,8 @@ paths:
       description: |
         Allow to unlike one user photo
       responses:
-        "202":
-          description: Like done on unlikePhoto operation
+        "200":
+          description: unLike done on unlikePhoto operation
           content:
             application/json:
               schema:
@@ -416,7 +428,7 @@ paths:
                   username: maria
                   comment: this photo is really bad!
       responses:
-        "202":
+        "201":
           description: comment done
           content:
             application/json:
@@ -437,7 +449,7 @@ paths:
       description: |
         Allow to uncomment one user photo
       responses:
-        "202":
+        "200":
           description: comment erased
           content:
             application/json:
@@ -465,7 +477,7 @@ paths:
               banneduser:
                 value: maria
       responses:
-        "202":
+        "201":
           description: ban done
           content:
             application/json:
@@ -486,7 +498,7 @@ paths:
       description: |
         Allow to unban one user photo
       responses:
-        "202":
+        "200":
           description: user unbanned
           content:
             application/json:
@@ -553,12 +565,12 @@ components:
           thumbnails:
             tumbimg1:
               thumbnailUrl: server/user1-id/photo1
-              dateTime: 02/02/2023 14:30
+              dateTime: 02/02/2013 14:30
               nLikes: 4
               nComments: 2
             tumbimg2:
               thumbnailUrl: server/user1-id/photo2
-              dateTime: 02/02/2023 16:30
+              dateTime: 02/02/2013 16:30
               nLikes: 2
               nComments: 1
     photoObject:

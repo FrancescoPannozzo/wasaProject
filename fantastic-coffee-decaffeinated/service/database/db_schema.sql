@@ -1,7 +1,9 @@
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE User
 (
-Id_user TEXT PRIMARY KEY, 
-Nickname TEXT CHECK(length(Nickname) >= 3 AND length(Nickname) <= 13)
+Id_user TEXT, 
+Nickname TEXT CHECK(length(Nickname) >= 3 AND length(Nickname) <= 13) PRIMARY KEY
 
 );
 
@@ -13,7 +15,7 @@ Date TEXT NOT NULL,
 Time TEXT NOT NULL,
 LocalPath TEXT NOT NULL,
 FOREIGN KEY (User)
-	REFERENCES User (Id_user)
+	REFERENCES User (Nickname)
 	ON UPDATE CASCADE
 	ON DELETE CASCADE
 );
@@ -23,7 +25,7 @@ CREATE TABLE Like
 User TEXT,
 Photo INTEGER,
 FOREIGN KEY (User)
-	REFERENCES User(Id_user)
+	REFERENCES User(Nickname)
 	ON UPDATE CASCADE
 	ON DELETE CASCADE,
 FOREIGN KEY (Photo)
@@ -40,7 +42,7 @@ User TEXT NOT NULL,
 Photo INTEGER NOT NULL,
 Text TEXT NOT NULL,
 FOREIGN KEY (User)
-	REFERENCES User(Id_user)
+	REFERENCES User(Nickname)
 	ON UPDATE CASCADE
 	ON DELETE CASCADE,
 FOREIGN KEY (Photo)
@@ -54,11 +56,11 @@ CREATE TABLE Ban
 Banner TEXT,
 Banned TEXT,
 FOREIGN KEY (Banner)
-	REFERENCES User(Id_user)
+	REFERENCES User(Nickname)
 	ON UPDATE CASCADE
 	ON DELETE CASCADE,
 FOREIGN KEY (Banned)
-	REFERENCES User(Id_user)
+	REFERENCES User(Nickname)
 	ON UPDATE CASCADE
 	ON DELETE CASCADE,
 PRIMARY KEY (Banner, Banned)
@@ -69,11 +71,11 @@ CREATE TABLE Follow
 Follower TEXT,
 Followed TEXT,
 FOREIGN KEY (Follower)
-	REFERENCES User(Id_user)
+	REFERENCES User(Nickname)
 	ON UPDATE CASCADE
 	ON DELETE CASCADE,
 FOREIGN KEY (Followed)
-	REFERENCES User(Id_user)
+	REFERENCES User(Nickname)
 	ON UPDATE CASCADE
 	ON DELETE CASCADE,
 PRIMARY KEY (Follower, Followed)

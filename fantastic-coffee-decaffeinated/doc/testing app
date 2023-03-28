@@ -25,3 +25,9 @@ go run ./cmd/webapi/.
 
 Upload a photo
 curl -XPOST --data @image.txt -H "Authorization: Baerer mspv20230322163441" http://localhost:3000/profiles/pan/photos
+
+Follow an user
+curl -d '{"name":"zoppo"}' -H "Accept: application/json" -H "Authorization: Baerer lree20230327141954" http://0.0.0.0:3000/profiles/pan/follows
+
+Unfollow an user
+curl -X DELETE -d '{"name":"userToUnfollow"}' -H "Accept: application/json" -H "Authorization: Baerer rwuc20230328131133" http://0.0.0.0:3000/profiles/pan/follows

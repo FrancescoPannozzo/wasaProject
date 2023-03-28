@@ -16,7 +16,6 @@ func VerifyUseridController(w http.ResponseWriter, r *http.Request, ps httproute
 	log.Println(authHeader)
 
 	reqUserid := strings.TrimPrefix(authHeader, prefix)
-	log.Println(reqUserid)
 
 	//username := r.URL.Query().Get("username")
 	username := ps.ByName("username")

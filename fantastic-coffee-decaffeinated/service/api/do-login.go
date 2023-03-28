@@ -5,7 +5,6 @@ import (
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -15,28 +14,33 @@ import (
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Logging the user..")
 
-	reqBody, err := io.ReadAll(r.Body)
+	/*
+		reqBody, err := io.ReadAll(r.Body)
+		_ = r.Body.Close()
+		if err != nil {
+			errBody := fmt.Errorf("error while reading the body request: %v", err)
+			fmt.Println(errBody)
+			utilities.WriteResponse(http.StatusBadRequest, errBody.Error(), w)
+			return
+		}
+
+		var username Username
+		errConv := json.Unmarshal(reqBody, &username)
+
+		if errConv != nil {
+			fmt.Printf("error with unmarshal.. err: %v", errConv)
+			utilities.WriteResponse(http.StatusBadRequest, errConv.Error(), w)
+			return
+		}
+
+	*/
+
+	var username utilities.Username
+	err := json.NewDecoder(r.Body).Decode(&username)
+	_ = r.Body.Close()
 	if err != nil {
-		errBody := fmt.Errorf("error while reading the body request: %v", err)
-		fmt.Println(errBody)
-		utilities.WriteResponse(http.StatusBadRequest, errBody.Error(), w)
-		return
-	}
-
-	//fmt.Println("reqBody content is:", bytes.NewBuffer(reqBody).String())
-	//isValid := json.Valid(reqBody)
-	//fmt.Println("Is reqBody content a valid json format?: ", isValid)
-
-	type Username struct {
-		Name string `json:"name"`
-	}
-
-	var username Username
-	errConv := json.Unmarshal(reqBody, &username)
-
-	if errConv != nil {
-		fmt.Printf("error with unmarshal.. err: %v", errConv)
-		utilities.WriteResponse(http.StatusBadRequest, errConv.Error(), w)
+		rt.baseLogger.WithError(err).Warning("wrong JSON received")
+		utilities.WriteResponse(http.StatusInternalServerError, "cannot read the request", w)
 		return
 	}
 

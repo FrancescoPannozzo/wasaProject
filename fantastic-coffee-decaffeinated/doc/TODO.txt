@@ -13,7 +13,7 @@ deletePhoto
 uploadPhoto:
     post: ok
 followUser:
-    post:
+    post: ok
 unfollowUser
     delete:
 likePhoto:

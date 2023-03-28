@@ -52,7 +52,10 @@ type AppDatabase interface {
 	ModifyUsername(oldName string, newName string) error
 	InsertPhoto(name string, idphoto string) (string, error, int)
 	DeletePhoto(name string, idphoto string) (string, error, int)
+	UsernameInDB(name string) bool
+	InsertFollower(follower string, followed string) (string, error, int)
 	//GetPhoto(name string, idphoto)
+	DeleteFollowed(follower string, followed string) (string, error, int)
 
 	Ping() error
 }

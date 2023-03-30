@@ -40,8 +40,6 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 
 	if err != nil {
 		logrus.Errorln(err.Error())
-		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
-		return
 	}
 
 	utilities.WriteResponse(http.StatusCreated, feedback, w)

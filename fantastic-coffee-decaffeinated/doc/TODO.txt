@@ -17,13 +17,13 @@ followUser:
 unfollowUser
     delete: ok
 likePhoto:
-    post:
-unlikePhoto:
-    delete:
+    post: ok
+remove like:
+    delete: ok
 commentPhoto:
-    post:
+    post: ok
 uncommentPhoto:
-    delete:
+    delete: ok
 banUser:
     post:
 unbanUser:
@@ -37,3 +37,6 @@ Lo stream dell' user e' composto dalle foto degli utenti seguiti (i followed)
 
 AGGIUNGERE
 operationId: search user
+
+DESIGN WARNING
+con i path con l'username di chi logga: e' una cosa superflua, tocca rimuoverla dai path e aggiustare

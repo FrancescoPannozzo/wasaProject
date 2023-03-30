@@ -19,6 +19,8 @@ func (db *appdbimpl) InsertPhoto(name string, idphoto string) (string, error, in
 
 	sqlStmt := fmt.Sprintf("INSERT INTO Photo (Id_photo, User, Date, Time, LocalPath) VALUES('%s', '%s','%s','%s', '%s');", idphoto, userID, date, time, idphoto+".png")
 
+	fmt.Println(sqlStmt)
+
 	_, err := db.c.Exec(sqlStmt)
 
 	if err != nil {

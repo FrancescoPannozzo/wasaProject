@@ -291,13 +291,7 @@ paths:
       operationId: followUser
       summary: Follow one user
       description: |
-        Allow to follow an user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: The user to follow
-              type: string
+        Allow to follow the username in the path
       responses:
         "201":
           description: User followed
@@ -345,16 +339,16 @@ paths:
         "401":
           $ref: "#/components/responses/UnauthorizedError"
           
-  /profiles/{username}/photos/{idPhoto}/likes:
+  /photos/{idPhoto}/likes:
     parameters:
-      - $ref: "#/components/parameters/username"
       - $ref: "#/components/parameters/idPhoto"
     post: 
       tags: ["photo"]
       operationId: likePhoto
-      summary: Give a like to a photo
+      summary: Give a like to the photo identified by idPhoto
       description: |
-        Allow to post a like on a user photo, so username is the visited user
+        Allow to post a like on a user photo, so username is the visited user and
+        idPhoto is the photo to like
       responses:
         "201":
           description: Like done on likePhoto operation
@@ -375,7 +369,7 @@ paths:
       operationId: unlikePhoto  
       summary: unLike a photo
       description: |
-        Allow to unlike one user photo
+        Delete a like to the photo identified by idPhoto
       responses:
         "200":
           description: unLike done on unlikePhoto operation
@@ -390,10 +384,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/generalError"
           
-  /profiles/{username}/photos/{idPhoto}/comments:
+  /photos/{idPhoto}/comments/{idComment}:
     parameters:
-      - $ref: "#/components/parameters/username"
       - $ref: "#/components/parameters/idPhoto"
+      - $ref: "#/components/parameters/idComment"
     post: 
       tags: ["photo"]
       operationId: commentPhoto
@@ -405,21 +399,16 @@ paths:
           application/json:
             schema:
               description: |
-                A JSON object containing the username of the comment giver and
-                the content of the message
+                The comment to post to a photo
               type: object
               properties:
-                username:
-                  description: the username of the comment giver
-                  type: string
                 comment:
                   description: The content of the comment
                   type: string
             examples:
-              username:
-                summary: the maria username
+              photocomment:
+                summary: the maria comment to the idPhoto photo
                 value:
-                  username: maria
                   comment: this photo is really bad!
       responses:
         "201":
@@ -526,6 +515,13 @@ components:
       in: path
       required: true
       description: a photo Id to identify a photo
+      schema:
+        type: string
+    idComment:
+      name: idComment
+      in: path
+      required: true
+      description: a comment Id to identify a comment
       schema:
         type: string
   schemas:

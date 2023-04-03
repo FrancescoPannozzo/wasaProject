@@ -1,10 +1,9 @@
 package database
 
 import (
+	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
-	"log"
 	"net/http"
-	"strings"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -12,7 +11,7 @@ import (
 // Verify the user id from a request with a Baerer Authorization Header, return the http status number and the message related to it
 func VerifyUseridController(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (int, string) {
 	authHeader := r.Header.Get(("Authorization"))
-	baererUserID := GetBaererID(r)
+	baererUserID := utilities.GetBaererID(r)
 
 	// Searching the username in the database
 	_, errNickname := DBcon.GetNameByID(baererUserID)
@@ -23,15 +22,17 @@ func VerifyUseridController(w http.ResponseWriter, r *http.Request, ps httproute
 	}
 
 	if errNickname == nil {
-		return http.StatusOK, "Successfull Authorization, Access allowed"
+		return http.StatusOK, "Token is valid"
 	}
 
 	return http.StatusBadRequest, "Error in authentication"
 }
 
+/*
 func GetBaererID(r *http.Request) string {
 	prefix := "Baerer "
 	authHeader := r.Header.Get(("Authorization"))
 	log.Println(authHeader)
 	return strings.TrimPrefix(authHeader, prefix)
 }
+*/

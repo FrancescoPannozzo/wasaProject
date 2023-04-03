@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Follow a user.
+// Comment a photo
 func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
@@ -19,7 +19,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	username, errUsername := rt.db.GetNameByID(database.GetBaererID(r))
+	username, errUsername := rt.db.GetNameByID(utilities.GetBaererID(r))
 
 	if errUsername != nil {
 		logrus.Errorln("Cannot find the user")

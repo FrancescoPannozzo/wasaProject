@@ -7,6 +7,7 @@ import (
 
 // Delete a follow
 func (db *appdbimpl) DeleteFollowed(follower string, followed string) (string, error, int) {
+
 	_, err := db.c.Exec("DELETE FROM Follow WHERE Follower = ? AND Followed = ?", follower, followed)
 
 	if err != nil {

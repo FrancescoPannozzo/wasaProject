@@ -26,14 +26,17 @@ go run ./cmd/webapi/.
 Upload a photo
 curl -X POST --data @image.txt -H "Authorization: Baerer mspv20230322163441" http://localhost:3000/profiles/pan/photos
 
+Delete a photo
+curl -X DELETE -H "Authorization: Baerer gxmt20230330184949" http://localhost:3000/profiles/pan/photos/gxmt20230331142500
+
 Follow an user
-curl -d '{"name":"zoppo"}' -H "Accept: application/json" -H "Authorization: Baerer lree20230327141954" http://0.0.0.0:3000/profiles/pan/follows
+curl -d '{"name":"zoppo"}' -H "Accept: application/json" -H "Authorization: Baerer gxmt20230330184949" http://0.0.0.0:3000/follows
 
 Unfollow an user
-curl -X DELETE -d '{"name":"userToUnfollow"}' -H "Accept: application/json" -H "Authorization: Baerer rwuc20230328131133" http://0.0.0.0:3000/profiles/pan/follows
+curl -X DELETE -H "Accept: application/json" -H "Authorization: Baerer rwuc20230328131133" http://0.0.0.0:3000/profiles/pan/follows/zoppo
 
 Like a photo
-curl POST -H "Authorization: Baerer jqux20230328130421" http://localhost:3000/photos/jqux20230329184759/likes
+curl -X POST -H "Authorization: Baerer jqux20230328130421" http://localhost:3000/photos/jqux20230329184759/likes
 
 Comment a photocurl -d '{"comment":"wow!"}' -H "Content-type:application/json" -H "Authorization: Baerer rwuc20230328131133" http://0.0.0.0:3000/photos/jqux20230329184759/comments
 

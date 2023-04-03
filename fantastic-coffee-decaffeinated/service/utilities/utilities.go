@@ -3,8 +3,10 @@ package utilities
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -112,4 +114,11 @@ func GenerateTimestamp() string {
 
 func toChar(i int) rune {
 	return rune('a' - 1 + i)
+}
+
+func GetBaererID(r *http.Request) string {
+	prefix := "Baerer "
+	authHeader := r.Header.Get(("Authorization"))
+	log.Println(authHeader)
+	return strings.TrimPrefix(authHeader, prefix)
 }

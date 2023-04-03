@@ -7,7 +7,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Get an username by passing the userId associated from the DB,
+// Get an username by passing the userId associated from the DB.
+// return the username and nil if sucessful, a feedback message anthe error otherwise
 func (db *appdbimpl) GetNameByID(userId string) (string, error) {
 
 	var (

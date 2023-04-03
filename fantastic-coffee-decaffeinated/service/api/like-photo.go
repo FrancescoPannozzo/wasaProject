@@ -18,7 +18,7 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	username, errUsername := rt.db.GetNameByID(database.GetBaererID(r))
+	username, errUsername := rt.db.GetNameByID(utilities.GetBaererID(r))
 
 	if errUsername != nil {
 		logrus.Errorln("Cannot find the user")

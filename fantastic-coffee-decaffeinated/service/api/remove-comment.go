@@ -17,7 +17,7 @@ func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	username, errUsername := database.DBcon.GetNameByID(database.GetBaererID(r))
+	username, errUsername := database.DBcon.GetNameByID(utilities.GetBaererID(r))
 
 	if errUsername != nil {
 		rt.baseLogger.WithError(errUsername).Warning("Cannot find the user")

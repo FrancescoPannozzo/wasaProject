@@ -17,7 +17,7 @@ func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	username, errUsername := rt.db.GetNameByID(database.GetBaererID(r))
+	username, errUsername := rt.db.GetNameByID(utilities.GetBaererID(r))
 
 	if errUsername != nil {
 		rt.baseLogger.WithError(errUsername).Warning("Cannot find the user")

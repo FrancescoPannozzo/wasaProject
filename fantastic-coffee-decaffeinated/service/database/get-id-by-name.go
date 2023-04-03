@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Get an username identifier from the DB,
+// Get an username identifier from the DB. @name the username
 // If the username is present in the DB it returns the userId, nil
 // if not it returns "", error
 func (db *appdbimpl) GetIdByName(name string) (string, error) {

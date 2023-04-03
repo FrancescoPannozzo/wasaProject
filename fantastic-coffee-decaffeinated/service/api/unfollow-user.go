@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Follow a user.
+// unFollow a user.
 func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
@@ -18,7 +18,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	name, errUser := database.DBcon.GetNameByID(database.GetBaererID(r))
+	name, errUser := database.DBcon.GetNameByID(utilities.GetBaererID(r))
 
 	if errUser != nil {
 		rt.baseLogger.WithError(errUser).Warning("error JSON format")
@@ -34,7 +34,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		utilities.WriteResponse(http.StatusBadRequest, "Warning, you cannot unfollow yourself", w)
 	}
 
-	feedback, err, httpStatus := database.DBcon.DeleteFollowed(ps.ByName("username"), name)
+	feedback, err, httpStatus := database.DBcon.DeleteFollowed(name, ps.ByName("username"))
 
 	if err != nil {
 		logrus.Errorln(err.Error())

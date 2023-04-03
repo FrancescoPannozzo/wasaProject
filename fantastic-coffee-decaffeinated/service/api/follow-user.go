@@ -19,24 +19,30 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	//name is the user to follow
-	name, errReq := utilities.GetNameFromReq(r)
-
+	userToFollow, errReq := utilities.GetNameFromReq(r)
 	if errReq != nil {
 		rt.baseLogger.WithError(errReq).Warning("error JSON format")
 		utilities.WriteResponse(http.StatusInternalServerError, "error JSON format", w)
 	}
 
-	if !(database.DBcon.UsernameInDB(name)) {
+	//check if the user to follow is in the DB
+	if !(database.DBcon.UsernameInDB(userToFollow)) {
 		utilities.WriteResponse(http.StatusBadRequest, "Warning, the user is not in the DB", w)
 		return
 	}
 
-	if ps.ByName("username") == name {
+	//Check if the user is trying to follow himself
+	loggedUser, err := rt.db.GetNameByID(utilities.GetBaererID(r))
+	if err != nil {
+		utilities.WriteResponse(http.StatusBadRequest, loggedUser, w)
+		return
+	}
+	if loggedUser == userToFollow {
 		utilities.WriteResponse(http.StatusBadRequest, "Warning, you cannot follow yourself", w)
 	}
 
-	//Quindi inserisci il follower come tale nel DB
-	feedback, err, httpStatus := database.DBcon.InsertFollower(ps.ByName("username"), name)
+	//Insert the user to follow in the DB
+	feedback, err, httpStatus := database.DBcon.InsertFollower(loggedUser, userToFollow)
 
 	if err != nil {
 		logrus.Errorln(err.Error())

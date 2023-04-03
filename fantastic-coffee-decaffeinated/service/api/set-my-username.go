@@ -19,10 +19,17 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		utilities.WriteResponse(statusNumber, payloadMessage, w)
 		return
 	}
-
 	//oldUsername := r.URL.Query().Get("username")
+	// Check if who wants to change the username is the real profile owner
+	userId := utilities.GetBaererID(r)
 	oldUsername := ps.ByName("username")
 
+	if !database.DBcon.CheckOwnership(userId, oldUsername) {
+		utilities.WriteResponse(http.StatusUnauthorized, "attempt to change someone else's username detected", w)
+		return
+	}
+
+	// Get the username to change from the RequestBody
 	newUsername, errName := utilities.GetNameFromReq(r)
 	if errName != nil {
 		logrus.Errorln("Error in setMyUsername() while getting the username from the client request %v", errName)

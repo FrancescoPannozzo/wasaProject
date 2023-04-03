@@ -3,7 +3,7 @@ doLogin
 getUserProfile
     get:
 setMyUserName
-    post: ok
+    post: ok with check
 getMyStream:
     get:
 getPhoto
@@ -40,3 +40,5 @@ operationId: search user
 
 DESIGN WARNING
 con i path con l'username di chi logga: e' una cosa superflua, tocca rimuoverla dai path e aggiustare
+
+

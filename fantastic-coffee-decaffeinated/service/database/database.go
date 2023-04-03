@@ -52,7 +52,7 @@ type AppDatabase interface {
 	GetNameByID(userId string) (string, error)
 	ModifyUsername(oldName string, newName string) error
 	InsertPhoto(name string, idphoto string) (string, error, int)
-	DeletePhoto(name string, idphoto string) (string, error, int)
+	DeletePhoto(idphoto string) (string, error, int)
 	UsernameInDB(name string) bool
 	InsertFollower(follower string, followed string) (string, error, int)
 	//GetPhoto(name string, idphoto)
@@ -66,6 +66,10 @@ type AppDatabase interface {
 	CommentPhoto(username string, idphoto string, comment string) (string, error, int)
 	// Delete a comment
 	RemoveComment(username string, idphoto string, idcomment string) (string, error, int)
+	// Check the username profile ownership
+	CheckOwnership(userId string, username string) bool
+	// get the username from a photoId
+	GetNameFromPhotoId(photoId string) (string, error)
 
 	Ping() error
 }

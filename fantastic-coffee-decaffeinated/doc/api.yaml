@@ -210,8 +210,6 @@ paths:
       summary: Delete a user photo
       description: |
         Delete a photo from the current user logged in
-      parameters:
-        - $ref: "#/components/parameters/idPhoto"
       responses:
         "200":
           description: Photo deleted

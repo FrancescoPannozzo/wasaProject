@@ -9,12 +9,11 @@ func (rt *_router) Handler() http.Handler {
 	// Register routes
 	rt.router.GET("/", rt.getHelloWorld)
 	rt.router.GET("/context", rt.wrap(rt.getContextReply))
-
-	rt.router.POST("/session", rt.doLogin)
-
-	rt.router.POST("/profiles/:username", rt.setMyUsername)
-
-	//rt.router.POST("/profiles/:username/photos/:idPhoto", rt.uploadPhoto)
+	// loggin
+	rt.router.POST("/session", rt.doLogin) //ok
+	// set a new username
+	rt.router.PUT("/profiles/:username", rt.setMyUsername) //ok
+	// rt.router.POST("/profiles/:username/photos/:idPhoto", rt.uploadPhoto)
 	// Upload a photo
 	rt.router.POST("/photos", rt.uploadPhoto)
 	// Delete a photo
@@ -26,13 +25,15 @@ func (rt *_router) Handler() http.Handler {
 	// Like one user's photo
 	rt.router.POST("/photos/:idPhoto/likes", rt.likePhoto)
 	// Remove a like
-	rt.router.DELETE("/photos/:idPhoto/likes", rt.removeLike)
+	rt.router.DELETE("/photos/:idPhoto/likes/:username", rt.removeLike)
 	// Comment a photo
 	rt.router.POST("/photos/:idPhoto/comments", rt.commentPhoto)
 	// Remove a comment
 	rt.router.DELETE("/photos/:idPhoto/comments/:idComment", rt.removeComment)
 	// ban a user
 	rt.router.POST("/bans", rt.banUser)
+	// unban a user
+	rt.router.DELETE("/bans/:username", rt.unbanUser)
 
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)

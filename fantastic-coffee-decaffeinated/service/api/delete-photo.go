@@ -19,19 +19,19 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// checking if the logged user has the rights to perform the action
 	// error not detected because GetNameById is launched in VerifyUserIdController
-	// username is the logged user
-	username, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
+	// loggedUsername is the logged user
+	loggedUsername, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
 	photoOwner, err := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, "cannot process the request", w)
 		return
 	}
-	if username != photoOwner {
+	if loggedUsername != photoOwner {
 		utilities.WriteResponse(http.StatusUnauthorized, "User doesn't have the rights to delete the photo, operation refused", w)
 		return
 	}
 
-	//username := ps.ByName("username")
+	//loggedUsername := ps.ByName("loggedUsername")
 
 	idphoto := ps.ByName("idPhoto")
 

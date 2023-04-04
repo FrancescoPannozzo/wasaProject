@@ -70,6 +70,10 @@ type AppDatabase interface {
 	CheckOwnership(userId string, username string) bool
 	// get the username from a photoId
 	GetNameFromPhotoId(photoId string) (string, error)
+	// ban user
+	BanUser(banner string, banned string) (string, error, int)
+	// unban user
+	UnbanUser(banner string, banned string) (string, error, int)
 
 	Ping() error
 }

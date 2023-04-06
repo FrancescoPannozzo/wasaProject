@@ -12,6 +12,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// a rappresentation of a thubnail image with informations
+type Thumbnail struct {
+	PhotoId        string `json:"idphoto"`
+	DateTime       string `json:"datetime"`
+	LikesNumber    int    `json:"nlikes"`
+	CommentsNumber int    `json:"ncomments"`
+}
+
 // A rappresentation of the username
 type Username struct {
 	Name string `json:"name"`

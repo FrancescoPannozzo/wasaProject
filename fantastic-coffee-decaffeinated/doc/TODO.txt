@@ -1,12 +1,12 @@
 doLogin
     post: ok
 getUserProfile
-    get:
+    get: ok
 setMyUserName
-    post: ok with check
+    post: ok 
 getMyStream:
     get:
-getPhoto
+getPhoto ok
     get:
 deletePhoto
     delete: ok
@@ -25,9 +25,9 @@ commentPhoto:
 uncommentPhoto:
     delete: ok
 banUser:
-    post:
+    post: ok
 unbanUser:
-    delete:        
+    delete: ok       
 
 
 NOTES:

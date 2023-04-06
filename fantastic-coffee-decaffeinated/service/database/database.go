@@ -33,6 +33,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -76,6 +77,8 @@ type AppDatabase interface {
 	UnbanUser(banner string, banned string) (string, error, int)
 	//Check bans
 	CheckBan(loggedUser string, targetUser string) bool
+	//
+	GetThumbnails(username string) ([]utilities.Thumbnail, error, int)
 	Ping() error
 }
 

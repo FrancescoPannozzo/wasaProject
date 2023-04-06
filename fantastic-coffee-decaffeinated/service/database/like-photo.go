@@ -1,20 +1,23 @@
 package database
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 )
 
 // Insert the user in the DB,
 func (db *appdbimpl) LikePhoto(username string, idphoto string) (string, error, int) {
-	/*
-		idphotoConv, errconv := strconv.Atoi(idphoto)
+	// check if idphoto is valid ---------
+	var idPhoto string
+	rows := db.c.QueryRow("SELECT DISTINCT Id_photo FROM Photo WHERE Id_photo=?", idphoto).Scan(&idPhoto)
 
-		if errconv != nil {
-			logrus.Errorln("error while processing the photo request")
-			return "error while processing the photo request", errconv, http.StatusInternalServerError
-		}
-	*/
+	if errors.Is(rows, sql.ErrNoRows) {
+		//errUser := fmt.Errorf("error execution query: %w", rows)
+		return "invalid idphoto", rows, http.StatusBadRequest
+	}
+
 	_, err := db.c.Exec("INSERT INTO Like (User, Photo) VALUES(?, ?);", username, idphoto)
 
 	if err != nil {

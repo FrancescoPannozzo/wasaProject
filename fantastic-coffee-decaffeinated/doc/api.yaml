@@ -96,25 +96,8 @@ paths:
                   An object with the user photo number, follower list, following list and thumbnail objects list
                 type: object
                 properties:
-                  nPhoto:
-                    description: The photo number referred to the user profile
-                    type: integer
-                  followers:
-                    description: A followers list
-                    type: array
-                    items:
-                      type: string
-                    minItems: 0
-                    maxItems: 1000
-                  following:
-                    description: A following users list
-                    type: array
-                    items:
-                      type: string
-                    minItems: 0
-                    maxItems: 1000
                   thumbnails:
-                    description: a thumbnail object with photo informations
+                    description: a thumbnail object with the photo and informations
                     type: array
                     items:
                       $ref: "#/components/schemas/thumbnailImage"
@@ -539,17 +522,17 @@ components:
         A rappresentation of a thumnail pic with other informations
       type: object
       properties:
-        idPhoto:
+        idphoto:
           description: the photo id
           type: string
-        dateTime:
+        datetime:
           description: the post date time to the referred photo
           type: string
           format: date-time
-        nLikes:
+        nlikes:
           description: The likes number to the referred photo
           type: integer
-        nComments:
+        ncomments:
           description: The comments number to the referred photo
           type: integer
       example:

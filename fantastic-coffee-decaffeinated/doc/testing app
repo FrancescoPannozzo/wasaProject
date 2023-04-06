@@ -42,3 +42,5 @@ curl -X POST -H "Authorization: Baerer jqux20230328130421" http://localhost:3000
 Comment a photo
 curl -d '{"comment":"wow!"}' -H "Content-type:application/json" -H "Authorization: Baerer rwuc20230328131133" http://0.0.0.0:3000/photos/jqux20230329184759/comments
 
+Get a photo
+curl -X GET --output test.png -H "Authorization: Baerer aiai20230404131621" http://0.0.0.0:3000/photos/ghsr20230405100110

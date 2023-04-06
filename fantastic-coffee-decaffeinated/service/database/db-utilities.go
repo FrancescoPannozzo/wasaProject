@@ -27,12 +27,3 @@ func VerifyUseridController(w http.ResponseWriter, r *http.Request, ps httproute
 
 	return http.StatusBadRequest, "Error in authentication"
 }
-
-/*
-func GetBaererID(r *http.Request) string {
-	prefix := "Baerer "
-	authHeader := r.Header.Get(("Authorization"))
-	log.Println(authHeader)
-	return strings.TrimPrefix(authHeader, prefix)
-}
-*/

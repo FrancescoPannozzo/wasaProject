@@ -11,9 +11,13 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.GET("/context", rt.wrap(rt.getContextReply))
 	// loggin
 	rt.router.POST("/session", rt.doLogin) //ok
+	// get an user profile
+	rt.router.GET("/profiles/:username", rt.getProfile)
 	// set a new username
 	rt.router.PUT("/profiles/:username", rt.setMyUsername) //ok
 	// rt.router.POST("/profiles/:username/photos/:idPhoto", rt.uploadPhoto)
+	//get a photo
+	rt.router.GET("/photos/:idPhoto", rt.getPhoto)
 	// Upload a photo
 	rt.router.POST("/photos", rt.uploadPhoto)
 	// Delete a photo

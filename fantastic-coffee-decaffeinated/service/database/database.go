@@ -74,7 +74,8 @@ type AppDatabase interface {
 	BanUser(banner string, banned string) (string, error, int)
 	// unban user
 	UnbanUser(banner string, banned string) (string, error, int)
-
+	//Check bans
+	CheckBan(loggedUser string, targetUser string) bool
 	Ping() error
 }
 

@@ -539,8 +539,8 @@ components:
         A rappresentation of a thumnail pic with other informations
       type: object
       properties:
-        thumbnailUrl:
-          description: the image url
+        idPhoto:
+          description: the photo id
           type: string
         dateTime:
           description: the post date time to the referred photo

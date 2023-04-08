@@ -10,7 +10,7 @@ import (
 )
 
 // Get an user profile
-func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
 	if httpStatus == http.StatusBadRequest || httpStatus == http.StatusUnauthorized {
@@ -18,30 +18,27 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
-	targetUser := ps.ByName("username")
+	//prendo lista following
+	// getfollowedlist()
 
-	// check if the user is banned
-	if database.DBcon.CheckBan(loggedUser, targetUser) {
-		utilities.WriteResponse(http.StatusUnauthorized, "the logged user is banned for the specific request", w)
-		return
-	}
+	loggedUser, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
 
 	//var thumbnails []Thumbnail
 
-	thumbnails, err, httpStatus := database.DBcon.GetThumbnails(targetUser)
+	thumbnails, err, httpStatus := database.DBcon.GetFollowedThumbnails(loggedUser)
 
 	if err != nil {
 		utilities.WriteResponse(httpStatus, err.Error(), w)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(&thumbnails)
+	result, err := json.Marshal(thumbnails)
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(result)
 
 }

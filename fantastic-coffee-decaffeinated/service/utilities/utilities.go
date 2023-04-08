@@ -2,6 +2,7 @@ package utilities
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -93,11 +94,11 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	//return
 }
 
-func CheckUsername(name string) (httpStatus int, feedback string) {
+func CheckUsername(name string) error {
 	if len(name) < 3 || len(name) > 13 {
-		return http.StatusBadRequest, "Username not valid, size must be in range [3-13] characters"
+		return errors.New("Username not valid, size must be in range [3-13] characters")
 	}
-	return http.StatusOK, "Correct username type"
+	return nil
 }
 
 // Create an user id composed by characters + timestamp

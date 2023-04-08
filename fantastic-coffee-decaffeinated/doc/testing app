@@ -44,3 +44,9 @@ curl -d '{"comment":"wow!"}' -H "Content-type:application/json" -H "Authorizatio
 
 Get a photo
 curl -X GET --output test.png -H "Authorization: Baerer aiai20230404131621" http://0.0.0.0:3000/photos/ghsr20230405100110
+
+Ban an user
+curl -d '{"username":"gabbo"}' -H "Accept: application/json" -H "Authorization: Baerer gxmt20230330184949" http://0.0.0.0:3000/bans
+
+TIPS
+w.Header().Set("content-type", "application/json") //si setta quello che mandi

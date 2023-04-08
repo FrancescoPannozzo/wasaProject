@@ -8,12 +8,12 @@ import (
 	"net/http"
 )
 
-func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, error, int) {
+func (db *appdbimpl) GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error, int) {
 	//var idphoto string
 
 	var thumbnails []utilities.Thumbnail
 
-	rows, err := db.c.Query("SELECT Id_photo, Date, Time FROM Photo WHERE User=? ORDER BY Date DESC, Time Desc;", username)
+	rows, err := db.c.Query("SELECT Id_photo, User, Date, Time FROM Photo JOIN Follow ON Follow.Followed = Photo.User WHERE Follow.Follower =? ORDER BY Date DESC, Time Desc;", loggedUser)
 	if err != nil {
 		return nil, fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
 	}
@@ -21,8 +21,12 @@ func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, erro
 	var thumbnail utilities.Thumbnail
 	for rows.Next() {
 
-		var date, time string
-		rows.Scan(&thumbnail.PhotoId, &date, &time)
+		var idphoto, user, date, time string
+		rows.Scan(&idphoto, &user, &date, &time)
+		if db.CheckBan(loggedUser, user) {
+			continue
+		}
+		thumbnail.PhotoId = idphoto
 		thumbnail.DateTime = fmt.Sprintf("%sT%s", date, time)
 		rows := db.c.QueryRow("SELECT COUNT(*) FROM Like WHERE Photo = ?;", thumbnail.PhotoId).Scan(&thumbnail.LikesNumber)
 		if errors.Is(rows, sql.ErrNoRows) {

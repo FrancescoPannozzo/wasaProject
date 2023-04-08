@@ -1,13 +1,13 @@
 doLogin
-    post: ok
+    post: ok -
 getUserProfile
-    get: ok
+    get: ok 
 setMyUserName
     post: ok 
 getMyStream:
-    get:
-getPhoto ok
-    get:
+    get: ok
+getPhoto 
+    get: ok
 deletePhoto
     delete: ok
 uploadPhoto:
@@ -31,14 +31,14 @@ unbanUser:
 
 
 NOTES:
-Il ban oscura un utente all'altro
 Un utente puo' cercare un altro utente tramite ricerca
-Lo stream dell' user e' composto dalle foto degli utenti seguiti (i followed)
 
 AGGIUNGERE
 operationId: search user
 
-DESIGN WARNING
-con i path con l'username di chi logga: e' una cosa superflua, tocca rimuoverla dai path e aggiustare
+MODIFICHE
+-occhio ai json tag name e username sparsi
+-quella verifyuserid..forse farla diventare funzione dell'interfaccia AppDatabase
+
 
 

@@ -14,27 +14,6 @@ import (
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Logging the user..")
 
-	/*
-		reqBody, err := io.ReadAll(r.Body)
-		_ = r.Body.Close()
-		if err != nil {
-			errBody := fmt.Errorf("error while reading the body request: %v", err)
-			fmt.Println(errBody)
-			utilities.WriteResponse(http.StatusBadRequest, errBody.Error(), w)
-			return
-		}
-
-		var username Username
-		errConv := json.Unmarshal(reqBody, &username)
-
-		if errConv != nil {
-			fmt.Printf("error with unmarshal.. err: %v", errConv)
-			utilities.WriteResponse(http.StatusBadRequest, errConv.Error(), w)
-			return
-		}
-
-	*/
-
 	var username utilities.Username
 	err := json.NewDecoder(r.Body).Decode(&username)
 	_ = r.Body.Close()
@@ -44,14 +23,12 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	httpResponse, feedback := utilities.CheckUsername(username.Name)
+	err = utilities.CheckUsername(username.Name)
 
-	if httpResponse == http.StatusBadRequest {
-		utilities.WriteResponse(httpResponse, feedback, w)
+	if err != nil {
+		utilities.WriteResponse(http.StatusBadRequest, err.Error(), w)
 		return
 	}
-
-	//fmt.Println("username to store in db is:", username.Name)
 
 	testUserID, errUser, httpResponse := database.DBcon.GetOrInsertUser(username.Name)
 
@@ -60,8 +37,6 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		utilities.WriteResponse(httpResponse, fmt.Sprintf("Cannot send the ID: %v\n", errUser), w)
 		return
 	}
-
-	// manage the httpResponses
 
 	if httpResponse == http.StatusCreated {
 		w.WriteHeader(http.StatusCreated)
@@ -73,14 +48,22 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 
 		userId := UserID{Identifier: testUserID}
 
-		jsonResp, errJson := json.Marshal(&userId)
+		err = json.NewEncoder(w).Encode(&userId)
 		if err != nil {
-			logrus.Infof("Error with Marshal: %v\n", errJson)
+			utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 			return
 		}
 
+		/*
+			jsonResp, errJson := json.Marshal(&userId)
+			if err != nil {
+				logrus.Infof("Error with Marshal: %v\n", errJson)
+				return
+			}
+		*/
+
 		logrus.Infoln("..user logged!")
-		w.Write(jsonResp)
+		//w.Write(jsonResp)
 
 		return
 	}

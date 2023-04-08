@@ -9,6 +9,9 @@ func (rt *_router) Handler() http.Handler {
 	// Register routes
 	rt.router.GET("/", rt.getHelloWorld)
 	rt.router.GET("/context", rt.wrap(rt.getContextReply))
+
+	// get the logged user stream
+	rt.router.GET("/my-stream", rt.getMyStream)
 	// loggin
 	rt.router.POST("/session", rt.doLogin) //ok
 	// get an user profile

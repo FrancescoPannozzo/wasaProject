@@ -37,9 +37,11 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	statusNumber, payloadMessage = utilities.CheckUsername(newUsername)
-	if statusNumber == http.StatusBadRequest {
-		utilities.WriteResponse(statusNumber, payloadMessage, w)
+	fmt.Println("New username: ", newUsername)
+
+	err := utilities.CheckUsername(newUsername)
+	if err != nil {
+		utilities.WriteResponse(http.StatusBadRequest, err.Error(), w)
 		return
 	}
 
@@ -59,7 +61,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	err := database.DBcon.ModifyUsername(userid, newUsername)
+	err = database.DBcon.ModifyUsername(userid, newUsername)
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return

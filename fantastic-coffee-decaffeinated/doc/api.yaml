@@ -93,7 +93,7 @@ paths:
             application/json:
               schema:
                 description: |
-                  An object with the user photo number, follower list, following list and thumbnail objects list
+                  a thumbnail object list with photos and informations reelated to them
                 type: object
                 properties:
                   thumbnails:
@@ -111,7 +111,7 @@ paths:
               $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-    post:
+    put:
       tags: ["user"]
       operationId: setMyUserName
       summary: set the user name
@@ -122,7 +122,20 @@ paths:
           application/json:
             schema:
               description: The new username
-              type: string
+              type: object
+              properties:
+                user:
+                  description: The new user's username to set
+                  type: string
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+            examples:
+              user:
+                summary: maria-user
+                value:
+                  name: maria
+        required: true
       responses:
         "200":
           description: Username updated, everything fine
@@ -158,7 +171,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/thumbnailImage"
+                type: array
+                items:
+                  $ref: "#/components/schemas/thumbnailImage"
+                minItems: 0
+                maxItems: 1000
         "401":
           $ref: "#/components/responses/UnauthorizedError"
   
@@ -274,9 +291,18 @@ paths:
               description: the username of the user to follow
               type: object
               properties:
-                username:
-                  description: An username to follow
+                name:
+                  description: The user's username to follow
                   type: string
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+            examples:
+              user:
+                summary: maria-user
+                value:
+                  name: maria
+        required: true
       responses:
         "201":
           description: User followed
@@ -447,10 +473,20 @@ paths:
           application/json:
             schema:
               description: the banned user to insert in the bans list
-              type: string
+              type: object
+              properties:
+                name:
+                  description: The banned user's username
+                  type: string
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
             examples:
-              banneduser:
-                value: maria
+              user:
+                summary: maria-user
+                value:
+                  name: maria
+        required: true
       responses:
         "201":
           description: ban done
@@ -536,25 +572,16 @@ components:
           description: The comments number to the referred photo
           type: integer
       example:
-        user-profile:
-          n-photo: 5
-          followers:
-            item1: utente1
-            item2: utente2
-          following:
-            item1: utente1
-            item2: utente2
-          thumbnails:
-            tumbimg1:
-              thumbnailUrl: server/user1-id/photo1
-              dateTime: 02/02/2013 14:30
-              nLikes: 4
-              nComments: 2
-            tumbimg2:
-              thumbnailUrl: server/user1-id/photo2
-              dateTime: 02/02/2013 16:30
-              nLikes: 2
-              nComments: 1
+        photo1:
+          idphoto: idphoto1234
+          datetime: "2022-02-02T13:30:15"
+          nlikes: 10
+          ncomments: 3
+        photo2:
+          idphoto: idphoto4321
+          datetime: "2022-03-09T17:20:24"
+          nlikes: 5
+          ncomments: 2
     photoObject:
       description: |
         An object with the original photo (not thumbnail), likes number

@@ -77,8 +77,11 @@ type AppDatabase interface {
 	UnbanUser(banner string, banned string) (string, error, int)
 	//Check bans
 	CheckBan(loggedUser string, targetUser string) bool
-	//
+	// get user thumbnails objects
 	GetThumbnails(username string) ([]utilities.Thumbnail, error, int)
+	// get followed thumbnails objects
+	GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error, int)
+
 	Ping() error
 }
 

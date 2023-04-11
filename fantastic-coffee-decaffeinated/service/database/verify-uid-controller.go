@@ -16,7 +16,11 @@ func VerifyUseridController(w http.ResponseWriter, r *http.Request, ps httproute
 	// Searching the username in the database
 	_, errNickname := DBcon.GetNameByID(baererUserID)
 
-	if errNickname != nil || authHeader == "" || baererUserID == authHeader {
+	if errNickname != nil {
+		return http.StatusNotFound, "user not in DB"
+	}
+
+	if authHeader == "" || baererUserID == authHeader {
 		fmt.Println(errNickname)
 		return http.StatusUnauthorized, "Baerer Token not valid"
 	}

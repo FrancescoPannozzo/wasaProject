@@ -12,11 +12,11 @@ import (
 
 // Update an existing username
 func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	statusNumber, payloadMessage := database.VerifyUseridController(w, r, ps)
+	httpStatus, payloadMessage := database.VerifyUseridController(w, r, ps)
 
-	if statusNumber == http.StatusBadRequest || statusNumber == http.StatusUnauthorized {
-		logrus.Errorln("Error with the authentication, httpStatus is '%v', %s", statusNumber, payloadMessage)
-		utilities.WriteResponse(statusNumber, payloadMessage, w)
+	if httpStatus != http.StatusOK {
+		logrus.Errorln("Error with the authentication, httpStatus is '%v', %s", httpStatus, payloadMessage)
+		utilities.WriteResponse(httpStatus, payloadMessage, w)
 		return
 	}
 	//oldUsername := r.URL.Query().Get("username")

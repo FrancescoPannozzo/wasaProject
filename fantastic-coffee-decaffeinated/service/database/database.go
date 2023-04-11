@@ -65,6 +65,8 @@ type AppDatabase interface {
 	// Comment a photo, usernaname is the writing comment user
 	//comment is the text of the comment
 	CommentPhoto(username string, idphoto string, comment string) (string, error, int)
+	// Get comments
+	GetComments(loggedUser string, photoID string) ([]utilities.Comment, error, int)
 	// Delete a comment
 	RemoveComment(username string, idphoto string, idcomment string) (string, error, int)
 	// Check the username profile ownership

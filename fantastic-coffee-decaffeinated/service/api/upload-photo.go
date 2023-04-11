@@ -20,7 +20,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
-	if httpStatus == http.StatusBadRequest || httpStatus == http.StatusUnauthorized {
+	if httpStatus != http.StatusOK {
 		utilities.WriteResponse(httpStatus, message, w)
 		return
 	}

@@ -12,7 +12,7 @@ import (
 func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
-	if httpStatus == http.StatusBadRequest || httpStatus == http.StatusUnauthorized {
+	if httpStatus != http.StatusOK {
 		utilities.WriteResponse(httpStatus, message, w)
 		return
 	}

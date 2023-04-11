@@ -13,7 +13,7 @@ import (
 func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
-	if httpStatus == http.StatusBadRequest || httpStatus == http.StatusUnauthorized {
+	if httpStatus != http.StatusOK {
 		utilities.WriteResponse(httpStatus, message, w)
 		return
 	}
@@ -34,7 +34,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	//Check if the user is trying to follow himself
 	loggedUser, err := rt.db.GetNameByID(utilities.GetBaererID(r))
 	if err != nil {
-		utilities.WriteResponse(http.StatusBadRequest, loggedUser, w)
+		utilities.WriteResponse(http.StatusNotFound, loggedUser, w)
 		return
 	}
 	if loggedUser == userToFollow {

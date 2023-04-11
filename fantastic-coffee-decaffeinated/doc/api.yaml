@@ -111,6 +111,12 @@ paths:
               $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        '500':
+          description: The server cannot elaborate the request to get the profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
     put:
       tags: ["user"]
       operationId: setMyUserName
@@ -438,7 +444,37 @@ paths:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-
+    get: 
+      tags: ["photo"]
+      operationId: getComments
+      summary: Get the comments for a photo
+      description: |
+        Allow to get the comments posted on a user photo
+      responses:
+        "201":
+          description: the returned comments list
+          content:
+            application/json:
+              schema:
+                description: |
+                  a comments object listing all the comments related to a photo
+                type: object
+                properties:
+                  comments:
+                    description: a single comment related to the photo
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/comment"
+                    minItems: 0
+                    maxItems: 1000
+        "400":
+          description: comment format/photo id/user id not valid for getComments operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
   /photos/{idPhoto}/comments/{idComment}:
     parameters:
       - $ref: "#/components/parameters/idPhoto"
@@ -613,6 +649,13 @@ components:
         comment:
           description: The comment content
           type: string
+      example:
+        comment1:
+          username: "pippo"
+          comment: "wow!"
+        comment2:
+          username: "pluto"
+          comment: "woof!"
     generalError:
       description: An object describing an error
       type: object

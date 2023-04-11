@@ -10,7 +10,7 @@ import (
 )
 
 // Get an user profile
-func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
 	if httpStatus != http.StatusOK {
@@ -18,21 +18,19 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	//prendo lista following
-	// getfollowedlist()
+	var comments []utilities.Comment
+	// get comments
 
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
 
-	//var thumbnails []Thumbnail
-
-	thumbnails, err, httpStatus := database.DBcon.GetFollowedThumbnails(loggedUser)
+	comments, err, httpStatus := database.DBcon.GetComments(loggedUser, ps.ByName("idPhoto"))
 
 	if err != nil {
 		utilities.WriteResponse(httpStatus, err.Error(), w)
 		return
 	}
 
-	result, err := json.Marshal(thumbnails)
+	result, err := json.Marshal(comments)
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return

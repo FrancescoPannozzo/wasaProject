@@ -12,15 +12,16 @@ import (
 func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
-	if httpStatus == http.StatusBadRequest || httpStatus == http.StatusUnauthorized {
+	if httpStatus != http.StatusOK {
 		utilities.WriteResponse(httpStatus, message, w)
 		return
 	}
 
 	// checking if the logged user has the rights to perform the action
-	// error not detected because GetNameById is launched in VerifyUserIdController
-	// loggedUsername is the logged user
-	loggedUsername, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
+	loggedUsername, err := rt.db.GetNameByID(utilities.GetBaererID(r))
+	if err != nil {
+		utilities.WriteResponse(http.StatusNotFound, err.Error(), w)
+	}
 	photoOwner, err := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, "cannot process the request", w)

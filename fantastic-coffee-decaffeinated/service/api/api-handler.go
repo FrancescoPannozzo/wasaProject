@@ -33,6 +33,8 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/photos/:idPhoto/likes", rt.likePhoto)
 	// Remove a like
 	rt.router.DELETE("/photos/:idPhoto/likes/:username", rt.removeLike)
+	// Get the comments from a photoID
+	rt.router.GET("/photos/:idPhoto/comments", rt.getComments)
 	// Comment a photo
 	rt.router.POST("/photos/:idPhoto/comments", rt.commentPhoto)
 	// Remove a comment

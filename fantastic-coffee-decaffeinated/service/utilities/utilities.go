@@ -26,11 +26,18 @@ type Username struct {
 	Name string `json:"name"`
 }
 
+// An Interfece to be able to set the right type of payload message, error or feedback
 type PayloadFeedback interface {
 	PrintFeedback(s string) string
 }
 
-// A rappresentation of a 4XX message error in string format
+// A rappresentation of a comment
+type Comment struct {
+	Name    string `json:"name"`
+	Content string `json:"comment"`
+}
+
+// A rappresentation of a 4XX/500 message error in string format
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
@@ -76,22 +83,12 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 		response = &FeedbackResponse{Feedback: payload}
 	}
 
-	/*
-		jsonResp, err := json.Marshal(response)
-		if err != nil {
-			fmt.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-	*/
 	err := json.NewEncoder(w).Encode(&response)
 	if err != nil {
 		logrus.Errorln("wrong JSON processed")
 		json.NewEncoder(w).Encode(&response)
 		return
 	}
-	//w.Write(jsonResp)
-	//return
 }
 
 func CheckUsername(name string) error {
@@ -125,6 +122,7 @@ func toChar(i int) rune {
 	return rune('a' - 1 + i)
 }
 
+// get the baerer id from the requestBody
 func GetBaererID(r *http.Request) string {
 	prefix := "Baerer "
 	authHeader := r.Header.Get(("Authorization"))

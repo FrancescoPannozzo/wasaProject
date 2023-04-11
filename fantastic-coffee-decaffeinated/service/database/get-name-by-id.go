@@ -8,7 +8,7 @@ import (
 )
 
 // Get an username by passing the userId associated from the DB.
-// return the username and nil if sucessful, a feedback message anthe error otherwise
+// return the username and nil if sucessful, a feedback message anthe ErrNoRows otherwise
 func (db *appdbimpl) GetNameByID(userId string) (string, error) {
 
 	var (
@@ -23,7 +23,7 @@ func (db *appdbimpl) GetNameByID(userId string) (string, error) {
 	if errors.Is(rows, sql.ErrNoRows) {
 		logrus.Printf("UserId %s not in the db", userId)
 		//errUser := fmt.Errorf("error execution query: %w", rows)
-		return "No user found", rows
+		return "", rows
 	}
 
 	logrus.Printf("UserId: %s found! nickname is: %s\n", userID, nickname)

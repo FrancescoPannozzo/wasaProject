@@ -27,7 +27,9 @@ uncommentPhoto:
 banUser:
     post: ok
 unbanUser:
-    delete: ok       
+    delete: ok
+getComments:
+    get: ok       
 
 
 NOTES:

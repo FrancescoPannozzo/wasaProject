@@ -38,8 +38,10 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	if len(usernames) == 0 {
-		username := utilities.Username{Name: "no users found"}
-		usernames = append(usernames, username)
+		//username := utilities.Username{Name: "no users found"}
+		//usernames = append(usernames, username)
+		utilities.WriteResponse(http.StatusNotFound, "User/s not found", w)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")

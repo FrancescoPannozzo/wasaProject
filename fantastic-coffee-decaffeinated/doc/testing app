@@ -50,3 +50,5 @@ curl -d '{"username":"gabbo"}' -H "Accept: application/json" -H "Authorization: 
 
 TIPS
 w.Header().Set("content-type", "application/json") //si setta quello che mandi
+
+@todo: insomnia

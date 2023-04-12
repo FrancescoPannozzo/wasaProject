@@ -10,6 +10,8 @@ import (
 // Insert the user in the DB,
 func (db *appdbimpl) LikePhoto(username string, idphoto string) (string, error, int) {
 	// check if idphoto is valid ---------
+
+	// @todo: potevo fare funzioncina check id photo
 	var idPhoto string
 	rows := db.c.QueryRow("SELECT DISTINCT Id_photo FROM Photo WHERE Id_photo=?", idphoto).Scan(&idPhoto)
 
@@ -25,6 +27,6 @@ func (db *appdbimpl) LikePhoto(username string, idphoto string) (string, error, 
 		return "error execution query in DB", fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
 	}
 
-	return "like added, ok", err, http.StatusCreated
+	return "like added, ok", nil, http.StatusCreated
 
 }

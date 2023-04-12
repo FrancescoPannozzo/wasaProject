@@ -31,6 +31,7 @@ type PayloadFeedback interface {
 	PrintFeedback(s string) string
 }
 
+// @todo: model, entities -> comment.go
 // A rappresentation of a comment
 type Comment struct {
 	Name    string `json:"name"`
@@ -76,13 +77,16 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(httpStatus)
 	var response PayloadFeedback
+	// @todo: mettere i range invece dei numeri
 	switch httpStatus {
 	case 401, 400, 404, 500:
 		response = &ErrorResponse{Error: payload}
+	// @todo: inutile
 	case 200, 201:
 		response = &FeedbackResponse{Feedback: payload}
 	}
 
+	// @todo: mandare solo stringa
 	err := json.NewEncoder(w).Encode(&response)
 	if err != nil {
 		logrus.Errorln("wrong JSON processed")

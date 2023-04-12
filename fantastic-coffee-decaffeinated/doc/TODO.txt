@@ -29,7 +29,9 @@ banUser:
 unbanUser:
     delete: ok
 getComments:
-    get: ok       
+    get: ok
+searchUser:
+    get: ok -       
 
 
 NOTES:

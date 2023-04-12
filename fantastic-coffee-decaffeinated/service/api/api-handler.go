@@ -20,8 +20,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.GET("/profiles/:username", rt.getProfile)
 	// set a new username
 	rt.router.PUT("/profiles/:username", rt.setMyUsername)
-	// rt.router.POST("/profiles/:username/photos/:idPhoto", rt.uploadPhoto)
-	//get a photo
+	// get a photo
 	rt.router.GET("/photos/:idPhoto", rt.getPhoto)
 	// Upload a photo
 	rt.router.POST("/photos", rt.uploadPhoto)

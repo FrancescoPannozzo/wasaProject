@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// @todo: e' l'handler che decide che tipo di http status code mandare, nelle data abse functions ritornare solo la roba richiesta ed err
 func (db *appdbimpl) GetUsernames(targetUser string) ([]utilities.Username, error, int) {
 
 	var usernames []utilities.Username

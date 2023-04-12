@@ -83,6 +83,7 @@ type AppDatabase interface {
 	GetThumbnails(username string) ([]utilities.Thumbnail, error, int)
 	// get followed thumbnails objects
 	GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error, int)
+	GetUsernames(targetUser string) ([]utilities.Username, error, int)
 
 	Ping() error
 }

@@ -13,11 +13,13 @@ func (rt *_router) Handler() http.Handler {
 	// get the logged user stream
 	rt.router.GET("/my-stream", rt.getMyStream)
 	// loggin
-	rt.router.POST("/session", rt.doLogin) //ok
+	rt.router.POST("/session", rt.doLogin)
+	// Get searched usernames list
+	rt.router.GET("/profiles", rt.searchUsers)
 	// get an user profile
 	rt.router.GET("/profiles/:username", rt.getProfile)
 	// set a new username
-	rt.router.PUT("/profiles/:username", rt.setMyUsername) //ok
+	rt.router.PUT("/profiles/:username", rt.setMyUsername)
 	// rt.router.POST("/profiles/:username/photos/:idPhoto", rt.uploadPhoto)
 	//get a photo
 	rt.router.GET("/photos/:idPhoto", rt.getPhoto)

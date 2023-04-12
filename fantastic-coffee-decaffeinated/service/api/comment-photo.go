@@ -34,6 +34,11 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	var content Comment
 	_ = json.NewDecoder(r.Body).Decode(&content)
 
+	if len(content.Comment) > 100 {
+		utilities.WriteResponse(http.StatusBadRequest, "Comment provided is longer than 100 characters", w)
+		return
+	}
+
 	feedback, err, httpStatus := database.DBcon.CommentPhoto(username, ps.ByName("idPhoto"), content.Comment)
 
 	if err != nil {

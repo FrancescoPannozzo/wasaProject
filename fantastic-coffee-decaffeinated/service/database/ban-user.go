@@ -2,18 +2,19 @@ package database
 
 import (
 	"fmt"
-	"net/http"
 )
 
-func (db *appdbimpl) BanUser(banner string, banned string) (string, error, int) {
+// Ban the provided user. Possible http status code returned: 201, 500
+func (db *appdbimpl) BanUser(banner string, banned string) (string, error) {
 
 	sqlStmt := fmt.Sprintf("INSERT INTO Ban (Banner, Banned) VALUES('%s','%s');", banner, banned)
 
 	_, err := db.c.Exec(sqlStmt)
 
 	if err != nil {
-		return "error execution query", fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
+		//500
+		return "error execution query", fmt.Errorf("error execution query: %w", err)
 	}
-
-	return "Banned user inserted in the DB", err, http.StatusCreated
+	//201
+	return "Banned user inserted in the DB", err
 }

@@ -1,7 +1,9 @@
 doLogin
-    post: ok -
+    post: ok - 500, 404, 201 ok 
+searchUser:
+    get: ok -  200, 404, 401, 500 ok
 getUserProfile
-    get: ok 
+    get: ok - 200, 404, 401, 500, 
 setMyUserName
     post: ok 
 getMyStream:
@@ -30,8 +32,7 @@ unbanUser:
     delete: ok
 getComments:
     get: ok
-searchUser:
-    get: ok -       
+     
 
 
 NOTES:

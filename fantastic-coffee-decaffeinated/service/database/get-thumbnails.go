@@ -5,17 +5,18 @@ import (
 	"errors"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
-	"net/http"
 )
 
-func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, error, int) {
+// Get user thumbnails objects.
+func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, error) {
 	//var idphoto string
 
 	var thumbnails []utilities.Thumbnail
 
 	rows, err := db.c.Query("SELECT Id_photo, Date, Time FROM Photo WHERE User=? ORDER BY Date DESC, Time Desc;", username)
 	if err != nil {
-		return nil, fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
+		//500
+		return nil, fmt.Errorf("error execution query: %w", err)
 	}
 
 	var thumbnail utilities.Thumbnail
@@ -26,17 +27,20 @@ func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, erro
 		thumbnail.DateTime = fmt.Sprintf("%sT%s", date, time)
 		rows := db.c.QueryRow("SELECT COUNT(*) FROM Like WHERE Photo = ?;", thumbnail.PhotoId).Scan(&thumbnail.LikesNumber)
 		if errors.Is(rows, sql.ErrNoRows) {
-			return nil, fmt.Errorf("error execution query: %w", rows), http.StatusInternalServerError
+			//500
+			return nil, fmt.Errorf("error execution query: %w", rows)
 		}
 		rows = db.c.QueryRow("SELECT COUNT(*) FROM Comment WHERE Photo = ?;", thumbnail.PhotoId).Scan(&thumbnail.CommentsNumber)
 		if errors.Is(rows, sql.ErrNoRows) {
-			return nil, fmt.Errorf("error execution query: %w", rows), http.StatusInternalServerError
+			//500
+			return nil, fmt.Errorf("error execution query: %w", rows)
 		}
 		thumbnails = append(thumbnails, thumbnail)
 		//calcola like number, comment number e selezionare datatime
 		fmt.Println(thumbnail)
 	}
 
-	return thumbnails, nil, http.StatusOK
+	//200
+	return thumbnails, nil
 
 }

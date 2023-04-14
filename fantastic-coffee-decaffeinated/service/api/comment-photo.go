@@ -19,7 +19,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	username, errUsername := rt.db.GetNameByID(utilities.GetBaererID(r))
+	username, errUsername := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	if errUsername != nil {
 		logrus.Errorln("Cannot find the user")
@@ -39,12 +39,20 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	feedback, err, httpStatus := database.DBcon.CommentPhoto(username, ps.ByName("idPhoto"), content.Comment)
+	_, err := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
+	if err != nil {
+		utilities.WriteResponse(http.StatusBadRequest, "The photo id provided is not in the DB", w)
+		return
+	}
+
+	feedback, err := database.DBcon.CommentPhoto(username, ps.ByName("idPhoto"), content.Comment)
 
 	if err != nil {
 		rt.baseLogger.WithError(err).Warning(feedback)
+		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 	}
 
-	utilities.WriteResponse(httpStatus, feedback, w)
+	utilities.WriteResponse(http.StatusCreated, feedback, w)
+	return
 
 }

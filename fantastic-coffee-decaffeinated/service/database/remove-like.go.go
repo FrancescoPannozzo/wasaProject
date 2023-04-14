@@ -2,18 +2,18 @@ package database
 
 import (
 	"fmt"
-	"net/http"
 )
 
 // Delete a follow
-func (db *appdbimpl) RemoveLike(username string, idphoto string) (string, error, int) {
+func (db *appdbimpl) RemoveLike(username string, idphoto string) (string, error) {
 	_, err := db.c.Exec("DELETE FROM Like WHERE User = ? AND Photo = ?", username, idphoto)
 
 	if err != nil {
 		// 500 Internal server error
-		return "error execution query in DB", fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
+		return "error execution query in DB", fmt.Errorf("error execution query: %w", err)
 	}
 
-	return "like removed done, ok", err, http.StatusOK
+	//200
+	return "like removed done, ok", err
 
 }

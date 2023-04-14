@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/sirupsen/logrus"
 )
 
 // Follow a user.
@@ -32,7 +31,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	//Check if the user is trying to follow himself
-	loggedUser, err := rt.db.GetNameByID(utilities.GetBaererID(r))
+	loggedUser, err := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if err != nil {
 		utilities.WriteResponse(http.StatusNotFound, loggedUser, w)
 		return
@@ -42,20 +41,13 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	//Insert the user to follow in the DB
-	feedback, err, httpStatus := database.DBcon.InsertFollower(loggedUser, userToFollow)
+	feedback, err := database.DBcon.InsertFollower(loggedUser, userToFollow)
 
 	if err != nil {
-		logrus.Errorln(err.Error())
+		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
+		return
 	}
 
 	utilities.WriteResponse(http.StatusCreated, feedback, w)
 	return
-	/*
-		err := json.NewDecoder(r.Body).Decode(&username)
-		_ = r.Body.Close()
-		if err != nil {
-			rt.baseLogger.Warning()
-			utilities.WriteResponse(http.StatusInternalServerError, "error JSON format", w)
-		}
-	*/
 }

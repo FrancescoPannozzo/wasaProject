@@ -21,12 +21,12 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 	var comments []utilities.Comment
 	// get comments
 
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
+	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
-	comments, err, httpStatus := database.DBcon.GetComments(loggedUser, ps.ByName("idPhoto"))
+	comments, err := database.DBcon.GetComments(loggedUser, ps.ByName("idPhoto"))
 
 	if err != nil {
-		utilities.WriteResponse(httpStatus, err.Error(), w)
+		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
 

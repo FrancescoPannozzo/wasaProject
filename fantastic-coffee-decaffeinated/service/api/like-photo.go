@@ -18,7 +18,7 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	username, errUsername := rt.db.GetNameByID(utilities.GetBaererID(r))
+	username, errUsername := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	if errUsername != nil {
 		logrus.Errorln("Cannot find the user")
@@ -26,12 +26,19 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	feedback, err, httpStatus := database.DBcon.LikePhoto(username, ps.ByName("idPhoto"))
+	feedback, err := rt.db.GetNameFromPhotoId(ps.ByName("idPhoto"))
+	if err != nil {
+		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
+		return
+	}
+
+	feedback, err = database.DBcon.LikePhoto(username, ps.ByName("idPhoto"))
 
 	if err != nil {
 		rt.baseLogger.WithError(err).Warning(feedback)
+		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 	}
 
-	utilities.WriteResponse(httpStatus, feedback, w)
-
+	utilities.WriteResponse(http.StatusCreated, feedback, w)
+	return
 }

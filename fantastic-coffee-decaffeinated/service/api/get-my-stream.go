@@ -21,14 +21,14 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 	//prendo lista following
 	// getfollowedlist()
 
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
+	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	//var thumbnails []Thumbnail
 
-	thumbnails, err, httpStatus := database.DBcon.GetFollowedThumbnails(loggedUser)
+	thumbnails, err := database.DBcon.GetFollowedThumbnails(loggedUser)
 
 	if err != nil {
-		utilities.WriteResponse(httpStatus, err.Error(), w)
+		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
 

@@ -12,7 +12,7 @@ import (
 // @todo: CONTROLLER cambiare verifyUserId (mvc)
 func VerifyUseridController(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (int, string) {
 	authHeader := r.Header.Get(("Authorization"))
-	baererUserID := utilities.GetBaererID(r)
+	baererUserID := utilities.GetBearerID(r)
 
 	// Searching the username in the database
 	_, errNickname := DBcon.GetNameByID(baererUserID)

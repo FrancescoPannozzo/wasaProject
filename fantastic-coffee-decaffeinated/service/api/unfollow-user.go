@@ -18,7 +18,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	name, errUser := database.DBcon.GetNameByID(utilities.GetBaererID(r))
+	name, errUser := database.DBcon.GetNameByID(utilities.GetBearerID(r))
 
 	if errUser != nil {
 		rt.baseLogger.WithError(errUser).Warning("error JSON format")
@@ -34,7 +34,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		utilities.WriteResponse(http.StatusBadRequest, "Warning, you cannot unfollow yourself", w)
 	}
 
-	feedback, err, httpStatus := database.DBcon.DeleteFollowed(name, ps.ByName("username"))
+	feedback, err := database.DBcon.DeleteFollowed(name, ps.ByName("username"))
 
 	if err != nil {
 		logrus.Errorln(err.Error())
@@ -42,14 +42,6 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	utilities.WriteResponse(http.StatusCreated, feedback, w)
+	utilities.WriteResponse(http.StatusOK, feedback, w)
 	return
-	/*
-		err := json.NewDecoder(r.Body).Decode(&username)
-		_ = r.Body.Close()
-		if err != nil {
-			rt.baseLogger.Warning()
-			utilities.WriteResponse(http.StatusInternalServerError, "error JSON format", w)
-		}
-	*/
 }

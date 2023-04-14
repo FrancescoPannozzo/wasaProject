@@ -30,46 +30,29 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	testUserID, errUser, httpResponse := database.DBcon.GetOrInsertUser(username.Name)
+	testUserID, errUser := database.DBcon.GetOrInsertUser(username.Name)
 
 	if errUser != nil {
 		fmt.Printf("Cannot send the ID: %v\n", errUser)
-		utilities.WriteResponse(httpResponse, fmt.Sprintf("Cannot send the ID: %v\n", errUser), w)
+		utilities.WriteResponse(http.StatusInternalServerError, fmt.Sprintf("Cannot send the ID: %v\n", errUser), w)
 		return
 	}
 
-	if httpResponse == http.StatusCreated {
-		w.WriteHeader(http.StatusCreated)
-		w.Header().Set("content-type", "application/json") //si setta quello che mandi
+	type UserID struct {
+		Identifier string `json:"identifier"`
+	}
 
-		type UserID struct {
-			Identifier string `json:"identifier"`
-		}
+	userId := UserID{Identifier: testUserID}
 
-		userId := UserID{Identifier: testUserID}
-
-		err = json.NewEncoder(w).Encode(&userId)
-		if err != nil {
-			utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
-			return
-		}
-
-		/*
-			jsonResp, errJson := json.Marshal(&userId)
-			if err != nil {
-				logrus.Infof("Error with Marshal: %v\n", errJson)
-				return
-			}
-		*/
-
-		logrus.Infoln("..user logged!")
-		//w.Write(jsonResp)
-
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("content-type", "application/json") //si setta quello che mandi
+	err = json.NewEncoder(w).Encode(&userId)
+	if err != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
 
-	// send error feedback
-	utilities.WriteResponse(httpResponse, errUser.Error(), w)
+	logrus.Infoln("..user logged!")
+
 	return
-
 }

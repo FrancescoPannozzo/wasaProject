@@ -88,7 +88,7 @@ paths:
     get:
       tags: ["user"]
       operationId: searchUser
-      summary: Return usernames
+      summary: Return usernames list
       description: |
         return the list of usernames related to the one provided
         in the search query
@@ -110,6 +110,13 @@ paths:
            application/json:
             schema:
               $ref: "#/components/schemas/generalFeedback"
+        "400":
+          description: |
+            the username provided for the search is not valid
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         '500':
@@ -173,14 +180,14 @@ paths:
               description: The new username
               type: object
               properties:
-                user:
+                name:
                   description: The new user's username to set
                   type: string
                   pattern: '^.*?$'
                   minLength: 3
                   maxLength: 16
             examples:
-              user:
+              name:
                 summary: maria-user
                 value:
                   name: maria
@@ -543,7 +550,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/username"
     post: 
-      tags: ["photo"]
+      tags: ["user"]
       operationId: banUser
       summary: ban one user
       description: |
@@ -583,7 +590,7 @@ paths:
         "401":
           $ref: "#/components/responses/UnauthorizedError" 
     delete:
-      tags: ["photo"]
+      tags: ["user"]
       operationId: unbanUser  
       summary: unban a user
       description: |

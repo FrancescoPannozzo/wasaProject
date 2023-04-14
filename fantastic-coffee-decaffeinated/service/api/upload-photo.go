@@ -41,10 +41,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	//generating the file name
-	//userId, _ := database.DBcon.GetIdByName(ps.ByName("username"))
-
-	userId := utilities.GetBaererID(r)
+	userId := utilities.GetBearerID(r)
 
 	idphoto := userId[:4] + utilities.GenerateTimestamp()
 	fileName := idphoto + ".png"
@@ -79,19 +76,15 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	//Adding a DB record
-	feedback, err, httpStatus := database.DBcon.InsertPhoto(username, idphoto)
+	feedback, err := database.DBcon.InsertPhoto(username, idphoto)
 	if err != nil {
-		utilities.WriteResponse(httpStatus, feedback, w)
+		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 		return
 	}
 
 	type Idphoto struct {
 		Idphoto string `json:"idphoto"`
 	}
-
-	//utilities.WriteResponse(http.StatusCreated, "Photo uploaded", w)
-	//w.WriteHeader(http.StatusCreated)
-	//idphoto := "TEST"
 
 	photo := &Idphoto{Idphoto: idphoto}
 	w.WriteHeader(http.StatusCreated)
@@ -102,9 +95,5 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	//response := fmt.Sprintf("{\"idphoto\":\"%s\"}", idphoto)
-	//utilities.WriteResponse(http.StatusCreated, response, w)
-	//w.WriteHeader(http.StatusCreated)
-	//w.Write([]byte(response))
 	return
 }

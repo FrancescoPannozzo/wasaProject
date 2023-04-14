@@ -2,12 +2,11 @@ package database
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 )
 
 // Insert the user photo in the DB,
-func (db *appdbimpl) InsertPhoto(name string, idphoto string) (string, error, int) {
+func (db *appdbimpl) InsertPhoto(name string, idphoto string) (string, error) {
 	now := time.Now()
 	date := now.Format("2006-01-02")
 	time := now.Format("15:04:05")
@@ -20,9 +19,9 @@ func (db *appdbimpl) InsertPhoto(name string, idphoto string) (string, error, in
 
 	if err != nil {
 		// 500 Internal server error
-		return "error execution query", fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
+		return "error execution query", fmt.Errorf("error execution query: %w", err)
 	}
 
 	// 201 Created
-	return "Photo inserted in the DB", nil, http.StatusCreated
+	return "Photo inserted in the DB", nil
 }

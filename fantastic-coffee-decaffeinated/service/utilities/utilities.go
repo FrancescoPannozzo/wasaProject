@@ -90,7 +90,7 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	err := json.NewEncoder(w).Encode(&response)
 	if err != nil {
 		logrus.Errorln("wrong JSON processed")
-		json.NewEncoder(w).Encode(&response)
+		json.NewEncoder(w).Encode("{\"error\":\"wrong JSON processed\"}")
 		return
 	}
 }
@@ -126,10 +126,11 @@ func toChar(i int) rune {
 	return rune('a' - 1 + i)
 }
 
-// get the baerer id from the requestBody
-func GetBaererID(r *http.Request) string {
-	prefix := "Baerer "
+// get the bearer id from the requestBody
+func GetBearerID(r *http.Request) string {
+	prefix := "Bearer "
 	authHeader := r.Header.Get(("Authorization"))
 	log.Println(authHeader)
+	log.Println(strings.TrimPrefix(authHeader, prefix))
 	return strings.TrimPrefix(authHeader, prefix)
 }

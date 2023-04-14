@@ -46,44 +46,69 @@ type AppDatabase interface {
 	GetName() (string, error)
 	SetName(name string) error
 
-	//CheckUser(name string) (string, error)
-	GetOrInsertUser(name string) (string, error, int)
-	InsertUser(name string) (string, error, int)
+	//Get an username if present in the DB, if not the username provided will
+	//be inserted in the DB. Return the
+	GetOrInsertUser(name string) (string, error)
+
+	InsertUser(name string) (string, error)
+
 	GetIdByName(name string) (string, error)
+
+	//get the username by the id provided
 	GetNameByID(userId string) (string, error)
+
 	ModifyUsername(oldName string, newName string) error
-	InsertPhoto(name string, idphoto string) (string, error, int)
+
+	InsertPhoto(name string, idphoto string) (string, error)
+
 	DeletePhoto(idphoto string) (string, error, int)
+
 	UsernameInDB(name string) bool
-	InsertFollower(follower string, followed string) (string, error, int)
-	//GetPhoto(name string, idphoto)
-	DeleteFollowed(follower string, followed string) (string, error, int)
+
+	InsertFollower(follower string, followed string) (string, error)
+
+	// Delete a followed user.
+	DeleteFollowed(follower string, followed string) (string, error)
+
 	// Give a Like
-	LikePhoto(username string, idphoto string) (string, error, int)
+	LikePhoto(username string, idphoto string) (string, error)
+
 	// Remove a like
-	RemoveLike(username string, idphoto string) (string, error, int)
-	// Comment a photo, usernaname is the writing comment user
-	//comment is the text of the comment
-	CommentPhoto(username string, idphoto string, comment string) (string, error, int)
+	RemoveLike(username string, idphoto string) (string, error)
+
+	// Insert the comment on the photoID provided in the DB.
+	// Return a feedback message and nil if successfull.
+	// Return a feedback message and an error excetution query otherwise.
+	CommentPhoto(username string, idphoto string, comment string) (string, error)
+
 	// Get comments
-	GetComments(loggedUser string, photoID string) ([]utilities.Comment, error, int)
+	GetComments(loggedUser string, photoID string) ([]utilities.Comment, error)
+
 	// Delete a comment
-	RemoveComment(username string, idphoto string, idcomment string) (string, error, int)
+	RemoveComment(username string, idphoto string, idcomment string) (string, error)
+
 	// Check the username profile ownership
 	CheckOwnership(userId string, username string) bool
+
 	// get the username from a photoId
 	GetNameFromPhotoId(photoId string) (string, error)
-	// ban user
-	BanUser(banner string, banned string) (string, error, int)
+
+	// Ban the provided user
+	BanUser(banner string, banned string) (string, error)
+
 	// unban user
-	UnbanUser(banner string, banned string) (string, error, int)
-	//Check bans
+	UnbanUser(banner string, banned string) (string, error)
+
+	// Check bans
 	CheckBan(loggedUser string, targetUser string) bool
-	// get user thumbnails objects
-	GetThumbnails(username string) ([]utilities.Thumbnail, error, int)
+
+	// Get user thumbnails objects
+	GetThumbnails(username string) ([]utilities.Thumbnail, error)
+
 	// get followed thumbnails objects
-	GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error, int)
-	GetUsernames(targetUser string) ([]utilities.Username, error, int)
+	GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error)
+
+	GetUsernames(targetUser string) ([]utilities.Username, error)
 
 	Ping() error
 }

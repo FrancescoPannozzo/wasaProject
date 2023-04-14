@@ -3,15 +3,14 @@ package database
 import (
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
-	"net/http"
 
 	"github.com/sirupsen/logrus"
 )
 
 // Insert the user in the DB,
-// return the userID, error = nil and the the http.StatusCreated
-// If there is an internal error it return empty userID, error != nil and http.StatusInternalServerError
-func (db *appdbimpl) InsertUser(name string) (string, error, int) {
+// return the userID and nil (status created) if successfull
+// If there is an internal error it return empty userID and error != nil (http status code 500)
+func (db *appdbimpl) InsertUser(name string) (string, error) {
 	//create user id
 	userID := utilities.GenerateUserID(name)
 
@@ -23,9 +22,9 @@ func (db *appdbimpl) InsertUser(name string) (string, error, int) {
 
 	if err != nil {
 		// 500 Internal server error
-		return "", fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
+		return "", fmt.Errorf("error execution query: %w", err)
 	}
 
 	// 201 Created
-	return userID, nil, http.StatusCreated
+	return userID, nil
 }

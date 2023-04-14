@@ -17,9 +17,9 @@ func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	username, errUsername := rt.db.GetNameByID(utilities.GetBaererID(r))
+	username, errUsername := rt.db.GetNameByID(utilities.GetBearerID(r))
 
-	if !rt.db.CheckOwnership(utilities.GetBaererID(r), username) {
+	if !rt.db.CheckOwnership(utilities.GetBearerID(r), username) {
 		utilities.WriteResponse(http.StatusUnauthorized, "Thelogged user can't set off a like of other users", w)
 		return
 	}
@@ -30,12 +30,14 @@ func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	feedback, err, httpStatus := database.DBcon.RemoveLike(ps.ByName("username"), ps.ByName("idPhoto"))
+	feedback, err := database.DBcon.RemoveLike(ps.ByName("username"), ps.ByName("idPhoto"))
 
 	if err != nil {
 		rt.baseLogger.WithError(err).Warning(feedback)
+		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
+		return
 	}
 
-	utilities.WriteResponse(httpStatus, feedback, w)
+	utilities.WriteResponse(http.StatusOK, feedback, w)
 	return
 }

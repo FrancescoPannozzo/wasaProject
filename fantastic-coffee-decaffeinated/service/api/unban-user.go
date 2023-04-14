@@ -17,13 +17,18 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	loggedUser, err := rt.db.GetNameByID(utilities.GetBaererID(r))
+	loggedUser, err := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, loggedUser, w)
 		return
 	}
-	feedback, err, httpStatus := database.DBcon.UnbanUser(loggedUser, ps.ByName("username"))
-	utilities.WriteResponse(httpStatus, feedback, w)
+	feedback, err := database.DBcon.UnbanUser(loggedUser, ps.ByName("username"))
+
+	if err != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
+		return
+	}
+	utilities.WriteResponse(http.StatusOK, feedback, w)
 	return
 
 }

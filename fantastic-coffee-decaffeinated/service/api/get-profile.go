@@ -10,6 +10,7 @@ import (
 )
 
 // Get an user profile
+// possibile http status codes: 401,500, 200
 func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	httpStatus, message := database.VerifyUseridController(w, r, ps)
 
@@ -18,7 +19,7 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
+	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 	targetUser := ps.ByName("username")
 
 	// check if the user is banned
@@ -27,12 +28,10 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	//var thumbnails []Thumbnail
-
-	thumbnails, err, httpStatus := database.DBcon.GetThumbnails(targetUser)
+	thumbnails, err := database.DBcon.GetThumbnails(targetUser)
 
 	if err != nil {
-		utilities.WriteResponse(httpStatus, err.Error(), w)
+		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
 

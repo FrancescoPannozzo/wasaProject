@@ -19,7 +19,8 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
+	// @todo:
+	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 	targetUser, _ := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
 
 	// check if the user is banned

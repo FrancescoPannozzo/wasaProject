@@ -18,7 +18,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	loggedUser, err := rt.db.GetNameByID(utilities.GetBaererID(r))
+	loggedUser, err := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	if err != nil {
 		utilities.WriteResponse(http.StatusNotFound, loggedUser, w)
@@ -37,7 +37,11 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	feedback, err, httpStatus := database.DBcon.BanUser(loggedUser, banned.Username)
-	utilities.WriteResponse(httpStatus, feedback, w)
+	feedback, err := database.DBcon.BanUser(loggedUser, banned.Username)
+	if err != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
+		return
+	}
+	utilities.WriteResponse(http.StatusCreated, feedback, w)
 	return
 }

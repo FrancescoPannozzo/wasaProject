@@ -19,7 +19,6 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	//loggedUser, _ := rt.db.GetNameByID(utilities.GetBaererID(r))
 	targetUser := r.URL.Query().Get("username")
 
 	logrus.Println("Query param =", targetUser)
@@ -30,10 +29,10 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	usernames, err, httpStatus := database.DBcon.GetUsernames(targetUser)
+	usernames, err := database.DBcon.GetUsernames(targetUser)
 
 	if err != nil {
-		utilities.WriteResponse(httpStatus, err.Error(), w)
+		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
 

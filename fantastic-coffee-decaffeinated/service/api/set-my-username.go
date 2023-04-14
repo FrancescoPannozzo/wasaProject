@@ -21,7 +21,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	}
 	//oldUsername := r.URL.Query().Get("username")
 	// Check if who wants to change the username is the real profile owner
-	userId := utilities.GetBaererID(r)
+	userId := utilities.GetBearerID(r)
 	oldUsername := ps.ByName("username")
 
 	if !database.DBcon.CheckOwnership(userId, oldUsername) {

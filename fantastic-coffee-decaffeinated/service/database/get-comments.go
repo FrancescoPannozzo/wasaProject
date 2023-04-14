@@ -3,10 +3,9 @@ package database
 import (
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
-	"net/http"
 )
 
-func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities.Comment, error, int) {
+func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities.Comment, error) {
 	//var idphoto string
 
 	var comments []utilities.Comment
@@ -15,7 +14,8 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 
 	rows, err := db.c.Query("SELECT User, Content FROM Comment WHERE Photo =?;", photoID)
 	if err != nil {
-		return nil, fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
+		//500
+		return nil, fmt.Errorf("error execution query: %w", err)
 	}
 
 	var comment utilities.Comment
@@ -33,6 +33,7 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 		fmt.Println(comments)
 	}
 
-	return comments, nil, http.StatusOK
+	//200
+	return comments, nil
 
 }

@@ -18,7 +18,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// checking if the logged user has the rights to perform the action
-	loggedUsername, err := rt.db.GetNameByID(utilities.GetBaererID(r))
+	loggedUsername, err := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if err != nil {
 		utilities.WriteResponse(http.StatusNotFound, err.Error(), w)
 	}

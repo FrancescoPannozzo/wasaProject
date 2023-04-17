@@ -11,6 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Do the loggin with the username provided in the requestBody
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Logging the user..")
 
@@ -45,14 +46,13 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	userId := UserID{Identifier: testUserID}
 
 	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("content-type", "application/json") //si setta quello che mandi
+	w.Header().Set("content-type", "application/json")
 	err = json.NewEncoder(w).Encode(&userId)
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
 
-	logrus.Infoln("..user logged!")
-
+	logrus.Infoln("User logged!")
 	return
 }

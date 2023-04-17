@@ -14,7 +14,7 @@ func (db *appdbimpl) InsertUser(name string) (string, error) {
 	//create user id
 	userID := utilities.GenerateUserID(name)
 
-	logrus.Infof("User id created =%s, inserting the new user in the db..\n", userID)
+	logrus.Infof("User id created: %s, inserting the new user in the db..\n", userID)
 
 	sqlStmt := fmt.Sprintf("INSERT INTO User (Id_user, Nickname) VALUES('%s','%s');", userID, name)
 
@@ -24,7 +24,7 @@ func (db *appdbimpl) InsertUser(name string) (string, error) {
 		// 500 Internal server error
 		return "", fmt.Errorf("error execution query: %w", err)
 	}
-
+	logrus.Infof("..done!")
 	// 201 Created
 	return userID, nil
 }

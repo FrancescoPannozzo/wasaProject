@@ -12,10 +12,10 @@ import (
 
 // Comment a photo
 func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	httpStatus, message := database.VerifyUseridController(w, r, ps)
+	errId := database.VerifyUserId(w, r, ps)
 
-	if httpStatus != http.StatusOK {
-		utilities.WriteResponse(httpStatus, message, w)
+	if errId != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
@@ -39,8 +39,8 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	_, err := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
-	if err != nil {
+	_, errID := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
+	if errID != nil {
 		utilities.WriteResponse(http.StatusBadRequest, "The photo id provided is not in the DB", w)
 		return
 	}

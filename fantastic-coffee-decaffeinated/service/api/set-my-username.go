@@ -12,11 +12,10 @@ import (
 
 // Update an existing username
 func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	httpStatus, payloadMessage := database.VerifyUseridController(w, r, ps)
+	errId := database.VerifyUserId(w, r, ps)
 
-	if httpStatus != http.StatusOK {
-		logrus.Errorln("Error with the authentication, httpStatus is '%v', %s", httpStatus, payloadMessage)
-		utilities.WriteResponse(httpStatus, payloadMessage, w)
+	if errId != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 	//oldUsername := r.URL.Query().Get("username")
@@ -36,8 +35,6 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		utilities.WriteResponse(http.StatusBadRequest, "Error: requestBody not valid", w)
 		return
 	}
-
-	fmt.Println("New username: ", newUsername)
 
 	err := utilities.CheckUsername(newUsername)
 	if err != nil {

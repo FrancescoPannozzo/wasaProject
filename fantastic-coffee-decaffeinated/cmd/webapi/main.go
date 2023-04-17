@@ -98,6 +98,7 @@ func run() error {
 		logger.WithError(errDB).Error("error creating AppDatabase")
 		return fmt.Errorf("creating AppDatabase: %w", errDB)
 	}
+	dbconn.Exec("PRAGMA foreign_keys = ON;")
 
 	// Start (main) API server
 	logger.Info("initializing API server")

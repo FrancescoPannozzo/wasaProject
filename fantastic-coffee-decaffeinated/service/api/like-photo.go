@@ -6,25 +6,19 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/sirupsen/logrus"
 )
 
 // Follow a user.
 func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	httpStatus, message := database.VerifyUseridController(w, r, ps)
+	err := database.VerifyUserId(w, r, ps)
 
-	if httpStatus != http.StatusOK {
-		utilities.WriteResponse(httpStatus, message, w)
+	if err != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
 		return
 	}
 
-	username, errUsername := rt.db.GetNameByID(utilities.GetBearerID(r))
-
-	if errUsername != nil {
-		logrus.Errorln("Cannot find the user")
-		utilities.WriteResponse(http.StatusUnauthorized, "Cannot find the user", w)
-		return
-	}
+	// GetNameById is called in VerifyUserId,the error is already managed, no needs to do the same here
+	username, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	feedback, err := rt.db.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if err != nil {

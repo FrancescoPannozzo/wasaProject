@@ -14,6 +14,6 @@ func (db *appdbimpl) RemoveLike(username string, idphoto string) (string, error)
 	}
 
 	//200
-	return "like removed done, ok", err
+	return "like removed done, ok", nil
 
 }

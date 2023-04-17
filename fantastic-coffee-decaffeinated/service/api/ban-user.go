@@ -7,14 +7,16 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/sirupsen/logrus"
 )
 
 // ban an user
 func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	httpStatus, message := database.VerifyUseridController(w, r, ps)
+	logrus.Infoln("Banning the provided user..")
+	err := database.VerifyUserId(w, r, ps)
 
-	if httpStatus != http.StatusOK {
-		utilities.WriteResponse(httpStatus, message, w)
+	if err != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
 		return
 	}
 
@@ -37,11 +39,19 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
+	//check if the user to ban is in the DB
+	_, errId := database.DBcon.GetIdByName(banned.Username)
+	if errId != nil {
+		utilities.WriteResponse(http.StatusBadRequest, errId.Error(), w)
+		return
+	}
+
 	feedback, err := database.DBcon.BanUser(loggedUser, banned.Username)
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 		return
 	}
+	logrus.Infoln("Done!")
 	utilities.WriteResponse(http.StatusCreated, feedback, w)
 	return
 }

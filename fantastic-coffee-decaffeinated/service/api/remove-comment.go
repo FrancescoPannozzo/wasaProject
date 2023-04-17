@@ -12,10 +12,10 @@ import (
 
 // Remove a like
 func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	httpStatus, message := database.VerifyUseridController(w, r, ps)
+	errId := database.VerifyUserId(w, r, ps)
 
-	if httpStatus != http.StatusOK {
-		utilities.WriteResponse(httpStatus, message, w)
+	if errId != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 

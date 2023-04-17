@@ -16,12 +16,11 @@ import (
 )
 
 func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	logrus.Info("Uploading photo")
+	logrus.Info("Uploading the photo..")
 
-	httpStatus, message := database.VerifyUseridController(w, r, ps)
-
-	if httpStatus != http.StatusOK {
-		utilities.WriteResponse(httpStatus, message, w)
+	errId := database.VerifyUserId(w, r, ps)
+	if errId != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
@@ -54,14 +53,12 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	defer tmpfile.Close()
 
-	breaded, errWrite := tmpfile.Write(dec)
+	_, errWrite := tmpfile.Write(dec)
 
 	if errWrite != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, "Error while writing the file", w)
 		return
 	}
-
-	fmt.Println("Bytes readed: ", breaded)
 
 	if errSync := tmpfile.Sync(); errSync != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, "Error while writing the file", w)
@@ -95,5 +92,6 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
+	logrus.Info("Done!")
 	return
 }

@@ -4,7 +4,8 @@ import (
 	"fmt"
 )
 
-// Ban the provided user. Possible http status code returned: 201, 500
+// Ban the provided user. Returns a feedback string and nil if successful,
+// a feedback string and error != nil otherwise.
 func (db *appdbimpl) BanUser(banner string, banned string) (string, error) {
 
 	sqlStmt := fmt.Sprintf("INSERT INTO Ban (Banner, Banned) VALUES('%s','%s');", banner, banned)
@@ -16,5 +17,5 @@ func (db *appdbimpl) BanUser(banner string, banned string) (string, error) {
 		return "error execution query", fmt.Errorf("error execution query: %w", err)
 	}
 	//201
-	return "Banned user inserted in the DB", err
+	return "Banned user inserted in the DB", nil
 }

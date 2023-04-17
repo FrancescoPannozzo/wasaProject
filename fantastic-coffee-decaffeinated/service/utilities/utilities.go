@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -95,6 +94,8 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	}
 }
 
+// Checks if the username provided is valid for the application.
+// Returns nil if successfull, an error otherwise
 func CheckUsername(name string) error {
 	if len(name) < 3 || len(name) > 13 {
 		return errors.New("Username not valid, size must be in range [3-13] characters")
@@ -130,7 +131,5 @@ func toChar(i int) rune {
 func GetBearerID(r *http.Request) string {
 	prefix := "Bearer "
 	authHeader := r.Header.Get(("Authorization"))
-	log.Println(authHeader)
-	log.Println(strings.TrimPrefix(authHeader, prefix))
 	return strings.TrimPrefix(authHeader, prefix)
 }

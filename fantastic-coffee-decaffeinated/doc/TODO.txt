@@ -13,13 +13,13 @@ getPhoto
 deletePhoto
     delete: ok
 uploadPhoto:
-    post: ok
+    post: ok -- ok
 followUser:
     post: ok
 unfollowUser
     delete: ok
 likePhoto:
-    post: ok
+    post: ok - ok
 remove like:
     delete: ok
 commentPhoto:
@@ -44,6 +44,8 @@ operationId: search user
 MODIFICHE
 -occhio ai json tag name e username sparsi
 -quella verifyuserid..forse farla diventare funzione dell'interfaccia AppDatabase
+
+@todo: (mvc)
 
 
 

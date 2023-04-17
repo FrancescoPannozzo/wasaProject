@@ -26,11 +26,8 @@ func (db *appdbimpl) DeletePhoto(idphoto string) (string, error, int) {
 	if errPath != nil {
 		return "error processing abs path", errPath, http.StatusInternalServerError
 	}
-	fmt.Printf("abs for . is:%s\nerr:%v\n", abs, errPath)
 
 	filepath := filepath.Join(abs, "storage", idphoto+".png")
-
-	fmt.Println(filepath)
 
 	checkFileExists(filepath)
 

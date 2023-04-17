@@ -11,10 +11,10 @@ import (
 
 // Get an user profile
 func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	httpStatus, message := database.VerifyUseridController(w, r, ps)
+	err := database.VerifyUserId(w, r, ps)
 
-	if httpStatus != http.StatusOK {
-		utilities.WriteResponse(httpStatus, message, w)
+	if err != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
 		return
 	}
 
@@ -23,16 +23,16 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
-	comments, err := database.DBcon.GetComments(loggedUser, ps.ByName("idPhoto"))
+	comments, errComm := database.DBcon.GetComments(loggedUser, ps.ByName("idPhoto"))
 
-	if err != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	if errComm != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, errComm.Error(), w)
 		return
 	}
 
-	result, err := json.Marshal(comments)
-	if err != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	result, errConv := json.Marshal(comments)
+	if errConv != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, errConv.Error(), w)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

@@ -18,7 +18,7 @@ func checkFileExists(filepath string) {
 	}
 }
 
-// Delete an user photo
+// Delete a user photo
 // return a payload feedback message, an error and a http status code
 func (db *appdbimpl) DeletePhoto(idphoto string) (string, error, int) {
 

@@ -1,15 +1,15 @@
 doLogin
-    post: ok - 500, 404, 201 ok 
+    post: ok - 500, 404, 401, 201 ok 
 searchUser:
-    get: ok -  200, 404, 401, 500 ok
+    get: ok -  200, 404, 400, 401, 500 ok
 getUserProfile
-    get: ok - 200, 404, 401, 500, 
+    get: ok - 200, 400, 404, 401, 500, ok
 setMyUserName
-    post: ok 
+    post: ok - 201, 400, 401, 500 - ok
 getMyStream:
-    get: ok
+    get: ok - 200, 401, 500 - ok
 getPhoto 
-    get: ok
+    get: ok - 
 deletePhoto
     delete: ok
 uploadPhoto:

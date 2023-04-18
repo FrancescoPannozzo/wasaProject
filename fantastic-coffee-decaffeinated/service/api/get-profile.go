@@ -7,20 +7,29 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/sirupsen/logrus"
 )
 
-// Get an user profile
+// Get a user profile
 // possibile http status codes: 401,500, 200
 func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	err := database.VerifyUserId(w, r, ps)
 
 	if err != nil {
+		logrus.Warn("Unauthorized user")
 		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
 		return
 	}
 
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 	targetUser := ps.ByName("username")
+
+	errUsername := utilities.CheckUsername(targetUser)
+	if errUsername != nil {
+		logrus.Warn(err.Error())
+		utilities.WriteResponse(http.StatusBadRequest, errUsername.Error(), w)
+		return
+	}
 
 	// check if the user is banned
 	if database.DBcon.CheckBan(loggedUser, targetUser) {

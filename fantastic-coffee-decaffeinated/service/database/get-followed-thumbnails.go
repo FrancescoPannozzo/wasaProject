@@ -8,8 +8,6 @@ import (
 )
 
 func (db *appdbimpl) GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error) {
-	//var idphoto string
-
 	var thumbnails []utilities.Thumbnail
 
 	rows, err := db.c.Query("SELECT Id_photo, User, Date, Time FROM Photo JOIN Follow ON Follow.Followed = Photo.User WHERE Follow.Follower =? ORDER BY Date DESC, Time Desc;", loggedUser)
@@ -20,7 +18,6 @@ func (db *appdbimpl) GetFollowedThumbnails(loggedUser string) ([]utilities.Thumb
 
 	var thumbnail utilities.Thumbnail
 	for rows.Next() {
-
 		var idphoto, user, date, time string
 		rows.Scan(&idphoto, &user, &date, &time)
 		if db.CheckBan(loggedUser, user) {
@@ -37,11 +34,8 @@ func (db *appdbimpl) GetFollowedThumbnails(loggedUser string) ([]utilities.Thumb
 			return nil, fmt.Errorf("error execution query: %w", rows)
 		}
 		thumbnails = append(thumbnails, thumbnail)
-		//calcola like number, comment number e selezionare datatime
-		fmt.Println(thumbnail)
 	}
 
 	//200
 	return thumbnails, nil
-
 }

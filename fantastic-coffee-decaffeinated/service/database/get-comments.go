@@ -3,14 +3,13 @@ package database
 import (
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
+
+	"github.com/sirupsen/logrus"
 )
 
 func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities.Comment, error) {
-	//var idphoto string
-
+	logrus.Infoln("Getting the comments..")
 	var comments []utilities.Comment
-
-	//Id_comment|User|Photo|Content
 
 	rows, err := db.c.Query("SELECT User, Content FROM Comment WHERE Photo =?;", photoID)
 	if err != nil {
@@ -29,11 +28,8 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 		comment.Name = user
 		comment.Content = content
 		comments = append(comments, comment)
-
-		fmt.Println(comments)
 	}
-
+	logrus.Infoln("Done!")
 	//200
 	return comments, nil
-
 }

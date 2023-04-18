@@ -9,7 +9,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// Get an user profile
+// Get a user profile
 func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	err := database.VerifyUserId(w, r, ps)
 

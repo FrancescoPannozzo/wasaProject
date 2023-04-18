@@ -1,6 +1,6 @@
 curl http://0.0.0.0:3000/
 
-Insert or login an user
+Insert or login a user
 curl -d '{"name":"pan"}' -H "Content-type:application/json" http://0.0.0.0:3000/session
 curl -d '{"name":"zoppo"}' -H "Content-type:application/json" http://0.0.0.0:3000/session
 curl -d '{"name":"fraffolo"}' -H "Content-type:application/json" http://0.0.0.0:3000/session
@@ -30,10 +30,10 @@ curl -X POST --data @image.txt -H "Authorization: Baerer mspv20230322163441" htt
 Delete a photo
 curl -X DELETE -H "Authorization: Baerer gxmt20230330184949" http://localhost:3000/profiles/pan/photos/gxmt20230331142500
 
-Follow an user
+Follow a user
 curl -d '{"name":"zoppo"}' -H "Accept: application/json" -H "Authorization: Baerer gxmt20230330184949" http://0.0.0.0:3000/follows
 
-Unfollow an user
+Unfollow a user
 curl -X DELETE -H "Accept: application/json" -H "Authorization: Baerer rwuc20230328131133" http://0.0.0.0:3000/profiles/pan/follows/zoppo
 
 Like a photo
@@ -45,7 +45,7 @@ curl -d '{"comment":"wow!"}' -H "Content-type:application/json" -H "Authorizatio
 Get a photo
 curl -X GET --output test.png -H "Authorization: Baerer aiai20230404131621" http://0.0.0.0:3000/photos/ghsr20230405100110
 
-Ban an user
+Ban a user
 curl -d '{"username":"gabbo"}' -H "Accept: application/json" -H "Authorization: Baerer gxmt20230330184949" http://0.0.0.0:3000/bans
 
 TIPS

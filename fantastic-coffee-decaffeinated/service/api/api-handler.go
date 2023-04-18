@@ -16,7 +16,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/session", rt.doLogin)
 	// Get searched usernames list
 	rt.router.GET("/profiles", rt.searchUsers)
-	// get an user profile
+	// get n user profile
 	rt.router.GET("/profiles/:username", rt.getProfile)
 	// set a new username
 	rt.router.PUT("/profiles/:username", rt.setMyUsername)

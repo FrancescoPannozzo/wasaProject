@@ -64,19 +64,20 @@ paths:
                 summary: maria-user-id
                 value:
                   name: "abcdef012345"
+        "400":
+          description: The content of the loggin request is not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
         '500':
           description: The server cannot elaborate the loggin request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
-        "400":
-          description: The content of the request is not valid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalError"
-  
   /profiles:
     parameters:
       - in: query
@@ -103,13 +104,6 @@ paths:
                 items:
                   type: string
                 example: ["username1", "username2", "username3"]
-        "404":
-          description: |
-            no usernames founds
-          content:
-           application/json:
-            schema:
-              $ref: "#/components/schemas/generalFeedback"
         "400":
           description: |
             the username provided for the search is not valid
@@ -119,6 +113,13 @@ paths:
               $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: |
+            no usernames founds
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalFeedback"
         '500':
           description: |
             The server cannot elaborate the request to get the usernames list
@@ -153,14 +154,21 @@ paths:
                       $ref: "#/components/schemas/thumbnailImage"
                     minItems: 0
                     maxItems: 1000
-        "404":
-          description: User not found
+        "400":
+          description: |
+            the username provided for the user profile is not valid
           content:
            application/json:
             schema:
               $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: User not found
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
         '500':
           description: The server cannot elaborate the request to get the profile
           content:
@@ -234,6 +242,12 @@ paths:
                 maxItems: 1000
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        '500':
+          description: The server cannot elaborate the getMyStream request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
   
   /photos/{idPhoto}:
     parameters:
@@ -246,7 +260,7 @@ paths:
         Get a full user photo (not thumbnail)
         with likes number and comments list
       responses:
-        "201":
+        "200":
           description: Photo, likes and comments downloaded
           content:           
             application/json:
@@ -633,7 +647,7 @@ components:
       name: username
       in: path
       required: true
-      description: an username
+      description: A username
       schema:
         type: string
     idPhoto:
@@ -687,7 +701,7 @@ components:
       type: object
       properties:
         originalImage:
-          description: The image url
+          description: The image id
           type: string
         nLikes:
           description: The likes number referred to the photo

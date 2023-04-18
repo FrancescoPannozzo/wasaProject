@@ -36,8 +36,6 @@ func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, erro
 			return nil, fmt.Errorf("error execution query: %w", rows)
 		}
 		thumbnails = append(thumbnails, thumbnail)
-		//calcola like number, comment number e selezionare datatime
-		fmt.Println(thumbnail)
 	}
 
 	//200

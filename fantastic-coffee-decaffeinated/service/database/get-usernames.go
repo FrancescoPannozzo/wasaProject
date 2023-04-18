@@ -3,8 +3,6 @@ package database
 import (
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
-
-	"github.com/sirupsen/logrus"
 )
 
 // @todo: e' l'handler che decide che tipo di http status code mandare, nelle data abse functions ritornare solo la roba richiesta ed err
@@ -13,7 +11,6 @@ func (db *appdbimpl) GetUsernames(targetUser string) ([]utilities.Username, erro
 	var usernames []utilities.Username
 
 	querytStmt := fmt.Sprintf("SELECT Nickname FROM User WHERE Nickname LIKE '%%%s%%';", targetUser)
-	logrus.Println(querytStmt)
 
 	rows, err := db.c.Query(querytStmt)
 	if err != nil {
@@ -24,9 +21,7 @@ func (db *appdbimpl) GetUsernames(targetUser string) ([]utilities.Username, erro
 	for rows.Next() {
 		rows.Scan(&username.Name)
 		usernames = append(usernames, username)
-		fmt.Println(username.Name)
 	}
 
 	return usernames, nil
-
 }

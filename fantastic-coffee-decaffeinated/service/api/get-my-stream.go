@@ -7,38 +7,39 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/sirupsen/logrus"
 )
 
-// Get an user profile
+// Get a user profile
 func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	logrus.Infoln("Getting the user stream..")
 	err := database.VerifyUserId(w, r, ps)
 
 	if err != nil {
+		logrus.Warn(err.Error())
 		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
 		return
 	}
 
-	//prendo lista following
-	// getfollowedlist()
-
+	// error not managed because GeNameById is already called in VerifyUserId
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
-	//var thumbnails []Thumbnail
-
 	thumbnails, err := database.DBcon.GetFollowedThumbnails(loggedUser)
-
 	if err != nil {
+		logrus.Warn(err.Error())
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
 
 	result, err := json.Marshal(thumbnails)
 	if err != nil {
+		logrus.Warn(err.Error())
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(result)
-
+	logrus.Infoln("Done!")
+	return
 }

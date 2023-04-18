@@ -8,7 +8,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// Delete an user photo
+// Delete a user photo
 func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	err := database.VerifyUserId(w, r, ps)
 

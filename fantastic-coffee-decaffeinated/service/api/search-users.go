@@ -10,21 +10,22 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Get an user profile
+// Get a user profile
 func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	logrus.Println("Searching users..")
 	errId := database.VerifyUserId(w, r, ps)
 
 	if errId != nil {
+		logrus.Warn("Unauthorized user")
 		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
 	targetUser := r.URL.Query().Get("username")
 
-	logrus.Println("Query param =", targetUser)
-
 	err := utilities.CheckUsername(targetUser)
 	if err != nil {
+		logrus.Warn(err.Error())
 		utilities.WriteResponse(http.StatusBadRequest, err.Error(), w)
 		return
 	}
@@ -32,13 +33,12 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 	usernames, err := database.DBcon.GetUsernames(targetUser)
 
 	if err != nil {
+		logrus.Warn(err.Error())
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
 
 	if len(usernames) == 0 {
-		//username := utilities.Username{Name: "no users found"}
-		//usernames = append(usernames, username)
 		utilities.WriteResponse(http.StatusNotFound, "User/s not found", w)
 		return
 	}
@@ -50,5 +50,6 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
 		return
 	}
-
+	logrus.Println("Done!")
+	return
 }

@@ -3,7 +3,6 @@ package database
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"os"
 	"path/filepath"
 )
@@ -19,31 +18,32 @@ func checkFileExists(filepath string) {
 }
 
 // Delete a user photo
-// return a payload feedback message, an error and a http status code
-func (db *appdbimpl) DeletePhoto(idphoto string) (string, error, int) {
+// return a payload feedback message and error
+func (db *appdbimpl) DeletePhoto(idphoto string) (string, error) {
 
 	abs, errPath := filepath.Abs(".")
 	if errPath != nil {
-		return "error processing abs path", errPath, http.StatusInternalServerError
+		//500
+		return "error processing abs path", errPath
 	}
 
 	filepath := filepath.Join(abs, "storage", idphoto+".png")
 
 	checkFileExists(filepath)
 
-	e := os.Remove(filepath)
-	if e != nil {
-		return "The server cannot delete the file", e, http.StatusInternalServerError
+	err := os.Remove(filepath)
+	if err != nil {
+		return "The server cannot delete the file", err
 	}
 
 	sqlStmt := fmt.Sprintf("DELETE FROM Photo WHERE Id_photo = '%s';", idphoto)
 
-	_, err := db.c.Exec(sqlStmt)
+	_, errQuery := db.c.Exec(sqlStmt)
 
-	if err != nil {
-		return "error execution query", fmt.Errorf("error execution query: %w", err), http.StatusInternalServerError
+	if errQuery != nil {
+		return "error execution query", fmt.Errorf("error execution query: %w", errQuery)
 	}
 
-	return "Image deleted, everything ok", err, http.StatusOK
+	return "Image deleted, everything ok", nil
 
 }

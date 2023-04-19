@@ -12,7 +12,7 @@ import (
 
 // Comment a photo
 func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	errId := database.VerifyUserId(w, r, ps)
+	errId := database.VerifyUserId(r, ps)
 
 	if errId != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)

@@ -13,7 +13,7 @@ import (
 // Get a user profile
 func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Getting the user stream..")
-	err := database.VerifyUserId(w, r, ps)
+	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
 		logrus.Warn(err.Error())

@@ -13,7 +13,7 @@ import (
 // Get a user profile
 // possibile http status codes: 401,500, 200
 func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	err := database.VerifyUserId(w, r, ps)
+	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
 		logrus.Warn("Unauthorized user")

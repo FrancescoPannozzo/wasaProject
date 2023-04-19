@@ -18,7 +18,7 @@ import (
 func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Info("Uploading the photo..")
 
-	errId := database.VerifyUserId(w, r, ps)
+	errId := database.VerifyUserId(r, ps)
 	if errId != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
@@ -66,13 +66,12 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	username, err := rt.db.GetNameByID(userId)
-
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, username, w)
 		return
 	}
 
-	//Adding a DB record
+	//Adding the photo data into the DB
 	feedback, err := database.DBcon.InsertPhoto(username, idphoto)
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)

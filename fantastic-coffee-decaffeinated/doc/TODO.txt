@@ -9,9 +9,9 @@ setMyUserName
 getMyStream:
     get: ok - 200, 401, 500 - ok
 getPhoto 
-    get: ok - 
+    get: ok - ok
 deletePhoto
-    delete: ok
+    delete: ok - 401, 404, 500
 uploadPhoto:
     post: ok -- ok
 followUser:

@@ -12,7 +12,7 @@ import (
 
 // Get a user post
 func (rt *_router) getPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	err := database.VerifyUserId(w, r, ps)
+	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
 		logrus.Warn("Unauthorized user")

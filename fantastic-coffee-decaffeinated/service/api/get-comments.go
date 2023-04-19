@@ -11,7 +11,7 @@ import (
 
 // Get a user profile
 func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	err := database.VerifyUserId(w, r, ps)
+	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)

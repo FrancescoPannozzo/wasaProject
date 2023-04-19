@@ -10,7 +10,7 @@ import (
 
 // Follow a user.
 func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	err := database.VerifyUserId(w, r, ps)
+	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)

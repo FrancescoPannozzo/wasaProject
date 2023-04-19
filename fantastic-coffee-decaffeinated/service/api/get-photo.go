@@ -14,7 +14,7 @@ import (
 // Get a user photo
 func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Getting the user photo..")
-	err := database.VerifyUserId(w, r, ps)
+	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
 		logrus.Warn(err.Error())
@@ -24,10 +24,9 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 	targetUser, errPhoto := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
-
 	if errPhoto != nil {
 		logrus.Warn(errPhoto.Error())
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+		utilities.WriteResponse(http.StatusNotFound, err.Error(), w)
 		return
 	}
 

@@ -46,22 +46,25 @@ type AppDatabase interface {
 	GetName() (string, error)
 	SetName(name string) error
 
-	//Get an username if present in the DB, if not the username provided will
-	//be inserted in the DB. Return the
+	// Get a username if present in the DB, if not the username provided will
+	// be inserted in the DB.
 	GetOrInsertUser(name string) (string, error)
 
+	// Insert a user into the DB. Returns a feedback string and nil if succesfull
 	InsertUser(name string) (string, error)
 
+	// Get the userId by the provided username
 	GetIdByName(name string) (string, error)
 
-	//get the username by the id provided
+	// Get the username by the provided user id
 	GetNameByID(userId string) (string, error)
 
+	// Set a new username, return nil if succesfull
 	ModifyUsername(oldName string, newName string) error
 
 	InsertPhoto(name string, idphoto string) (string, error)
 
-	DeletePhoto(idphoto string) (string, error, int)
+	DeletePhoto(idphoto string) (string, error)
 
 	UsernameInDB(name string) bool
 
@@ -92,7 +95,6 @@ type AppDatabase interface {
 
 	// get the username from a photoId
 	GetNameFromPhotoId(photoId string) (string, error)
-
 	// Ban the provided user
 	BanUser(banner string, banned string) (string, error)
 

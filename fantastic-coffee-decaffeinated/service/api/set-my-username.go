@@ -12,8 +12,8 @@ import (
 
 // Update an existing username
 func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	logrus.Infoln("Setting the username..")
-	errId := database.VerifyUserId(w, r, ps)
+	logrus.Infoln("Updating the username in the db..")
+	errId := database.VerifyUserId(r, ps)
 
 	if errId != nil {
 		logrus.Warn(errId.Error())
@@ -47,7 +47,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	//test if the newusername is already in the db
+	//test if the new username is already in the db
 	userid, errDb := database.DBcon.GetIdByName(newUsername)
 	if errDb == nil {
 		message := fmt.Sprintf("WARNING, the username %s is already taken, please choose another one", newUsername)
@@ -71,6 +71,6 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	utilities.WriteResponse(http.StatusOK, "Username successfully updated", w)
-	logrus.Infoln("Done!")
+	logrus.Info("Update done!")
 	return
 }

@@ -9,7 +9,7 @@ import (
 )
 
 // Verify the user id from a request with a Baerer Authorization Header, return the http status number and the message related to it
-func VerifyUserId(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
+func VerifyUserId(r *http.Request, ps httprouter.Params) error {
 	authHeader := r.Header.Get(("Authorization"))
 	baererUserID := utilities.GetBearerID(r)
 

@@ -13,7 +13,7 @@ import (
 // ban a user
 func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Banning the provided user..")
-	err := database.VerifyUserId(w, r, ps)
+	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)

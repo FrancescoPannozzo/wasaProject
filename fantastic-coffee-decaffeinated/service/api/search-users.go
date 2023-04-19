@@ -13,7 +13,7 @@ import (
 // Get a user profile
 func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Println("Searching users..")
-	errId := database.VerifyUserId(w, r, ps)
+	errId := database.VerifyUserId(r, ps)
 
 	if errId != nil {
 		logrus.Warn("Unauthorized user")

@@ -2,17 +2,10 @@ package database
 
 import (
 	"fmt"
-
-	"github.com/sirupsen/logrus"
 )
 
 // Modify the user in the DB
 func (db *appdbimpl) ModifyUsername(userid string, newName string) error {
-
-	logrus.Info("Updating the username in the db..")
-
-	//newUserID := utilities.GenerateUserID(newName)
-
 	sqlStmt := fmt.Sprintf("UPDATE User SET Nickname = '%s' WHERE Id_user = '%s'", newName, userid)
 
 	_, err := db.c.Exec(sqlStmt)
@@ -21,6 +14,5 @@ func (db *appdbimpl) ModifyUsername(userid string, newName string) error {
 		return fmt.Errorf("error execution query: %w", err)
 	}
 
-	logrus.Info("Update done!")
 	return nil
 }

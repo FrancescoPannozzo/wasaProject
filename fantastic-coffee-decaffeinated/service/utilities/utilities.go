@@ -6,15 +6,19 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
 )
 
+// ----- ENTITIES ------
+
 // a rappresentation of a thubnail image with informations
 type Thumbnail struct {
-	PhotoId        string `json:"idphoto"`
+	PhotoId        string `json:"photoId"`
+	PhotoURL       string `json:"photourl"`
 	DateTime       string `json:"datetime"`
 	LikesNumber    int    `json:"nlikes"`
 	CommentsNumber int    `json:"ncomments"`
@@ -37,6 +41,14 @@ type Comment struct {
 	Content string `json:"comment"`
 }
 
+// a rappresentation of a thubnail image with informations
+type Post struct {
+	PhotoURL    string    `json:"photourl"`
+	DateTime    string    `json:"datetime"`
+	LikesNumber int       `json:"nlikes"`
+	Comments    []Comment `json:"comments"`
+}
+
 // A rappresentation of a 4XX/500 message error in string format
 type ErrorResponse struct {
 	Error string `json:"error"`
@@ -46,6 +58,8 @@ type ErrorResponse struct {
 type FeedbackResponse struct {
 	Feedback string `json:"feedback"`
 }
+
+// ----- FUNCTIONS -----
 
 func (er *ErrorResponse) PrintFeedback(s string) string {
 	response := fmt.Sprint("Error response:", s)
@@ -132,4 +146,10 @@ func GetBearerID(r *http.Request) string {
 	prefix := "Bearer "
 	authHeader := r.Header.Get(("Authorization"))
 	return strings.TrimPrefix(authHeader, prefix)
+}
+
+// Photo URL maker
+func CreatePhotoURL(idPhoto string) string {
+	baseURL := "http://0.0.0.0:3000/photos/"
+	return filepath.Join(baseURL, idPhoto)
 }

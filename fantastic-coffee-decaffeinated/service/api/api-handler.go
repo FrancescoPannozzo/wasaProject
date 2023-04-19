@@ -18,6 +18,8 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.GET("/profiles", rt.searchUsers)
 	// get n user profile
 	rt.router.GET("/profiles/:username", rt.getProfile)
+	// get a post
+	rt.router.GET("/posts/:idPhoto", rt.getPost)
 	// set a new username
 	rt.router.PUT("/profiles/:username", rt.setMyUsername)
 	// get a photo

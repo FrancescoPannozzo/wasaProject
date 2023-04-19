@@ -35,6 +35,7 @@ func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, erro
 			//500
 			return nil, fmt.Errorf("error execution query: %w", rows)
 		}
+		thumbnail.PhotoURL = utilities.CreatePhotoURL(thumbnail.PhotoId)
 		thumbnails = append(thumbnails, thumbnail)
 	}
 

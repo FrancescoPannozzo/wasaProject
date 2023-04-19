@@ -24,12 +24,13 @@ func (db *appdbimpl) GetFollowedThumbnails(loggedUser string) ([]utilities.Thumb
 			continue
 		}
 		thumbnail.PhotoId = idphoto
+		thumbnail.PhotoURL = utilities.CreatePhotoURL(idphoto)
 		thumbnail.DateTime = fmt.Sprintf("%sT%s", date, time)
-		rows := db.c.QueryRow("SELECT COUNT(*) FROM Like WHERE Photo = ?;", thumbnail.PhotoId).Scan(&thumbnail.LikesNumber)
+		rows := db.c.QueryRow("SELECT COUNT(*) FROM Like WHERE Photo = ?;", thumbnail.PhotoURL).Scan(&thumbnail.LikesNumber)
 		if errors.Is(rows, sql.ErrNoRows) {
 			return nil, fmt.Errorf("error execution query: %w", rows)
 		}
-		rows = db.c.QueryRow("SELECT COUNT(*) FROM Comment WHERE Photo = ?;", thumbnail.PhotoId).Scan(&thumbnail.CommentsNumber)
+		rows = db.c.QueryRow("SELECT COUNT(*) FROM Comment WHERE Photo = ?;", thumbnail.PhotoURL).Scan(&thumbnail.CommentsNumber)
 		if errors.Is(rows, sql.ErrNoRows) {
 			return nil, fmt.Errorf("error execution query: %w", rows)
 		}

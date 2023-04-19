@@ -1,5 +1,3 @@
-PRAGMA foreign_keys = ON;
-
 CREATE TABLE User
 (
 Id_user TEXT, 
@@ -13,7 +11,7 @@ Id_photo TEXT PRIMARY KEY,
 User TEXT NOT NULL,
 Date TEXT NOT NULL,
 Time TEXT NOT NULL,
-LocalPath TEXT NOT NULL,
+Photo_url TEXT NOT NULL,
 FOREIGN KEY (User)
 	REFERENCES User (Nickname)
 	ON UPDATE CASCADE

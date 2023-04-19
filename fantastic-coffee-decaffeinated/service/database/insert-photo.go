@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
 	"time"
 )
@@ -11,8 +12,9 @@ func (db *appdbimpl) InsertPhoto(name string, idphoto string) (string, error) {
 	now := time.Now()
 	date := now.Format("2006-01-02")
 	time := now.Format("15:04:05")
+	photoUrl := utilities.CreatePhotoURL(idphoto)
 
-	sqlStmt := fmt.Sprintf("INSERT INTO Photo (Id_photo, User, Date, Time, LocalPath) VALUES('%s', '%s','%s','%s', '%s');", idphoto, name, date, time, idphoto+".png")
+	sqlStmt := fmt.Sprintf("INSERT INTO Photo (Id_photo, User, Date, Time, Photo_url) VALUES('%s', '%s','%s','%s', '%s');", idphoto, name, date, time, photoUrl)
 	_, err := db.c.Exec(sqlStmt)
 
 	if err != nil {

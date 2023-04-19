@@ -105,6 +105,9 @@ type AppDatabase interface {
 	// Get user thumbnails objects
 	GetThumbnails(username string) ([]utilities.Thumbnail, error)
 
+	// Get a post
+	GetPost(loggedUser string, photoId string) (utilities.Post, error)
+
 	// get followed thumbnails objects
 	GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error)
 

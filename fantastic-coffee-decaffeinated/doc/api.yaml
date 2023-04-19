@@ -151,7 +151,7 @@ paths:
                     description: a thumbnail object with the photo and informations
                     type: array
                     items:
-                      $ref: "#/components/schemas/thumbnailImage"
+                      $ref: "#/components/schemas/thumbnailObject"
                     minItems: 0
                     maxItems: 1000
         "400":
@@ -226,9 +226,9 @@ paths:
     get:
       tags: ["user"]
       operationId: getMyStream
-      summary: Return logged user stream
+      summary: Return the logged user stream
       description: |
-        Get the user stream
+        Get the user stream consisting in a list of thumbnailObjects
       responses:
         "200":
           description: Downloaded the user stream
@@ -237,7 +237,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/thumbnailImage"
+                  $ref: "#/components/schemas/thumbnailObject"
                 minItems: 0
                 maxItems: 1000
         "401":
@@ -249,6 +249,31 @@ paths:
               schema:
                 $ref: "#/components/schemas/generalError"
   
+  /posts/{idPhoto}:
+    parameters:
+      - $ref: "#/components/parameters/idPhoto"
+    get:
+      tags: ["photo"]
+      operationId: getPost
+      summary: get a user post
+      description: |
+        Get a full user post
+        with the photo, likes number, date time and comments list
+      responses:
+        "200":
+          description: post downloaded
+          content:           
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postObject"
+        "404":
+          description: Photo not found for get operation
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
   /photos/{idPhoto}:
     parameters:
       - $ref: "#/components/parameters/idPhoto"
@@ -262,10 +287,11 @@ paths:
       responses:
         "200":
           description: Photo, likes and comments downloaded
-          content:           
-            application/json:
-              schema:
-                $ref: "#/components/schemas/photoObject"
+          content:       
+            image/*:     
+             schema: 
+               type: string
+               format: binary
         "404":
           description: Photo not found for get operation
           content:
@@ -665,13 +691,13 @@ components:
       schema:
         type: string
   schemas:
-    thumbnailImage:
+    thumbnailObject:
       description: |
         A rappresentation of a thumnail pic with other informations
       type: object
       properties:
         idphoto:
-          description: the photo id
+          description: the photo url
           type: string
         datetime:
           description: the post date time to the referred photo
@@ -694,14 +720,14 @@ components:
           datetime: "2022-03-09T17:20:24"
           nlikes: 5
           ncomments: 2
-    photoObject:
+    postObject:
       description: |
         An object with the original photo (not thumbnail), likes number
         and comment list
       type: object
       properties:
         originalImage:
-          description: The image id
+          description: The image url
           type: string
         nLikes:
           description: The likes number referred to the photo

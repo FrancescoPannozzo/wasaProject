@@ -19,13 +19,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	username, errUsername := rt.db.GetNameByID(utilities.GetBearerID(r))
-
-	if errUsername != nil {
-		logrus.Errorln("Cannot find the user")
-		utilities.WriteResponse(http.StatusNotFound, "Cannot find the user", w)
-		return
-	}
+	username, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	type Comment struct {
 		Comment string `json:"comment"`
@@ -39,14 +33,18 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
+	if !utilities.IsPhotoIdValid(ps.ByName("idPhoto")) {
+		logrus.Warn("Photo not found")
+		utilities.WriteResponse(http.StatusBadRequest, "Photo not found", w)
+	}
+
 	_, errID := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if errID != nil {
-		utilities.WriteResponse(http.StatusBadRequest, "The photo id provided is not in the DB", w)
+		utilities.WriteResponse(http.StatusNotFound, "The photo id provided is not in the DB", w)
 		return
 	}
 
 	feedback, err := database.DBcon.CommentPhoto(username, ps.ByName("idPhoto"), content.Comment)
-
 	if err != nil {
 		rt.baseLogger.WithError(err).Warning(feedback)
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)

@@ -16,7 +16,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/session", rt.doLogin)
 	// Get searched usernames list
 	rt.router.GET("/profiles", rt.searchUsers)
-	// get n user profile
+	// get a user profile
 	rt.router.GET("/profiles/:username", rt.getProfile)
 	// get a post
 	rt.router.GET("/posts/:idPhoto", rt.getPost)

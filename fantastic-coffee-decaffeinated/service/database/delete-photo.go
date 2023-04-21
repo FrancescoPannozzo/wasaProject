@@ -17,8 +17,8 @@ func checkFileExists(filepath string) {
 	}
 }
 
-// Delete a user photo
-// return a payload feedback message and error
+// Delete a user photo.
+// Return a payload feedback message and error
 func (db *appdbimpl) DeletePhoto(idphoto string) (string, error) {
 
 	abs, errPath := filepath.Abs(".")

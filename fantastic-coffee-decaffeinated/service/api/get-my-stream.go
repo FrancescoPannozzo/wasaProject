@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Get a user profile
+// Get a user stream
 func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Getting the user stream..")
 	err := database.VerifyUserId(r, ps)

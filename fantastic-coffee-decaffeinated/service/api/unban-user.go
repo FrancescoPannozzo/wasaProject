@@ -20,12 +20,14 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	loggedUser, err := rt.db.GetNameByID(utilities.GetBearerID(r))
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusInternalServerError, loggedUser, w)
+	errUsername := utilities.CheckUsername(ps.ByName("username"))
+	if errUsername != nil {
+		logrus.Warn("Bad request for the username to unban")
+		utilities.WriteResponse(http.StatusBadRequest, "Username to unban not valid", w)
 		return
 	}
+
+	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	feedback, err := database.DBcon.UnbanUser(loggedUser, ps.ByName("username"))
 	if err != nil {

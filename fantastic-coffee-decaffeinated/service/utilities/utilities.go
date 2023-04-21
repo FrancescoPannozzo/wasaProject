@@ -37,8 +37,9 @@ type PayloadFeedback interface {
 // @todo: model, entities -> comment.go
 // A rappresentation of a comment
 type Comment struct {
-	Name    string `json:"name"`
-	Content string `json:"comment"`
+	CommentId string `json:"commentid"`
+	Name      string `json:"name"`
+	Content   string `json:"comment"`
 }
 
 // a rappresentation of a thubnail image with informations
@@ -152,4 +153,14 @@ func GetBearerID(r *http.Request) string {
 func CreatePhotoURL(idPhoto string) string {
 	baseURL := "http://0.0.0.0:3000/photos/"
 	return filepath.Join(baseURL, idPhoto)
+}
+
+// Check if the photo ID is valid
+func IsPhotoIdValid(idphoto string) bool {
+	fmt.Println(len(idphoto))
+	const idphotoLenghts = 18
+	if len(idphoto) != idphotoLenghts {
+		return false
+	}
+	return true
 }

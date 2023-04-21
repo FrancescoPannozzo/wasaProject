@@ -1,5 +1,5 @@
 doLogin
-    post: ok - 500, 404, 401, 201 ok 
+    post: ok - 500, 404, 401, 201, 400 ok 
 searchUser:
     get: ok -  200, 404, 400, 401, 500 ok
 getUserProfile
@@ -15,37 +15,30 @@ deletePhoto
 uploadPhoto:
     post: ok -- ok
 followUser:
-    post: ok
+    post: ok - 401 500 404 400 201 - ok
 unfollowUser
-    delete: ok
+    delete: ok - 401 500 400 200 - ok
 likePhoto:
     post: ok - ok
 remove like:
-    delete: ok
+    delete: ok - ok
 commentPhoto:
-    post: ok
+    post: ok - ok
 uncommentPhoto:
-    delete: ok
+    delete: ok - 
 banUser:
     post: ok
 unbanUser:
     delete: ok
 getComments:
-    get: ok
+    get: ok - 
      
 
-
-NOTES:
-Un utente puo' cercare un altro utente tramite ricerca
-
-AGGIUNGERE
-operationId: search user
-
-MODIFICHE
--occhio ai json tag name e username sparsi
--quella verifyuserid..forse farla diventare funzione dell'interfaccia AppDatabase
-
-@todo: (mvc)
+MODIFICHE:
+occhio alle BAD REQUEST!
+Stabilire politica comune di azione, magari sui check 
+preventivi. Forse i not found e i bad request 
+sono un po ovunque.
 
 
 

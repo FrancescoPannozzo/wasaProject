@@ -43,11 +43,13 @@ var DBcon AppDatabase
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
+	//Base example
 	GetName() (string, error)
+	//Base example
 	SetName(name string) error
 
-	// Get a username if present in the DB, if not the username provided will
-	// be inserted in the DB.
+	// Get a username if present in the DB. If not present, the username provided will
+	// be inserted in the DB. Returns the username and nil if successfull
 	GetOrInsertUser(name string) (string, error)
 
 	// Insert a user into the DB. Returns a feedback string and nil if succesfull
@@ -62,57 +64,65 @@ type AppDatabase interface {
 	// Set a new username, return nil if succesfull
 	ModifyUsername(oldName string, newName string) error
 
+	// Insert photo data into the DB
 	InsertPhoto(name string, idphoto string) (string, error)
 
+	// Delete a photo, return a feedback string an nil if successfull
 	DeletePhoto(idphoto string) (string, error)
 
+	// Check if the provided username is in the DB
 	UsernameInDB(name string) bool
 
+	// Insert the user as follower into the DB. Return a
 	InsertFollower(follower string, followed string) (string, error)
 
-	// Delete a followed user.
+	// Delete a followed user. Return a feedback string an nil if successfull
 	DeleteFollowed(follower string, followed string) (string, error)
 
-	// Give a Like
+	// Insert the Like data into the DB. Return a feedback string an nil if successfull
 	LikePhoto(username string, idphoto string) (string, error)
 
-	// Remove a like
+	// Remove a like data drom the DB. Return a feedback string an nil if successfull
 	RemoveLike(username string, idphoto string) (string, error)
 
-	// Insert the comment on the photoID provided in the DB.
+	// Insert the comment to the photo(idphoto) in the DB.
 	// Return a feedback message and nil if successfull.
-	// Return a feedback message and an error excetution query otherwise.
 	CommentPhoto(username string, idphoto string, comment string) (string, error)
 
-	// Get comments
+	// Get the comments list of the provided photoId. Return nil if successfull
 	GetComments(loggedUser string, photoID string) ([]utilities.Comment, error)
 
-	// Delete a comment
-	RemoveComment(username string, idphoto string, idcomment string) (string, error)
+	// Delete a comment. Return a feedback string an nil if successfull
+	RemoveComment(idcomment string) (string, error)
 
 	// Check the username profile ownership
 	CheckOwnership(userId string, username string) bool
 
-	// get the username from a photoId
+	// Get the username from a photoId. Return the username and nil if successfull
 	GetNameFromPhotoId(photoId string) (string, error)
-	// Ban the provided user
+
+	// Get the username from a commentId. Return the username and nil if successfull
+	GetNameFromCommentId(commentId string) (string, error)
+
+	// Ban the provided user. Return a feedback string an nil if successfull
 	BanUser(banner string, banned string) (string, error)
 
-	// unban user
+	// Unban the provided user. Return a feedback string an nil if successfull
 	UnbanUser(banner string, banned string) (string, error)
 
-	// Check bans
+	// Check if the target user is banned from the logged user.
 	CheckBan(loggedUser string, targetUser string) bool
 
-	// Get user thumbnails objects
+	// Get user thumbnails objects. Returns the thumbnailsObject list and nil if successfull
 	GetThumbnails(username string) ([]utilities.Thumbnail, error)
 
-	// Get a post
+	// Get a post. Returns the postObject and nil if successfull
 	GetPost(loggedUser string, photoId string) (utilities.Post, error)
 
-	// get followed thumbnails objects
+	// Get followed thumbnails objects (the own stream). Returns the thumbnailsObject list and nil if successfull
 	GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error)
 
+	// Get a username list by searching with the provided tergetUSer. Returns the usernames and nil if successfull
 	GetUsernames(targetUser string) ([]utilities.Username, error)
 
 	Ping() error
@@ -135,7 +145,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='User';`).Scan(&tableName)
 
 	if errors.Is(err, sql.ErrNoRows) {
-		// Getting absolute path of db_schema.txt
+		// Getting absolute path of db_schema.sql
 		abs, err := filepath.Abs("./service/database/db_schema.sql")
 
 		dat, errFile := ioutil.ReadFile(abs)

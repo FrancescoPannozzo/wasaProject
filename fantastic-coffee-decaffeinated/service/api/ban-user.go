@@ -14,18 +14,12 @@ import (
 func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Banning the provided user..")
 	err := database.VerifyUserId(r, ps)
-
 	if err != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
 		return
 	}
 
-	loggedUser, err := rt.db.GetNameByID(utilities.GetBearerID(r))
-
-	if err != nil {
-		utilities.WriteResponse(http.StatusNotFound, loggedUser, w)
-		return
-	}
+	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	type Banned struct {
 		Username string `json:"name"`
@@ -42,7 +36,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	//check if the user to ban is in the DB
 	_, errId := database.DBcon.GetIdByName(banned.Username)
 	if errId != nil {
-		utilities.WriteResponse(http.StatusBadRequest, errId.Error(), w)
+		utilities.WriteResponse(http.StatusNotFound, errId.Error(), w)
 		return
 	}
 
@@ -52,6 +46,6 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 	logrus.Infoln("Done!")
-	utilities.WriteResponse(http.StatusCreated, feedback, w)
+	utilities.WriteResponse(http.StatusOK, feedback, w)
 	return
 }

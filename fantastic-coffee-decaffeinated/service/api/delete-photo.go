@@ -28,7 +28,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photoOwner, err := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if err != nil {
 		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusInternalServerError, "cannot process the request", w)
+		utilities.WriteResponse(http.StatusNotFound, "cannot process the request", w)
 		return
 	}
 	if loggedUsername != photoOwner {
@@ -37,14 +37,21 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	idphoto := ps.ByName("idPhoto")
-	feedback, err, httpStatus := database.DBcon.DeletePhoto(idphoto)
 
-	if httpStatus == http.StatusInternalServerError {
-		utilities.WriteResponse(httpStatus, feedback+".Error:"+err.Error(), w)
+	if utilities.IsPhotoIdValid(idphoto) {
+		logrus.Warn("Invalid photo ID")
+		utilities.WriteResponse(http.StatusBadRequest, "Invalid photo ID", w)
 		return
 	}
 
-	utilities.WriteResponse(httpStatus, feedback, w)
+	feedback, err := database.DBcon.DeletePhoto(idphoto)
+
+	if err != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, feedback+".Error:"+err.Error(), w)
+		return
+	}
+
+	utilities.WriteResponse(http.StatusOK, feedback, w)
 	return
 
 }

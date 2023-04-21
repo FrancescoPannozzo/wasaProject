@@ -8,31 +8,41 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/sirupsen/logrus"
 )
 
-// Remove a like
+// Remove a comment
 func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	errId := database.VerifyUserId(r, ps)
-
 	if errId != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
-	username, errUsername := database.DBcon.GetNameByID(utilities.GetBearerID(r))
-
-	if errUsername != nil {
-		rt.baseLogger.WithError(errUsername).Warning("Cannot find the user")
-		utilities.WriteResponse(http.StatusBadRequest, "Cannot find the user", w)
+	if !utilities.IsPhotoIdValid(ps.ByName("idPhoto")) {
+		logrus.Warn("photo id not valid")
+		utilities.WriteResponse(http.StatusBadRequest, "photo id not valid", w)
 		return
 	}
 
 	//check if the user is the comment owner
+	loggedUser, _ := database.DBcon.GetNameByID(utilities.GetBearerID(r))
+	commentOwner, errUser := database.DBcon.GetNameFromCommentId(ps.ByName("idComment"))
+	if errUser != nil {
+		logrus.Warn(errUser.Error())
+		utilities.WriteResponse(http.StatusNotFound, "comment not found", w)
+		return
+	}
 
-	feedback, err := database.DBcon.RemoveComment(username, ps.ByName("idPhoto"), ps.ByName("idComment"))
+	if loggedUser != commentOwner {
+		logrus.Warn("Unauthorized to perform this action")
+		utilities.WriteResponse(http.StatusUnauthorized, "the user is not the owner of the comment", w)
+		return
+	}
 
+	feedback, err := database.DBcon.RemoveComment(ps.ByName("idComment"))
 	if errors.Is(err, sql.ErrNoRows) {
-		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
+		utilities.WriteResponse(http.StatusNotFound, feedback, w)
 		return
 	}
 

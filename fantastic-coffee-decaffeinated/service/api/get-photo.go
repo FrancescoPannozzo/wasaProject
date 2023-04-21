@@ -22,8 +22,16 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
+	idphoto := ps.ByName("idPhoto")
+
+	if !utilities.IsPhotoIdValid(idphoto) {
+		logrus.Warn("Invalid photo ID")
+		utilities.WriteResponse(http.StatusBadRequest, "Invalid photo ID", w)
+		return
+	}
+
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
-	targetUser, errPhoto := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
+	targetUser, errPhoto := database.DBcon.GetNameFromPhotoId(idphoto)
 	if errPhoto != nil {
 		logrus.Warn(errPhoto.Error())
 		utilities.WriteResponse(http.StatusNotFound, err.Error(), w)
@@ -37,7 +45,6 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	idphoto := ps.ByName("idPhoto")
 	fileName := idphoto + ".png"
 	filePath := filepath.Join("storage", fileName)
 

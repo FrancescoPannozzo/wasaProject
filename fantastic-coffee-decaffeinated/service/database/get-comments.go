@@ -11,7 +11,7 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 	logrus.Infoln("Getting the comments..")
 	var comments []utilities.Comment
 
-	rows, err := db.c.Query("SELECT User, Content FROM Comment WHERE Photo =?;", photoID)
+	rows, err := db.c.Query("SELECT Id_comment, User, Content FROM Comment WHERE Photo =?;", photoID)
 	if err != nil {
 		//500
 		return nil, fmt.Errorf("error execution query: %w", err)
@@ -20,11 +20,12 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 	var comment utilities.Comment
 	for rows.Next() {
 
-		var user, content string
-		rows.Scan(&user, &content)
+		var commentId, user, content string
+		rows.Scan(&commentId, &user, &content)
 		if db.CheckBan(loggedUser, user) {
 			continue
 		}
+		comment.CommentId = commentId
 		comment.Name = user
 		comment.Content = content
 		comments = append(comments, comment)

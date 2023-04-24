@@ -1,14 +1,21 @@
 package database
 
 import (
+	"database/sql"
+	"errors"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
-
-	"github.com/sirupsen/logrus"
 )
 
 func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities.Comment, error) {
-	logrus.Infoln("Getting the comments..")
+	var photo string
+
+	row := db.c.QueryRow("SELECT Photo FROM Comment WHERE Photo =?;", photoID).Scan(&photo)
+	if errors.Is(row, sql.ErrNoRows) {
+		//404 photo not found in Comment DB table, comments not found
+		return nil, row
+	}
+
 	var comments []utilities.Comment
 
 	rows, err := db.c.Query("SELECT Id_comment, User, Content FROM Comment WHERE Photo =?;", photoID)
@@ -30,7 +37,7 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 		comment.Content = content
 		comments = append(comments, comment)
 	}
-	logrus.Infoln("Done!")
+
 	//200
 	return comments, nil
 }

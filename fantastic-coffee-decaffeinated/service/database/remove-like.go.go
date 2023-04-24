@@ -1,11 +1,22 @@
 package database
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 )
 
-// Delete a follow
-func (db *appdbimpl) RemoveLike(username string, idphoto string) (string, error) {
+// Delete a like
+func (db *appdbimpl) RemoveLike(loggedUser string, idphoto string) (string, error) {
+	var username string
+
+	rows := db.c.QueryRow("SELECT User FROM Like WHERE Photo=?", idphoto).Scan(&username)
+
+	if errors.Is(rows, sql.ErrNoRows) {
+		// 404 like not found
+		return "like not found", rows
+	}
+
 	_, err := db.c.Exec("DELETE FROM Like WHERE User = ? AND Photo = ?", username, idphoto)
 
 	if err != nil {

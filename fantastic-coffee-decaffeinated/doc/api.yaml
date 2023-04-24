@@ -310,14 +310,14 @@ paths:
            application/json:
             schema:
               $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
         "404":
           description: Photo not found for getPhoto operation
           content:
            application/json:
             schema:
               $ref: "#/components/schemas/generalError"
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
         '500':
           description: The server cannot elaborate the getPhoto request
           content:
@@ -343,14 +343,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
         "404":
           description: Photo not found for delete operation
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
         "500":
           description: The server cannot proces the deletePhoto request
           content:
@@ -389,7 +389,7 @@ paths:
                   value:
                     idphoto: abcd20132303151010
         "400":
-          description: Photo format/photo id/user id not valid for uploadPhoto operation
+          description: photo format not valid for uploadPhoto operation
           content:
             application/json:
               schema:
@@ -436,20 +436,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalFeedback"
+        "400":
+          description: Invalid username for followUser operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-        "400":
-          description: Invalid user id for followUser operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalError"
-        "404":
-          description: Photo not found for delete operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the followUser request
           content:
@@ -473,13 +467,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: Invalid user id unfollowUser
+          description: Invalid username for unfollowUser
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: username not found for unfollow user operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the unfollowUser request
           content:
@@ -512,12 +512,6 @@ paths:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-        "404":
-          description: Photo not found for likePhoto operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the likePhoto request
           content:
@@ -542,19 +536,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: Photo format/photo id/user id not valid for unlikePhoto operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalError"
-        "404":
-          description: Photo not found for removeLike operation
+          description: photo id/username not valid for unlikePhoto operation
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: like not found for removeLike operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the removePhoto request
           content:
@@ -595,19 +589,13 @@ paths:
                 $ref: "#/components/schemas/generalFeedback"
         "400":
           description: |
-            Photo photo id not valid for commentPhoto operation
+            Photo id not valid for commentPhoto operation
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-        "404":
-          description: photo not found for commentPhoto operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the commentPhoto request
           content:
@@ -646,7 +634,7 @@ paths:
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
-          description: photoId not found so comment list not found
+          description: comment list not found
           content:
             application/json:
               schema:
@@ -669,13 +657,13 @@ paths:
         Allow to uncomment one user photo
       responses:
         "200":
-          description: comment erased
+          description: comment deleted
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: photo id not valid for remove comment operation
+          description: photo id/comment id not valid for remove comment operation
           content:
             application/json:
               schema:
@@ -721,26 +709,20 @@ paths:
                   name: maria
         required: true
       responses:
-        "200":
+        "201":
           description: ban done
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: user id not valid
+          description: username not valid
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-        "404":
-          description: the logged user can't ban himself
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the banUser request
           content:
@@ -764,13 +746,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: user id not valid for unBanUser operation
+          description: username not valid for unBanUser operation
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: ban not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the unbanUser request
           content:

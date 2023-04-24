@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/sirupsen/logrus"
 )
 
 // Follow a user.
@@ -18,24 +19,24 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	//name is the user to follow
-	userToFollow, errReq := utilities.GetNameFromReq(r)
-	if errReq != nil {
-		rt.baseLogger.WithError(errReq).Warning("error JSON format")
-		utilities.WriteResponse(http.StatusInternalServerError, "error JSON format", w)
+	userToFollow, _ := utilities.GetNameFromReq(r)
+
+	errUser := utilities.CheckUsername(userToFollow)
+	if errUser != nil {
+		message := "username not valid"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusBadRequest, message, w)
+		return
 	}
 
 	//check if the user to follow is in the DB
 	if !(database.DBcon.UsernameInDB(userToFollow)) {
-		utilities.WriteResponse(http.StatusBadRequest, "Warning, the user is not in the DB", w)
+		utilities.WriteResponse(http.StatusBadRequest, "Warning, the user provided is not in the DB", w)
 		return
 	}
 
 	//Check if the user is trying to follow himself
-	loggedUser, err := rt.db.GetNameByID(utilities.GetBearerID(r))
-	if err != nil {
-		utilities.WriteResponse(http.StatusNotFound, loggedUser, w)
-		return
-	}
+	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if loggedUser == userToFollow {
 		utilities.WriteResponse(http.StatusBadRequest, "Warning, you cannot follow yourself", w)
 	}

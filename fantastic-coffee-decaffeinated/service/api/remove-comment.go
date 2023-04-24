@@ -24,6 +24,12 @@ func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps http
 		utilities.WriteResponse(http.StatusBadRequest, "photo id not valid", w)
 		return
 	}
+	_, errPhoto := rt.db.GetNameFromPhotoId(ps.ByName("idPhoto"))
+	if errPhoto != nil {
+		logrus.Warn("photoId not found")
+		utilities.WriteResponse(http.StatusNotFound, "photo not found", w)
+		return
+	}
 
 	//check if the user is the comment owner
 	loggedUser, _ := database.DBcon.GetNameByID(utilities.GetBearerID(r))
@@ -33,7 +39,6 @@ func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps http
 		utilities.WriteResponse(http.StatusNotFound, "comment not found", w)
 		return
 	}
-
 	if loggedUser != commentOwner {
 		logrus.Warn("Unauthorized to perform this action")
 		utilities.WriteResponse(http.StatusUnauthorized, "the user is not the owner of the comment", w)

@@ -27,13 +27,15 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	feedback, err := rt.db.GetNameFromPhotoId(ps.ByName("idPhoto"))
-	if err != nil {
-		utilities.WriteResponse(http.StatusNotFound, feedback, w)
+	_, errPhoto := rt.db.GetNameFromPhotoId(ps.ByName("idPhoto"))
+	if errPhoto != nil {
+		message := "Photo id to like not found"
+		logrus.Warn("")
+		utilities.WriteResponse(http.StatusBadRequest, message, w)
 		return
 	}
 
-	feedback, err = database.DBcon.LikePhoto(username, ps.ByName("idPhoto"))
+	feedback, err := database.DBcon.LikePhoto(username, ps.ByName("idPhoto"))
 
 	if err != nil {
 		rt.baseLogger.WithError(err).Warning(feedback)

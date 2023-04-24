@@ -30,6 +30,13 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
+	if !database.DBcon.UsernameInDB(targetUser) {
+		message := "user not found"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusNotFound, message, w)
+		return
+	}
+
 	// check if the user is banned
 	if database.DBcon.CheckBan(loggedUser, targetUser) {
 		utilities.WriteResponse(http.StatusUnauthorized, "the logged user is banned for the specific request", w)

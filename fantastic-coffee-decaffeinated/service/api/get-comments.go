@@ -1,7 +1,9 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"net/http"
@@ -12,6 +14,7 @@ import (
 
 // Get a comment list of a user photo
 func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	logrus.Infoln("Getting the comments..")
 	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
@@ -23,6 +26,11 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 	idPhoto := ps.ByName("idPhoto")
+	if !utilities.IsPhotoIdValid(idPhoto) {
+		logrus.Warn("Invalid photo ID")
+		utilities.WriteResponse(http.StatusBadRequest, "Invalid photo ID", w)
+		return
+	}
 	targetUser, errPhoto := database.DBcon.GetNameFromPhotoId(idPhoto)
 	if errPhoto != nil {
 		logrus.Warn(errPhoto.Error())
@@ -46,13 +54,18 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 	// Check if the requested photo is in the DB
 	_, errPhoto = database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if errPhoto != nil {
-		// Comment list retrive attempt of one photo not in the DB, so comments doesn' exists
 		logrus.Warn(errPhoto.Error())
-		utilities.WriteResponse(http.StatusNotFound, errPhoto.Error(), w)
+		utilities.WriteResponse(http.StatusBadRequest, errPhoto.Error(), w)
 		return
 	}
 
 	comments, errComm := database.DBcon.GetComments(loggedUser, ps.ByName("idPhoto"))
+	if errors.Is(errComm, sql.ErrNoRows) {
+		message := "Comments not found"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusNotFound, message, w)
+		return
+	}
 	if errComm != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, errComm.Error(), w)
 		return
@@ -66,5 +79,6 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(result)
-
+	logrus.Infoln("Done!")
+	return
 }

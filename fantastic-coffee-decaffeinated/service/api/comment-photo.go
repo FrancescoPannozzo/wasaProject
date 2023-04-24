@@ -34,13 +34,13 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	if !utilities.IsPhotoIdValid(ps.ByName("idPhoto")) {
-		logrus.Warn("Photo not found")
-		utilities.WriteResponse(http.StatusBadRequest, "Photo not found", w)
+		logrus.Warn("Photo id not valid")
+		utilities.WriteResponse(http.StatusBadRequest, "Photo id not valid", w)
 	}
 
 	_, errID := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if errID != nil {
-		utilities.WriteResponse(http.StatusNotFound, "The photo id provided is not in the DB", w)
+		utilities.WriteResponse(http.StatusBadRequest, "The photo id provided is not in the DB", w)
 		return
 	}
 

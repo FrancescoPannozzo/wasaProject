@@ -19,6 +19,14 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
+	idphoto := ps.ByName("idPhoto")
+
+	if utilities.IsPhotoIdValid(idphoto) {
+		logrus.Warn("Invalid photo ID")
+		utilities.WriteResponse(http.StatusBadRequest, "Invalid photo ID", w)
+		return
+	}
+
 	// checking if the logged user has the rights to perform the action
 	loggedUsername, err := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if err != nil {
@@ -33,14 +41,6 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	if loggedUsername != photoOwner {
 		utilities.WriteResponse(http.StatusUnauthorized, "User doesn't have the rights to delete the photo, operation refused", w)
-		return
-	}
-
-	idphoto := ps.ByName("idPhoto")
-
-	if utilities.IsPhotoIdValid(idphoto) {
-		logrus.Warn("Invalid photo ID")
-		utilities.WriteResponse(http.StatusBadRequest, "Invalid photo ID", w)
 		return
 	}
 

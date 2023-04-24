@@ -1,6 +1,8 @@
 package api
 
 import (
+	"database/sql"
+	"errors"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"net/http"
@@ -11,7 +13,7 @@ import (
 
 // Unban the user provided by the path parameter username
 func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	logrus.Infoln("Banning the provided user..")
+	logrus.Infoln("Removing the ban for the provided user..")
 	errId := database.VerifyUserId(r, ps)
 
 	if errId != nil {
@@ -27,9 +29,22 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
+	if !database.DBcon.UsernameInDB(ps.ByName("username")) {
+		message := "username not found"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusBadRequest, message, w)
+		return
+	}
+
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	feedback, err := database.DBcon.UnbanUser(loggedUser, ps.ByName("username"))
+	if errors.Is(err, sql.ErrNoRows) {
+		logrus.Warn(feedback)
+		utilities.WriteResponse(http.StatusNotFound, feedback, w)
+		return
+
+	}
 	if err != nil {
 		logrus.Warn(err.Error())
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)

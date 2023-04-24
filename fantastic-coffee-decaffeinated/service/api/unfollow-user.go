@@ -18,23 +18,26 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	name, errUser := database.DBcon.GetNameByID(utilities.GetBearerID(r))
-
+	errUser := utilities.CheckUsername(ps.ByName("username"))
 	if errUser != nil {
-		rt.baseLogger.WithError(errUser).Warning("error JSON format")
-		utilities.WriteResponse(http.StatusInternalServerError, "error JSON format", w)
-	}
-
-	if !(database.DBcon.UsernameInDB(name)) {
-		utilities.WriteResponse(http.StatusBadRequest, "Warning, the user is not in the DB", w)
+		message := "username to unfollow not valid"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusBadRequest, message, w)
 		return
 	}
 
-	if ps.ByName("username") == name {
-		utilities.WriteResponse(http.StatusBadRequest, "Warning, you cannot unfollow yourself", w)
+	if !(database.DBcon.UsernameInDB(ps.ByName("username"))) {
+		utilities.WriteResponse(http.StatusNotFound, "Warning, the user to unfollow is not in the DB", w)
+		return
 	}
 
-	feedback, err := database.DBcon.DeleteFollowed(name, ps.ByName("username"))
+	loggedUser, _ := database.DBcon.GetNameByID(utilities.GetBearerID(r))
+
+	if ps.ByName("username") == loggedUser {
+		utilities.WriteResponse(http.StatusBadRequest, "Warning, logged cannot unfollow himself", w)
+	}
+
+	feedback, err := database.DBcon.DeleteFollowed(loggedUser, ps.ByName("username"))
 
 	if err != nil {
 		logrus.Errorln(err.Error())

@@ -25,13 +25,13 @@ remove like:
 commentPhoto:
     post: ok - ok
 uncommentPhoto:
-    delete: ok - 
+    delete: ok - ok
 banUser:
-    post: ok
+    post: ok - okk
 unbanUser:
-    delete: ok
+    delete: ok - ok
 getComments:
-    get: ok - 
+    get: ok - ok
      
 
 MODIFICHE:

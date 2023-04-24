@@ -155,7 +155,7 @@ func CreatePhotoURL(idPhoto string) string {
 	return filepath.Join(baseURL, idPhoto)
 }
 
-// Check if the photo ID is valid
+// Check if the photo ID format length is valid
 func IsPhotoIdValid(idphoto string) bool {
 	fmt.Println(len(idphoto))
 	const idphotoLenghts = 18

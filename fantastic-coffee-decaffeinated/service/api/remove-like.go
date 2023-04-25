@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"errors"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
@@ -41,7 +40,7 @@ func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	feedback, err := database.DBcon.RemoveLike(ps.ByName("username"), ps.ByName("idPhoto"))
-	if errors.Is(err, sql.ErrNoRows) {
+	if errors.Is(err, &utilities.DbBadRequest{}) {
 		rt.baseLogger.WithError(err).Warning(feedback)
 		utilities.WriteResponse(http.StatusNotFound, feedback, w)
 		return

@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
 )
 
@@ -14,7 +15,7 @@ func (db *appdbimpl) RemoveComment(idcomment string) (string, error) {
 
 	if errors.Is(rows, sql.ErrNoRows) {
 		// 404 comment not found
-		return "comment not found", rows
+		return "comment not found", &utilities.DbBadRequest{}
 	}
 
 	_, err := db.c.Exec("DELETE FROM Comment WHERE Id_comment = ?;", idcomment)

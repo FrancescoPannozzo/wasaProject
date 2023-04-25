@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
 )
 
@@ -14,7 +15,7 @@ func (db *appdbimpl) RemoveLike(loggedUser string, idphoto string) (string, erro
 
 	if errors.Is(rows, sql.ErrNoRows) {
 		// 404 like not found
-		return "like not found", rows
+		return "like not found", &utilities.DbBadRequest{}
 	}
 
 	_, err := db.c.Exec("DELETE FROM Like WHERE User = ? AND Photo = ?", username, idphoto)

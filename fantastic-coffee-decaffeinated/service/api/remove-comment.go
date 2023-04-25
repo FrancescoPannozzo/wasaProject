@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"errors"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
@@ -46,7 +45,7 @@ func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	feedback, err := database.DBcon.RemoveComment(ps.ByName("idComment"))
-	if errors.Is(err, sql.ErrNoRows) {
+	if errors.Is(err, &utilities.DbBadRequest{}) {
 		utilities.WriteResponse(http.StatusNotFound, feedback, w)
 		return
 	}

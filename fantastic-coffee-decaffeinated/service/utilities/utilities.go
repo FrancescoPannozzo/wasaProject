@@ -60,6 +60,12 @@ type FeedbackResponse struct {
 	Feedback string `json:"feedback"`
 }
 
+type DbBadRequest struct{}
+
+func (e *DbBadRequest) Error() string {
+	return "Bad request for the provided DB operation"
+}
+
 // ----- FUNCTIONS -----
 
 func (er *ErrorResponse) PrintFeedback(s string) string {
@@ -157,7 +163,6 @@ func CreatePhotoURL(idPhoto string) string {
 
 // Check if the photo ID format length is valid
 func IsPhotoIdValid(idphoto string) bool {
-	fmt.Println(len(idphoto))
 	const idphotoLenghts = 18
 	if len(idphoto) != idphotoLenghts {
 		return false

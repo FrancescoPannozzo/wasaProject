@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"errors"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
@@ -39,7 +38,7 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
 	feedback, err := database.DBcon.UnbanUser(loggedUser, ps.ByName("username"))
-	if errors.Is(err, sql.ErrNoRows) {
+	if errors.Is(err, &utilities.DbBadRequest{}) {
 		logrus.Warn(feedback)
 		utilities.WriteResponse(http.StatusNotFound, feedback, w)
 		return

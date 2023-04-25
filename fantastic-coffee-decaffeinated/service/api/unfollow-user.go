@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 // unFollow a user.
 func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	logrus.Infoln("Removing the follow..")
 	errId := database.VerifyUserId(r, ps)
 
 	if errId != nil {
@@ -38,13 +40,18 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	feedback, err := database.DBcon.DeleteFollowed(loggedUser, ps.ByName("username"))
-
+	if errors.Is(err, &utilities.DbBadRequest{}) {
+		logrus.Warn(feedback)
+		utilities.WriteResponse(http.StatusNotFound, feedback, w)
+		return
+	}
 	if err != nil {
-		logrus.Errorln(err.Error())
+		logrus.Warn(err.Error())
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 		return
 	}
 
 	utilities.WriteResponse(http.StatusOK, feedback, w)
+	logrus.Infoln("Done!")
 	return
 }

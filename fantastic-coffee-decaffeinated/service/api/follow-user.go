@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 // Follow a user.
 func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	logrus.Infoln("Following the user..")
 	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
@@ -39,10 +41,16 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if loggedUser == userToFollow {
 		utilities.WriteResponse(http.StatusBadRequest, "Warning, you cannot follow yourself", w)
+		return
 	}
 
 	//Insert the user to follow in the DB
 	feedback, err := database.DBcon.InsertFollower(loggedUser, userToFollow)
+	if errors.Is(err, &utilities.DbBadRequest{}) {
+		logrus.Warn(feedback)
+		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
+		return
+	}
 
 	if err != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
@@ -50,5 +58,6 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	utilities.WriteResponse(http.StatusCreated, feedback, w)
+	logrus.Infoln("Done!")
 	return
 }

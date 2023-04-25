@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"net/http"
@@ -50,7 +51,13 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 
 	feedback, err := database.DBcon.BanUser(loggedUser, banned.Username)
+	if errors.Is(err, &utilities.DbBadRequest{}) {
+		logrus.Warn(feedback)
+		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
+		return
+	}
 	if err != nil {
+		logrus.Warn(feedback)
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 		return
 	}

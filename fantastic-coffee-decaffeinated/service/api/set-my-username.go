@@ -43,7 +43,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	if !database.DBcon.CheckOwnership(userId, oldUsername) {
 		feedback := "attempt to change someone else's username detected"
 		logrus.Warn(feedback)
-		utilities.WriteResponse(http.StatusUnauthorized, feedback, w)
+		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
 		return
 	}
 

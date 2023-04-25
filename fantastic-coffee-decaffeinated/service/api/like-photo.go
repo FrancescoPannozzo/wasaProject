@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
 	"net/http"
@@ -36,7 +37,11 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	feedback, err := database.DBcon.LikePhoto(username, ps.ByName("idPhoto"))
-
+	if errors.Is(err, &utilities.DbBadRequest{}) {
+		rt.baseLogger.WithError(err).Warning(feedback)
+		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
+		return
+	}
 	if err != nil {
 		rt.baseLogger.WithError(err).Warning(feedback)
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)

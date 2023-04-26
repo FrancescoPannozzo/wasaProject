@@ -527,7 +527,7 @@ paths:
       operationId: removeLike  
       summary: remove a like to a photo
       description: |
-        Remove a like to the photo identified by idPhoto
+        Remove a like username gave to the photo identified by idPhoto
       responses:
         "200":
           description: like removed on removeLike operation

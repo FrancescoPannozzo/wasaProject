@@ -32,7 +32,10 @@ func (db *appdbimpl) GetPost(loggedUser string, photoId string) (utilities.Post,
 	if err != nil {
 		return post, err
 	}
-
+	//
+	//
+	//
+	//
 	post.Comments = comments
 
 	//200

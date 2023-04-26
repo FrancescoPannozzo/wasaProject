@@ -13,7 +13,7 @@ func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, erro
 
 	var thumbnails []utilities.Thumbnail
 
-	rows, err := db.c.Query("SELECT Id_photo, Date, Time FROM Photo WHERE User=? ORDER BY Date DESC, Time Desc;", username)
+	rows, err := db.c.Query("SELECT User, Id_photo, Date, Time FROM Photo WHERE User=? ORDER BY Date DESC, Time Desc;", username)
 	if err != nil {
 		//500
 		return nil, fmt.Errorf("error execution query: %w", err)
@@ -23,7 +23,7 @@ func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, erro
 	for rows.Next() {
 
 		var date, time string
-		rows.Scan(&thumbnail.PhotoId, &date, &time)
+		rows.Scan(&thumbnail.Username, &thumbnail.PhotoId, &date, &time)
 		thumbnail.DateTime = fmt.Sprintf("%sT%s", date, time)
 		rows := db.c.QueryRow("SELECT COUNT(*) FROM Like WHERE Photo = ?;", thumbnail.PhotoId).Scan(&thumbnail.LikesNumber)
 		if errors.Is(rows, sql.ErrNoRows) {

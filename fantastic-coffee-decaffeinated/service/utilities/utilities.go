@@ -17,6 +17,7 @@ import (
 
 // a rappresentation of a thubnail image with informations
 type Thumbnail struct {
+	Username       string `json:"username"`
 	PhotoId        string `json:"photoId"`
 	PhotoURL       string `json:"photourl"`
 	DateTime       string `json:"datetime"`
@@ -34,7 +35,6 @@ type PayloadFeedback interface {
 	PrintFeedback(s string) string
 }
 
-// @todo: model, entities -> comment.go
 // A rappresentation of a comment
 type Comment struct {
 	CommentId string `json:"commentid"`
@@ -60,13 +60,14 @@ type FeedbackResponse struct {
 	Feedback string `json:"feedback"`
 }
 
+// Custom Error type
 type DbBadRequest struct{}
+
+// ----- FUNCTIONS -----
 
 func (e *DbBadRequest) Error() string {
 	return "Bad request for the provided DB operation"
 }
-
-// ----- FUNCTIONS -----
 
 func (er *ErrorResponse) PrintFeedback(s string) string {
 	response := fmt.Sprint("Error response:", s)
@@ -79,7 +80,7 @@ func (fr *FeedbackResponse) PrintFeedback(s string) string {
 }
 
 // Get the username from a request, return the username and nil if successful.
-// If an error has occurred return an empty string and the error
+// If an error has occurred return a feedback string and the error
 func GetNameFromReq(r *http.Request) (string, error) {
 	var username Username
 	err := json.NewDecoder(r.Body).Decode(&username)
@@ -97,16 +98,13 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(httpStatus)
 	var response PayloadFeedback
-	// @todo: mettere i range invece dei numeri
 	switch httpStatus {
 	case 401, 400, 404, 500:
 		response = &ErrorResponse{Error: payload}
-	// @todo: inutile
 	case 200, 201:
 		response = &FeedbackResponse{Feedback: payload}
 	}
 
-	// @todo: mandare solo stringa
 	err := json.NewEncoder(w).Encode(&response)
 	if err != nil {
 		logrus.Errorln("wrong JSON processed")
@@ -115,7 +113,7 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	}
 }
 
-// Checks if the username provided is valid for the application.
+// Checks if the provided username length is valid for the application.
 // Returns nil if successfull, an error otherwise
 func CheckUsername(name string) error {
 	if len(name) < 3 || len(name) > 13 {
@@ -126,7 +124,6 @@ func CheckUsername(name string) error {
 
 // Create a user id composed by characters + timestamp
 func GenerateUserID(name string) string {
-	//create user id
 	s1 := rand.NewSource(time.Now().UnixNano())
 	r1 := rand.New(s1)
 	var s string

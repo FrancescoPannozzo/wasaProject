@@ -12,6 +12,7 @@ import (
 
 // Remove a like
 func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	logrus.Warn("Removing the like..")
 	errId := database.VerifyUserId(r, ps)
 
 	if errId != nil {
@@ -19,23 +20,21 @@ func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	username, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
-
 	errUser := utilities.CheckUsername(ps.ByName("username"))
 	if errUser != nil {
 		logrus.Warn("User ID not valid")
 		utilities.WriteResponse(http.StatusBadRequest, "User ID not valid", w)
 		return
 	}
-	if utilities.IsPhotoIdValid(ps.ByName("idPhoto")) {
+	if !utilities.IsPhotoIdValid(ps.ByName("idPhoto")) {
 		logrus.Warn("Invalid photo ID")
 		utilities.WriteResponse(http.StatusBadRequest, "Invalid photo ID", w)
 		return
 	}
 
-	if !rt.db.CheckOwnership(utilities.GetBearerID(r), username) {
+	if !rt.db.CheckOwnership(utilities.GetBearerID(r), ps.ByName("username")) {
 		message := "The logged user can't remove a like of other users"
-		utilities.WriteResponse(http.StatusBadRequest, message, w)
+		utilities.WriteResponse(http.StatusUnauthorized, message, w)
 		return
 	}
 
@@ -52,5 +51,6 @@ func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	utilities.WriteResponse(http.StatusOK, feedback, w)
+	logrus.Warn("Done!")
 	return
 }

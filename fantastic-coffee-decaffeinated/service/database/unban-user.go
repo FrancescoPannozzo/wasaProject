@@ -24,5 +24,5 @@ func (db *appdbimpl) UnbanUser(banner string, banned string) (string, error) {
 	}
 
 	//200
-	return "User unbanned, DB updated", err
+	return "User unbanned, DB updated", nil
 }

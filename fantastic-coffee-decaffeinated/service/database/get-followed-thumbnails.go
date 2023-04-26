@@ -23,6 +23,7 @@ func (db *appdbimpl) GetFollowedThumbnails(loggedUser string) ([]utilities.Thumb
 		if db.CheckBan(loggedUser, user) {
 			continue
 		}
+		thumbnail.Username = user
 		thumbnail.PhotoId = idphoto
 		thumbnail.PhotoURL = utilities.CreatePhotoURL(idphoto)
 		thumbnail.DateTime = fmt.Sprintf("%sT%s", date, time)

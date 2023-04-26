@@ -11,7 +11,7 @@ import (
 func (db *appdbimpl) RemoveLike(loggedUser string, idphoto string) (string, error) {
 	var username string
 
-	rows := db.c.QueryRow("SELECT User FROM Like WHERE Photo=?", idphoto).Scan(&username)
+	rows := db.c.QueryRow("SELECT User FROM Like WHERE User=? AND Photo=?", loggedUser, idphoto).Scan(&username)
 
 	if errors.Is(rows, sql.ErrNoRows) {
 		// 404 like not found

@@ -12,6 +12,7 @@ import (
 
 // Get a user post
 func (rt *_router) getPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	logrus.Warn("Getting the user post..")
 	err := database.VerifyUserId(r, ps)
 
 	if err != nil {
@@ -46,6 +47,7 @@ func (rt *_router) getPost(w http.ResponseWriter, r *http.Request, ps httprouter
 	if err != nil {
 		logrus.Warn(err.Error())
 		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+		return
 	}
 
 	result, errConv := json.Marshal(post)

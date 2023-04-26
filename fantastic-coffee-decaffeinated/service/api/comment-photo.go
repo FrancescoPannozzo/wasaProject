@@ -12,6 +12,7 @@ import (
 
 // Comment a photo
 func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	logrus.Infoln("Posting the comment..")
 	errId := database.VerifyUserId(r, ps)
 
 	if errId != nil {
@@ -19,7 +20,19 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	username, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
+	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
+	targetUser, errID := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
+	if errID != nil {
+		utilities.WriteResponse(http.StatusBadRequest, "The photo id provided is not in the DB", w)
+		return
+	}
+
+	// check if the user is banned
+	if database.DBcon.CheckBan(loggedUser, targetUser) {
+		logrus.Warn("Banned user found")
+		utilities.WriteResponse(http.StatusUnauthorized, "the logged user is banned for the specific request", w)
+		return
+	}
 
 	type Comment struct {
 		Comment string `json:"comment"`
@@ -38,19 +51,14 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		utilities.WriteResponse(http.StatusBadRequest, "Photo id not valid", w)
 	}
 
-	_, errID := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
-	if errID != nil {
-		utilities.WriteResponse(http.StatusBadRequest, "The photo id provided is not in the DB", w)
-		return
-	}
-
-	feedback, err := database.DBcon.CommentPhoto(username, ps.ByName("idPhoto"), content.Comment)
+	feedback, err := database.DBcon.CommentPhoto(loggedUser, ps.ByName("idPhoto"), content.Comment)
 	if err != nil {
 		rt.baseLogger.WithError(err).Warning(feedback)
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 	}
 
 	utilities.WriteResponse(http.StatusCreated, feedback, w)
+	logrus.Infoln("Done!")
 	return
 
 }

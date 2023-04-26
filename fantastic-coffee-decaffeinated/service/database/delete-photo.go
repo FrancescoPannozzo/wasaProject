@@ -1,12 +1,13 @@
 package database
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 )
 
+//testing func
+/*
 func checkFileExists(filepath string) {
 	_, err := os.Stat(filepath)
 
@@ -16,6 +17,7 @@ func checkFileExists(filepath string) {
 		fmt.Println("file exists")
 	}
 }
+*/
 
 // Delete a user photo.
 // Return a payload feedback message and error
@@ -29,7 +31,7 @@ func (db *appdbimpl) DeletePhoto(idphoto string) (string, error) {
 
 	filepath := filepath.Join(abs, "storage", idphoto+".png")
 
-	checkFileExists(filepath)
+	//checkFileExists(filepath)
 
 	err := os.Remove(filepath)
 	if err != nil {
@@ -45,5 +47,4 @@ func (db *appdbimpl) DeletePhoto(idphoto string) (string, error) {
 	}
 
 	return "Image deleted, everything ok", nil
-
 }

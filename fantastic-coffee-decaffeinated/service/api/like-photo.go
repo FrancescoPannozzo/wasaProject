@@ -13,10 +13,10 @@ import (
 // Give a like to a user photo.
 func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Posting a like to the photo..")
-	err := database.VerifyUserId(r, ps)
+	errId := database.VerifyUserId(r, ps)
 
-	if err != nil {
-		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
+	if errId != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
@@ -25,7 +25,7 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	targetUser, errPhoto := rt.db.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if errPhoto != nil {
 		message := "Photo id to like not found"
-		logrus.Warn("")
+		rt.baseLogger.WithError(errPhoto).Warning(message)
 		utilities.WriteResponse(http.StatusBadRequest, message, w)
 		return
 	}

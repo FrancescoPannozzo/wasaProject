@@ -44,6 +44,7 @@ type Comment struct {
 
 // a rappresentation of a thubnail image with informations
 type Post struct {
+	Username    string    `json:"username"`
 	PhotoURL    string    `json:"photourl"`
 	DateTime    string    `json:"datetime"`
 	LikesNumber int       `json:"nlikes"`

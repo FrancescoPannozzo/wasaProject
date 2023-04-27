@@ -13,10 +13,10 @@ import (
 // Follow a user.
 func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Following the user..")
-	err := database.VerifyUserId(r, ps)
+	errId := database.VerifyUserId(r, ps)
 
-	if err != nil {
-		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
+	if errId != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 

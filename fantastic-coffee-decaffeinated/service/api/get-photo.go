@@ -14,11 +14,11 @@ import (
 // Get a user photo
 func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Getting the user photo..")
-	err := database.VerifyUserId(r, ps)
+	errId := database.VerifyUserId(r, ps)
 
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
+	if errId != nil {
+		logrus.Warn(errId.Error())
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
@@ -34,7 +34,7 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 	targetUser, errPhoto := database.DBcon.GetNameFromPhotoId(idphoto)
 	if errPhoto != nil {
 		logrus.Warn(errPhoto.Error())
-		utilities.WriteResponse(http.StatusNotFound, err.Error(), w)
+		utilities.WriteResponse(http.StatusNotFound, errPhoto.Error(), w)
 		return
 	}
 

@@ -12,11 +12,12 @@ import (
 
 // Get a user profile
 func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	err := database.VerifyUserId(r, ps)
+	logrus.Infoln("Getting the user profile..")
+	errId := database.VerifyUserId(r, ps)
 
-	if err != nil {
+	if errId != nil {
 		logrus.Warn("Unauthorized user")
-		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
@@ -25,7 +26,7 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 
 	errUsername := utilities.CheckUsername(targetUser)
 	if errUsername != nil {
-		logrus.Warn(err.Error())
+		logrus.Warn(errUsername.Error())
 		utilities.WriteResponse(http.StatusBadRequest, errUsername.Error(), w)
 		return
 	}
@@ -43,19 +44,19 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	thumbnails, err := database.DBcon.GetThumbnails(targetUser)
-
-	if err != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	thumbnails, errThumb := database.DBcon.GetThumbnails(targetUser)
+	if errThumb != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, errThumb.Error(), w)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(&thumbnails)
-	if err != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	errEnc := json.NewEncoder(w).Encode(&thumbnails)
+	if errEnc != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, errEnc.Error(), w)
 		return
 	}
-
+	logrus.Infoln("Done!")
+	return
 }

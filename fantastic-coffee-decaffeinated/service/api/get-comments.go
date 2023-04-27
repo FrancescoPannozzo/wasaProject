@@ -15,10 +15,10 @@ import (
 // Get a comment list of a user photo
 func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Getting the comments..")
-	err := database.VerifyUserId(r, ps)
+	errId := database.VerifyUserId(r, ps)
 
-	if err != nil {
-		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
+	if errId != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
@@ -34,7 +34,7 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 	targetUser, errPhoto := database.DBcon.GetNameFromPhotoId(idPhoto)
 	if errPhoto != nil {
 		logrus.Warn(errPhoto.Error())
-		utilities.WriteResponse(http.StatusNotFound, err.Error(), w)
+		utilities.WriteResponse(http.StatusNotFound, errPhoto.Error(), w)
 		return
 	}
 
@@ -68,6 +68,12 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	if errComm != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, errComm.Error(), w)
+		return
+	}
+
+	if comments == nil {
+		logrus.Warn("No comments found")
+		utilities.WriteResponse(http.StatusNotFound, "No comments found", w)
 		return
 	}
 

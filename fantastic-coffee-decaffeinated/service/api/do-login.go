@@ -24,10 +24,10 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	err = utilities.CheckUsername(username.Name)
+	errCheckUser := utilities.CheckUsername(username.Name)
 
 	if err != nil {
-		utilities.WriteResponse(http.StatusBadRequest, err.Error(), w)
+		utilities.WriteResponse(http.StatusBadRequest, errCheckUser.Error(), w)
 		return
 	}
 
@@ -47,9 +47,9 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("content-type", "application/json")
-	err = json.NewEncoder(w).Encode(&userId)
-	if err != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	errEnc := json.NewEncoder(w).Encode(&userId)
+	if errEnc != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, errEnc.Error(), w)
 		return
 	}
 

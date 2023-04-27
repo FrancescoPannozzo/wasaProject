@@ -12,12 +12,12 @@ import (
 
 // Get a user post
 func (rt *_router) getPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	logrus.Warn("Getting the user post..")
-	err := database.VerifyUserId(r, ps)
+	logrus.Infoln("Getting the user post..")
+	errId := database.VerifyUserId(r, ps)
 
-	if err != nil {
+	if errId != nil {
 		logrus.Warn("Unauthorized user")
-		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
@@ -31,8 +31,8 @@ func (rt *_router) getPost(w http.ResponseWriter, r *http.Request, ps httprouter
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 	targetUser, errPhoto := database.DBcon.GetNameFromPhotoId(idPhoto)
 	if errPhoto != nil {
-		logrus.Warn(errPhoto.Error())
-		utilities.WriteResponse(http.StatusNotFound, err.Error(), w)
+		rt.baseLogger.Warningln(errPhoto.Error())
+		utilities.WriteResponse(http.StatusNotFound, errPhoto.Error(), w)
 		return
 	}
 
@@ -43,10 +43,10 @@ func (rt *_router) getPost(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	post, err := database.DBcon.GetPost(loggedUser, idPhoto)
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	post, errPost := database.DBcon.GetPost(loggedUser, idPhoto)
+	if errPost != nil {
+		logrus.Warn(errPost.Error())
+		utilities.WriteResponse(http.StatusInternalServerError, errPost.Error(), w)
 		return
 	}
 

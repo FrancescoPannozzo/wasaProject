@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fantastic-coffee-decaffeinated/service/database"
 	"fantastic-coffee-decaffeinated/service/utilities"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -29,15 +28,17 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	_ = r.Body.Close()
 
 	if errBody != nil {
-		err := fmt.Errorf("error while reading the body request: %v", errBody)
-		logrus.Println(errBody)
-		utilities.WriteResponse(http.StatusBadRequest, err.Error(), w)
+		message := "error while reading the body request"
+		rt.baseLogger.WithError(errBody).Warning(message)
+		utilities.WriteResponse(http.StatusBadRequest, message, w)
 		return
 	}
 
 	dec, errDec := base64.StdEncoding.DecodeString(string(reqBody))
 	if errDec != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, "Server Error while decoding the photo", w)
+		message := "Server Error while decoding the photo"
+		rt.baseLogger.WithError(errDec).Warning(message)
+		utilities.WriteResponse(http.StatusInternalServerError, message, w)
 		return
 	}
 
@@ -48,7 +49,9 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	filePath := filepath.Join("storage", fileName)
 	tmpfile, errCreate := os.Create(filePath)
 	if errCreate != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, "Error while writingcreating", w)
+		message := "Error with the creation of the file to store"
+		rt.baseLogger.WithError(errCreate).Warning(message)
+		utilities.WriteResponse(http.StatusInternalServerError, message, w)
 		return
 	}
 
@@ -57,7 +60,9 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	_, errWrite := tmpfile.Write(dec)
 
 	if errWrite != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, "Error while writing the file", w)
+		message := "Error while writing the file"
+		rt.baseLogger.WithError(errWrite).Warning(message)
+		utilities.WriteResponse(http.StatusInternalServerError, message, w)
 		return
 	}
 
@@ -66,15 +71,18 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	username, err := rt.db.GetNameByID(userId)
-	if err != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, username, w)
+	username, errNameId := rt.db.GetNameByID(userId)
+	if errNameId != nil {
+		message := "error while storing the file"
+		rt.baseLogger.WithError(errNameId).Warning(message)
+		utilities.WriteResponse(http.StatusInternalServerError, message, w)
 		return
 	}
 
 	//Adding the photo data into the DB
-	feedback, err := database.DBcon.InsertPhoto(username, idphoto)
-	if err != nil {
+	feedback, errPhoto := database.DBcon.InsertPhoto(username, idphoto)
+	if errPhoto != nil {
+		rt.baseLogger.WithError(errNameId).Warning(feedback)
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 		return
 	}
@@ -87,7 +95,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	w.WriteHeader(http.StatusCreated)
 	errJson := json.NewEncoder(w).Encode(&photo)
 	if errJson != nil {
-		rt.baseLogger.WithError(err).Warning("wrong idphoto JSON")
+		rt.baseLogger.WithError(errJson).Warning("wrong idphoto JSON")
 		utilities.WriteResponse(http.StatusInternalServerError, "cannot read the request", w)
 		return
 	}

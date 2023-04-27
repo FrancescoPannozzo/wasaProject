@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 // Get the username of the provided photoID.
@@ -14,7 +15,7 @@ func (db *appdbimpl) GetNameFromPhotoId(photoId string) (string, error) {
 	rows := db.c.QueryRow("SELECT User FROM Photo WHERE Id_photo=?", photoId).Scan(&username)
 
 	if errors.Is(rows, sql.ErrNoRows) {
-		return "", rows
+		return "", fmt.Errorf("Cannot find a username associated to the provided photo id. Error %w", rows)
 	}
 
 	return username, nil

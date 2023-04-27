@@ -21,7 +21,7 @@ func (db *appdbimpl) BanUser(banner string, banned string) (string, error) {
 
 	if err != nil {
 		//500
-		return "error execution query", fmt.Errorf("error execution query: %w", err)
+		return "cannot insert the ban into the DB", fmt.Errorf("error execution query: %w", err)
 	}
 	//201
 	return "Banned user inserted in the DB", nil

@@ -14,9 +14,9 @@ import (
 // ban a user
 func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Banning the provided user..")
-	err := database.VerifyUserId(r, ps)
-	if err != nil {
-		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
+	errId := database.VerifyUserId(r, ps)
+	if errId != nil {
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
@@ -52,12 +52,12 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 
 	feedback, err := database.DBcon.BanUser(loggedUser, banned.Username)
 	if errors.Is(err, &utilities.DbBadRequest{}) {
-		logrus.Warn(feedback)
+		rt.baseLogger.WithError(err).Warning(feedback)
 		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
 		return
 	}
 	if err != nil {
-		logrus.Warn(feedback)
+		rt.baseLogger.WithError(err).Warning(feedback)
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 		return
 	}

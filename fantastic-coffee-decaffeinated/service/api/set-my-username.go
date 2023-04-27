@@ -29,10 +29,10 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	err := utilities.CheckUsername(newUsername)
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusBadRequest, err.Error(), w)
+	errCheckUser := utilities.CheckUsername(newUsername)
+	if errCheckUser != nil {
+		logrus.Warn(errCheckUser.Error())
+		utilities.WriteResponse(http.StatusBadRequest, errCheckUser.Error(), w)
 		return
 	}
 
@@ -43,7 +43,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	if !database.DBcon.CheckOwnership(userId, oldUsername) {
 		feedback := "attempt to change someone else's username detected"
 		logrus.Warn(feedback)
-		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
+		utilities.WriteResponse(http.StatusUnauthorized, feedback, w)
 		return
 	}
 
@@ -63,10 +63,10 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	err = database.DBcon.ModifyUsername(userid, newUsername)
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	errModifyName := database.DBcon.ModifyUsername(userid, newUsername)
+	if errModifyName != nil {
+		logrus.Warn(errModifyName.Error())
+		utilities.WriteResponse(http.StatusInternalServerError, errModifyName.Error(), w)
 		return
 	}
 

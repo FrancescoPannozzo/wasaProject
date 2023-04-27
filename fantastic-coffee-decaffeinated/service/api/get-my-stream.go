@@ -13,30 +13,31 @@ import (
 // Get a user stream
 func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Getting the user stream..")
-	err := database.VerifyUserId(r, ps)
+	errId := database.VerifyUserId(r, ps)
 
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusUnauthorized, err.Error(), w)
+	if errId != nil {
+		logrus.Warn(errId.Error())
+		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
 	// error not managed because GeNameById is already called in VerifyUserId
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 
-	thumbnails, err := database.DBcon.GetFollowedThumbnails(loggedUser)
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	thumbnails, errThumb := database.DBcon.GetFollowedThumbnails(loggedUser)
+	if errThumb != nil {
+		logrus.Warn(errThumb.Error())
+		utilities.WriteResponse(http.StatusInternalServerError, errThumb.Error(), w)
 		return
 	}
 
-	result, err := json.Marshal(thumbnails)
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	result, errConv := json.Marshal(thumbnails)
+	if errConv != nil {
+		logrus.Warn(errConv.Error())
+		utilities.WriteResponse(http.StatusInternalServerError, errConv.Error(), w)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(result)

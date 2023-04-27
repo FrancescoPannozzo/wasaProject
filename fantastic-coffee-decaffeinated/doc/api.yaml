@@ -83,6 +83,8 @@ paths:
       - in: query
         name: username
         required: true
+        description: |
+          The username to search
         schema:
           type: string
           example: "pan82"
@@ -799,6 +801,9 @@ components:
         A rappresentation of a thumnail pic with other informations
       type: object
       properties:
+        username:
+          description: the photo owner
+          type: string
         idphoto:
           description: the photo url
           type: string

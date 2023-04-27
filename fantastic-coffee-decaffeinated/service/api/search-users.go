@@ -23,18 +23,18 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 
 	targetUser := r.URL.Query().Get("username")
 
-	err := utilities.CheckUsername(targetUser)
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusBadRequest, err.Error(), w)
+	errCheckUser := utilities.CheckUsername(targetUser)
+	if errCheckUser != nil {
+		logrus.Warn(errCheckUser.Error())
+		utilities.WriteResponse(http.StatusBadRequest, errCheckUser.Error(), w)
 		return
 	}
 
-	usernames, err := database.DBcon.GetUsernames(targetUser)
+	usernames, errGetNames := database.DBcon.GetUsernames(targetUser)
 
-	if err != nil {
-		logrus.Warn(err.Error())
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	if errGetNames != nil {
+		logrus.Warn(errGetNames.Error())
+		utilities.WriteResponse(http.StatusInternalServerError, errGetNames.Error(), w)
 		return
 	}
 
@@ -45,9 +45,9 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(&usernames)
-	if err != nil {
-		utilities.WriteResponse(http.StatusInternalServerError, err.Error(), w)
+	errEnc := json.NewEncoder(w).Encode(&usernames)
+	if errEnc != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, errEnc.Error(), w)
 		return
 	}
 	logrus.Println("Done!")

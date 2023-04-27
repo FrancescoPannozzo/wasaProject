@@ -71,6 +71,6 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	utilities.WriteResponse(http.StatusOK, "Username successfully updated", w)
-	logrus.Info("Update done!")
+	logrus.Info("Update done!!")
 	return
 }

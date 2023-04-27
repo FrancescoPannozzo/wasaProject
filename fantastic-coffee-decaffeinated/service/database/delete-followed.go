@@ -12,7 +12,7 @@ func (db *appdbimpl) DeleteFollowed(follower string, followed string) (string, e
 	var user string
 	rows := db.c.QueryRow("SELECT Follower FROM Follow WHERE Follower=? AND Followed=?", follower, followed).Scan(&user)
 	if errors.Is(rows, sql.ErrNoRows) {
-		return "warning: user not found for the unfollow operation", &utilities.DbBadRequest{}
+		return "warning: user not found in the Followers list", &utilities.DbBadRequest{}
 	}
 
 	_, err := db.c.Exec("DELETE FROM Follow WHERE Follower = ? AND Followed = ?", follower, followed)

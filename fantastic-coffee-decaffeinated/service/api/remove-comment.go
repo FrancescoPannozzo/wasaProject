@@ -34,8 +34,9 @@ func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps http
 	loggedUser, _ := database.DBcon.GetNameByID(utilities.GetBearerID(r))
 	commentOwner, errUser := database.DBcon.GetNameFromCommentId(ps.ByName("idComment"))
 	if errUser != nil {
-		logrus.Warn(errUser.Error())
-		utilities.WriteResponse(http.StatusNotFound, "comment not found", w)
+		message := "comment not found"
+		rt.baseLogger.WithError(errUser).Warning(message)
+		utilities.WriteResponse(http.StatusNotFound, message, w)
 		return
 	}
 	if loggedUser != commentOwner {

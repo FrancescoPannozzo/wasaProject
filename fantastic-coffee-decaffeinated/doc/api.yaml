@@ -506,6 +506,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalFeedback"
+        "204":
+          description: Like already done, nothing to do
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: photo id not valid for likePhoto operation
           content:

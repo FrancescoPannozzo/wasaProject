@@ -8,8 +8,8 @@ import (
 )
 
 func (db *appdbimpl) UnbanUser(banner string, banned string) (string, error) {
-	var bannedUser string
-	rows := db.c.QueryRow("SELECT Banner FROM Ban WHERE Banned=?", banned).Scan(&bannedUser)
+	var bannerUser string
+	rows := db.c.QueryRow("SELECT Banner FROM Ban WHERE Banned=? AND Banner=?;", banned, banner).Scan(&bannerUser)
 	if errors.Is(rows, sql.ErrNoRows) {
 		// 404 like not found
 		return "Ban not found", &utilities.DbBadRequest{}

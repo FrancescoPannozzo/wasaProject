@@ -446,6 +446,22 @@ paths:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "409":
+          description: |
+            follow already done/auto-follow attempt/provided user to follow not in DB
+            nothing to process
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "422":
+          description: |
+            provided user to follow not in DB
+            nothing to process
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the followUser request
           content:
@@ -488,7 +504,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalError"
-          
   /photos/{idPhoto}/likes:
     parameters:
       - $ref: "#/components/parameters/idPhoto"
@@ -497,17 +512,11 @@ paths:
       operationId: likePhoto
       summary: Give a like to the photo identified by idPhoto
       description: |
-        Allow to post a like on a user photo, so username is the visited user and
+        Allow to post a like on a user photo,
         idPhoto is the photo to like
       responses:
         "201":
           description: Like done on likePhoto operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/generalFeedback"
-        "204":
-          description: Like already done, nothing to do
           content:
             application/json:
               schema:
@@ -520,6 +529,12 @@ paths:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "409":
+          description: Like already done, nothing to do
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the likePhoto request
           content:
@@ -731,6 +746,22 @@ paths:
                 $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "409":
+          description: |
+            Logged user cannot ban himself/provided user already banned
+            nothing to process
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "422":
+          description: |
+            user to ban not in the DB,
+            nothing to process
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "500":
           description: The server cannot proces the banUser request
           content:

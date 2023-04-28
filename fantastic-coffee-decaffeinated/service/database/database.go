@@ -124,6 +124,10 @@ type AppDatabase interface {
 
 	// Get a username list by searching with the provided tergetUSer. Returns the usernames and nil if successfull
 	GetUsernames(targetUser string) ([]utilities.Username, error)
+	// Get the followed users by the provided loggedUser
+	GetFollowed(loggedUser string) ([]utilities.Username, error)
+	// Return the logged user followers
+	GetFollowers(LoggedUser string) ([]utilities.Username, error)
 
 	Ping() error
 }

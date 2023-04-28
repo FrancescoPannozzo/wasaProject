@@ -33,26 +33,29 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 
 	//check if the user to follow is in the DB
 	if !(database.DBcon.UsernameInDB(userToFollow)) {
-		utilities.WriteResponse(http.StatusBadRequest, "Warning, the user provided is not in the DB", w)
+		message := "Warning, the user provided is not in the DB"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusUnprocessableEntity, message, w)
 		return
 	}
 
 	//Check if the user is trying to follow himself
 	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if loggedUser == userToFollow {
-		utilities.WriteResponse(http.StatusBadRequest, "Warning, you cannot follow yourself", w)
+		utilities.WriteResponse(http.StatusConflict, "Warning, you cannot follow yourself", w)
 		return
 	}
 
 	//Insert the user to follow in the DB
-	feedback, err := database.DBcon.InsertFollower(loggedUser, userToFollow)
-	if errors.Is(err, &utilities.DbBadRequest{}) {
+	feedback, errIns := database.DBcon.InsertFollower(loggedUser, userToFollow)
+	if errors.Is(errIns, &utilities.DbBadRequest{}) {
 		logrus.Warn(feedback)
-		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
+		utilities.WriteResponse(http.StatusConflict, feedback, w)
 		return
 	}
 
-	if err != nil {
+	if errIns != nil {
+		logrus.Warn(feedback)
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)
 		return
 	}

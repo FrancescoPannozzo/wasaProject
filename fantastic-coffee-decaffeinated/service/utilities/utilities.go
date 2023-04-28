@@ -51,6 +51,15 @@ type Post struct {
 	Comments    []Comment `json:"comments"`
 }
 
+// a rappresentation of a user profile
+type Profile struct {
+	Username    string      `json:"username"`
+	PhotoNumber int         `json:"nphoto"`
+	Followers   []Username  `json:"followers"`
+	Followed    []Username  `json:"followed"`
+	Thumbnail   []Thumbnail `json:"thumbnails"`
+}
+
 // A rappresentation of a 4XX/500 message error in string format
 type ErrorResponse struct {
 	Error string `json:"error"`
@@ -99,10 +108,9 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(httpStatus)
 	var response PayloadFeedback
-	switch httpStatus {
-	case 401, 400, 404, 500:
+	if httpStatus >= 400 {
 		response = &ErrorResponse{Error: payload}
-	case 200, 201:
+	} else {
 		response = &FeedbackResponse{Feedback: payload}
 	}
 

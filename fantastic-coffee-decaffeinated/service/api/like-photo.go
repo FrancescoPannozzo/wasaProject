@@ -46,7 +46,7 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	feedback, err := database.DBcon.LikePhoto(loggedUser, ps.ByName("idPhoto"))
 	if errors.Is(err, &utilities.DbBadRequest{}) {
 		rt.baseLogger.WithError(err).Warning(feedback)
-		utilities.WriteResponse(http.StatusNoContent, feedback, w)
+		utilities.WriteResponse(http.StatusConflict, feedback, w)
 		return
 	}
 	if err != nil {

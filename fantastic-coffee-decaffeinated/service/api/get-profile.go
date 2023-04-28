@@ -50,9 +50,29 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
+	var profile utilities.Profile
+
+	profile.Username = loggedUser
+	profile.PhotoNumber = len(thumbnails)
+	profile.Thumbnail = thumbnails
+	var errFollowed error
+	profile.Followed, errFollowed = database.DBcon.GetFollowed(loggedUser)
+	if errFollowed != nil {
+		message := "cannot get the followed list from the DB"
+		rt.baseLogger.WithError(errFollowed).Warning(message)
+		utilities.WriteResponse(http.StatusInternalServerError, message, w)
+	}
+	var errFollowers error
+	profile.Followers, errFollowers = database.DBcon.GetFollowers(loggedUser)
+	if errFollowers != nil {
+		message := "cannot get the followers list from the DB"
+		rt.baseLogger.WithError(errFollowed).Warning(message)
+		utilities.WriteResponse(http.StatusInternalServerError, message, w)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	errEnc := json.NewEncoder(w).Encode(&thumbnails)
+	errEnc := json.NewEncoder(w).Encode(&profile)
 	if errEnc != nil {
 		utilities.WriteResponse(http.StatusInternalServerError, errEnc.Error(), w)
 		return

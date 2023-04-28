@@ -38,7 +38,9 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 
 	if loggedUser == banned.Username {
-		utilities.WriteResponse(http.StatusBadRequest, "Logged user cannot ban himself", w)
+		message := "Logged user cannot ban himself"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusConflict, message, w)
 		return
 	}
 
@@ -46,14 +48,14 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	if !database.DBcon.UsernameInDB(banned.Username) {
 		message := "User to ban not found"
 		logrus.Warn(message)
-		utilities.WriteResponse(http.StatusBadRequest, message, w)
+		utilities.WriteResponse(http.StatusUnprocessableEntity, message, w)
 		return
 	}
 
 	feedback, err := database.DBcon.BanUser(loggedUser, banned.Username)
 	if errors.Is(err, &utilities.DbBadRequest{}) {
 		rt.baseLogger.WithError(err).Warning(feedback)
-		utilities.WriteResponse(http.StatusBadRequest, feedback, w)
+		utilities.WriteResponse(http.StatusConflict, feedback, w)
 		return
 	}
 	if err != nil {

@@ -34,6 +34,7 @@ func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprou
 
 	if !rt.db.CheckOwnership(utilities.GetBearerID(r), ps.ByName("username")) {
 		message := "The logged user can't remove a like of other users"
+		logrus.Warn(message)
 		utilities.WriteResponse(http.StatusUnauthorized, message, w)
 		return
 	}

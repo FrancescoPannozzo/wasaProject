@@ -1,23 +1,22 @@
 package database
 
 import (
-	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
 )
 
 // Return the logged user followers
-func (db *appdbimpl) GetFollowers(loggedUser string) ([]utilities.Username, error) {
+func (db *appdbimpl) GetFollowers(loggedUser string) ([]string, error) {
 
-	var followers []utilities.Username
+	var followers []string
 
 	rows, err := db.c.Query("SELECT Follower FROM Follow WHERE Followed=?;", loggedUser)
 	if err != nil {
 		return nil, fmt.Errorf("error execution query: %w", err)
 	}
 
-	var username utilities.Username
+	var username string
 	for rows.Next() {
-		rows.Scan(&username.Name)
+		rows.Scan(&username)
 		followers = append(followers, username)
 	}
 

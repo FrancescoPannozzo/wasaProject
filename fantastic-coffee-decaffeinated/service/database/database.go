@@ -123,11 +123,11 @@ type AppDatabase interface {
 	GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error)
 
 	// Get a username list by searching with the provided tergetUSer. Returns the usernames and nil if successfull
-	GetUsernames(targetUser string) ([]utilities.Username, error)
+	GetUsernames(targetUser string) ([]string, error)
 	// Get the followed users by the provided loggedUser
-	GetFollowed(loggedUser string) ([]utilities.Username, error)
+	GetFollowed(loggedUser string) ([]string, error)
 	// Return the logged user followers
-	GetFollowers(LoggedUser string) ([]utilities.Username, error)
+	GetFollowers(LoggedUser string) ([]string, error)
 
 	Ping() error
 }

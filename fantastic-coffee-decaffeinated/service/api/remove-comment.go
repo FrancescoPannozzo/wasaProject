@@ -12,6 +12,7 @@ import (
 
 // Remove a comment
 func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	logrus.Infoln("Removing the comment..")
 	errId := database.VerifyUserId(r, ps)
 	if errId != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
@@ -58,5 +59,6 @@ func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	utilities.WriteResponse(http.StatusOK, feedback, w)
+	logrus.Infoln("Done!")
 	return
 }

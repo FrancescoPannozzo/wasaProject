@@ -6,6 +6,13 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:3000
+tags:
+  - name: login
+    description: user login operations
+  - name: user
+    description: user related operations 
+  - name: photo
+    description: photo related operations
 paths:
   /session:
     post:
@@ -22,14 +29,20 @@ paths:
         content:
           application/json:
             schema:
+              description: The username of the user for the login
               type: object
               properties:
                 name:
+                  description: The user's username
                   type: string
-                  example: Maria
                   pattern: '^.*?$'
                   minLength: 3
                   maxLength: 16
+            examples:
+              user:
+                summary: maria-user
+                value:
+                  name: maria
         required: true
       responses:
         '201':
@@ -37,87 +50,272 @@ paths:
           content:
            application/json:
             schema:
+              description: |
+                A json object with one string field referred to the 
+                user identifier
               type: object
               properties:
                 identifier:
+                  description: The user-identifier
                   type: string
                   example: "abcdef012345"
-  /profiles/{userId}:
+            examples:
+              user:
+                summary: maria-user-id
+                value:
+                  name: "abcdef012345"
+        "400":
+          description: The content of the loggin request is not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        '500':
+          description: The server cannot elaborate the loggin request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /profiles:
+    parameters:
+      - in: query
+        name: username
+        required: true
+        description: |
+          The username to search
+        schema:
+          type: string
+          example: "pan82"
+    get:
+      tags: ["user"]
+      operationId: searchUser
+      summary: Return usernames list
+      description: |
+        return the list of usernames related to the one provided
+        in the search query
+      responses:
+        "200":
+          description: Downloaded the usernames search list
+          content:
+            application/json:
+              schema:
+                description: an array of usernames
+                type: array
+                items:
+                  type: string
+                example: ["username1", "username2", "username3"]
+        "400":
+          description: |
+            the username provided for the search is not valid
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: |
+            no usernames founds
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalFeedback"
+        '500':
+          description: |
+            The server cannot elaborate the request to get the usernames list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+                
+  /profiles/{username}:
+    parameters:
+      - $ref: "#/components/parameters/username"
     get:
       tags: ["user"]
       operationId: getUserProfile
       summary: Return one user profile
       description: |
-        Get the user profile with associated userId
-      parameters:
-        - $ref: "#/components/parameters/userId"
+        Get the user profile with associated username
       responses:
         "200":
-          description: Downloaded the specified user profile page
+          description: Download the specified user profile page
           content:
             application/json:
               schema:
                 description: |
-                  An object with the user photo number, follower list, following list and thumbnail objects list
+                  an object with thfe profile username, the uploaded photo number,
+                  the followers list, the followed list and an array of thumbnailObjects
                 type: object
                 properties:
-                  nPhoto:
+                  username:
+                    description: the user profile
+                    type: string
+                    example: francesco
+                  nphoto:
+                    description: the uploaded phot number
                     type: integer
+                    example: 4
                   followers:
+                    description: the followers list
                     type: array
                     items:
                       type: string
-                  following:
+                    example: ["username1", "username2", "username3"]
+                    minItems: 0
+                    maxItems: 1000000
+                  followed:
+                    description: the followed list
                     type: array
                     items:
                       type: string
+                    example: ["username1", "username2", "username3"]
+                    minItems: 0
+                    maxItems: 1000000
                   thumbnails:
+                    description: a thumbnail array with the photo urls and informations
                     type: array
                     items:
-                      $ref: "#/components/schemas/thumbnailImage"
-        "404":
-          description: User not found
+                      $ref: "#/components/schemas/thumbnailObject"
+                    minItems: 0
+                    maxItems: 1000
+        "400":
+          description: |
+            the username provided for the user profile is not valid
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-    post:
+        "404":
+          description: User not found
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
+        '500':
+          description: The server cannot elaborate the request to get the profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+    put:
       tags: ["user"]
       operationId: setMyUserName
       summary: set the user name
       description: Allow to set a new username
-      parameters:
-        - $ref: "#/components/parameters/userId"
       requestBody:
+        description: the new username to set
         content:
           application/json:
             schema:
               description: The new username
-              type: string
+              type: object
+              properties:
+                name:
+                  description: The new user's username to set
+                  type: string
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+            examples:
+              name:
+                summary: maria-user
+                value:
+                  name: maria
+        required: true
       responses:
         "200":
           description: Username updated, everything fine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
           description: The username is not allowed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        '500':
+          description: The server cannot elaborate the username update request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         
-  /myStream:
+  /my-stream:
     get:
       tags: ["user"]
       operationId: getMyStream
-      summary: Return logged user stream
+      summary: Return the logged user stream
       description: |
-        Get the user stream
+        Get the user stream consisting in a list of thumbnailObjects
       responses:
         "200":
           description: Downloaded the user stream
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/thumbnailImage"
+                type: array
+                items:
+                  $ref: "#/components/schemas/thumbnailObject"
+                minItems: 0
+                maxItems: 1000
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-  
-  /profiles/{userId}/photos/{idPhoto}:
+        '500':
+          description: The server cannot elaborate the getMyStream request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /posts/{idPhoto}:
+    parameters:
+      - $ref: "#/components/parameters/idPhoto"
+    get:
+      tags: ["photo"]
+      operationId: getPost
+      summary: get a user post
+      description: |
+        Get a full user post
+        with the photo, likes number, date time and comments list
+      responses:
+        "200":
+          description: post downloaded
+          content:           
+            application/json:
+              schema:
+                $ref: "#/components/schemas/postObject"
+        "400":
+          description: photo id not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        
+        "404":
+          description: Post not found for get operation
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
+        '500':
+          description: The server cannot elaborate the getPost request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /photos/{idPhoto}:
+    parameters:
+      - $ref: "#/components/parameters/idPhoto"
     get:
       tags: ["photo"]
       operationId: getPhoto
@@ -125,207 +323,512 @@ paths:
       description: |
         Get a full user photo (not thumbnail)
         with likes number and comments list
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       responses:
-        "202":
+        "200":
           description: Photo, likes and comments downloaded
-          content:           
-            application/json:
-              schema:
-                $ref: "#/components/schemas/photoObject"
-        "404":
-          description: Photo not found
+          content:       
+            image/*:     
+             schema: 
+               type: string
+               format: binary
+        "400":
+          description: Photo ID not valid for getPhoto operation
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Photo not found for getPhoto operation
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/generalError"
+        '500':
+          description: The server cannot elaborate the getPhoto request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+    delete:
+      tags: ["photo"]
+      operationId: deletePhoto
+      summary: Delete a user photo
+      description: |
+        Delete a photo from the current user logged in
+      responses:
+        "200":
+          description: Photo deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
+        "400":
+          description: photo id not valid for deletePhoto operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Photo not found for delete operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the deletePhoto request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /photos:
     post:
       tags: ["photo"]
       operationId: uploadPhoto
       summary: Upload a user photo
       description: |
         Upload a photo from the current user logged in
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       requestBody:
         content:
           image/*:
             schema:
+              description: The photo file base64 rappresentation
               type: string
-              format: binary
+              format: base64
       responses:
-        "202":
-          description: Photo uploaded, everything ok
+        "201":
+          description: Photo uploaded
+          content:
+            application/json:
+              schema:
+                description: A json object with one property containing the photo id
+                type: object
+                properties:
+                  idphoto:
+                    description: The photo id
+                    type: string
+              examples:
+                photouser:
+                  summary: maria-photo
+                  value:
+                    idphoto: abcd20132303151010
         "400":
-          description: Photo format/photo id/user id not valid
+          description: photo format not valid for uploadPhoto operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-    delete:
-      tags: ["photo"]
-      operationId: deletePhoto
-      summary: Delete a user photo
-      description: |
-        Upload a photo from the current user logged in
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
-      responses:
-        "202":
-          description: Photo deleted
-        "400":
-          description: Invalid user id or photo id
-        "404":
-          description: Photo not found
-        "401":
-          $ref: "#/components/responses/UnauthorizedError"
+        '500':
+          description: The server cannot elaborate deconding photo file request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
           
-  /profiles/{userId}/follows:
+  /follows:
     post:
       tags: ["user"]
       operationId: followUser
       summary: Follow one user
       description: |
-        Allow to follow the visitng user
-      parameters:
-        - $ref: "#/components/parameters/userId"
+        Allow to follow the username in the path
       requestBody:
         content:
           application/json:
             schema:
-              type: boolean
+              description: the username of the user to follow
+              type: object
+              properties:
+                name:
+                  description: The user's username to follow
+                  type: string
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+            examples:
+              user:
+                summary: maria-user
+                value:
+                  name: maria
+        required: true
       responses:
-        "202":
+        "201":
           description: User followed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: Invalid user id
+          description: Invalid username for followUser operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "409":
+          description: |
+            follow already done/auto-follow attempt/provided user to follow not in DB
+            nothing to process
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "422":
+          description: |
+            provided user to follow not in DB
+            nothing to process
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the followUser request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /follows/{username}:
+    parameters:
+      - $ref: "#/components/parameters/username"
     delete:
       tags: ["user"]
       operationId: unfollowUser
       summary: Unfollow one user
       description: |
         Allow to unfollow on user
-      parameters:
-        - $ref: "#/components/parameters/userId"
       responses:
-        "202":
+        "200":
           description: User unfollowed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: Invalid user id
+          description: Invalid username for unfollowUser
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-          
-  /profiles/{userId}/photos/{idPhoto}/like:
+        "404":
+          description: username not found for unfollow user operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the unfollowUser request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /photos/{idPhoto}/likes:
+    parameters:
+      - $ref: "#/components/parameters/idPhoto"
     post: 
       tags: ["photo"]
       operationId: likePhoto
-      summary: Give a like to a photo
+      summary: Give a like to the photo identified by idPhoto
       description: |
-        Allow to post a like on a user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: boolean
+        Allow to post a like on a user photo,
+        idPhoto is the photo to like
       responses:
-        "202":
-          description: Like done
+        "201":
+          description: Like done on likePhoto operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: Photo format/photo id/user id not valid
+          description: photo id not valid for likePhoto operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
-          $ref: "#/components/responses/UnauthorizedError"  
+          $ref: "#/components/responses/UnauthorizedError"
+        "409":
+          description: Like already done, nothing to do
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the likePhoto request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /photos/{idPhoto}/likes/{username}:
+    parameters:
+      - $ref: "#/components/parameters/idPhoto"
+      - $ref: "#/components/parameters/username"  
     delete:
       tags: ["photo"]
-      operationId: unlikePhoto  
-      summary: unLike a photo
+      operationId: removeLike  
+      summary: remove a like to a photo
       description: |
-        Allow to unlike one user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
+        Remove a like username gave to the photo identified by idPhoto
       responses:
-        "202":
-          description: Like done
+        "200":
+          description: like removed on removeLike operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: Photo format/photo id/user id not valid
-          
-  /profiles/{userId}/photos/{idPhoto}/comments:
+          description: photo id/username not valid for unlikePhoto operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: like not found for removeLike operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the removePhoto request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /photos/{idPhoto}/comments:
+    parameters:
+      - $ref: "#/components/parameters/idPhoto"
     post: 
       tags: ["photo"]
       operationId: commentPhoto
       summary: Give a comment to a photo
       description: |
         Allow to post a comment on a user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       requestBody:
         content:
           application/json:
             schema:
-              type: string
+              description: |
+                The comment to post to a photo
+              type: object
+              properties:
+                comment:
+                  description: The content of the comment
+                  type: string
+            examples:
+              photocomment:
+                summary: the maria comment to the idPhoto photo
+                value:
+                  comment: this photo is really bad!
       responses:
-        "202":
+        "201":
           description: comment done
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: Photo format/photo id/user id not valid
+          description: |
+            Photo id not valid for commentPhoto operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
-          $ref: "#/components/responses/UnauthorizedError"  
+          $ref: "#/components/responses/UnauthorizedError"
+        "500":
+          description: The server cannot proces the commentPhoto request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+    get: 
+      tags: ["photo"]
+      operationId: getComments
+      summary: Get the comments for a photo
+      description: |
+        Allow to get the comments posted on a user photo
+      responses:
+        "200":
+          description: the returned comments list
+          content:
+            application/json:
+              schema:
+                description: |
+                  a comments object listing all the comments related to a photo
+                type: object
+                properties:
+                  comments:
+                    description: a single comment related to the photo
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/comment"
+                    minItems: 0
+                    maxItems: 1000
+        "400":
+          description: photo id not valid for getComments operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: comment list not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the getComment request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /photos/{idPhoto}/comments/{idComment}:
+    parameters:
+      - $ref: "#/components/parameters/idPhoto"
+      - $ref: "#/components/parameters/idComment"
     delete:
       tags: ["photo"]
       operationId: uncommentPhoto  
       summary: uncomment a photo
       description: |
         Allow to uncomment one user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/idPhoto"
       responses:
-        "202":
-          description: comment erased
+        "200":
+          description: comment deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
+        "400":
+          description: photo id/comment id not valid for remove comment operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-          
-  /profiles/{userId}/bans:        
+        "404":
+          description: comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the remove comment request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /bans:
     post: 
-      tags: ["photo"]
+      tags: ["user"]
       operationId: banUser
       summary: ban one user
       description: |
-        Allow to ban a user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
+        Allow to ban a user
       requestBody:
         content:
           application/json:
             schema:
-              type: boolean
+              description: the banned user to insert in the bans list
+              type: object
+              properties:
+                name:
+                  description: The banned user's username
+                  type: string
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+            examples:
+              user:
+                summary: maria-user
+                value:
+                  name: maria
+        required: true
       responses:
-        "202":
+        "201":
           description: ban done
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: user id not valid
+          description: username not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
-          $ref: "#/components/responses/UnauthorizedError" 
+          $ref: "#/components/responses/UnauthorizedError"
+        "409":
+          description: |
+            Logged user cannot ban himself/provided user already banned
+            nothing to process
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "422":
+          description: |
+            user to ban not in the DB,
+            nothing to process
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the banUser request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+  /bans/{username}:
+    parameters:
+      - $ref: "#/components/parameters/username" 
     delete:
-      tags: ["photo"]
+      tags: ["user"]
       operationId: unbanUser  
       summary: unban a user
       description: |
-        Allow to unban one user photo
-      parameters:
-        - $ref: "#/components/parameters/userId"
+        Allow to unban the username as path parameter
       responses:
-        "202":
+        "200":
           description: user unbanned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         "400":
-          description: Photo format/photo id/user id not valid
+          description: username not valid for unBanUser operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
-          
+        "404":
+          description: ban not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
+        "500":
+          description: The server cannot proces the unbanUser request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalError"
 components:
   securitySchemes:
     bearerAuth:   
@@ -333,11 +836,11 @@ components:
       scheme: bearer
       bearerFormat: JWT
   parameters:
-    userId:
-      name: userId
+    username:
+      name: username
       in: path
       required: true
-      description: an user Id to identify a user
+      description: A username
       schema:
         type: string
     idPhoto:
@@ -347,50 +850,115 @@ components:
       description: a photo Id to identify a photo
       schema:
         type: string
+    idComment:
+      name: idComment
+      in: path
+      required: true
+      description: a comment Id to identify a comment
+      schema:
+        type: string
   schemas:
-    thumbnailImage:
+    thumbnailObject:
       description: |
         A rappresentation of a thumnail pic with other informations
       type: object
       properties:
-        thumbnailUrl:
-          # image url
+        username:
+          description: the photo owner
           type: string
-        dateTime:
+        photoid:
+          description: the photo id
+          type: string
+        photourl:
+          description: the photo url
+          type: string
+        datetime:
+          description: the post date time to the referred photo
           type: string
           format: date-time
-        nLikes:
+        nlikes:
+          description: The likes number to the referred photo
           type: integer
-        nComments:
+        ncomments:
+          description: The comments number to the referred photo
           type: integer
-    photoObject:
+      example:
+        photo1:
+          username: francesco
+          idphoto: idphoto1234
+          photourl: "http:/0.0.0.0:3000/photos/idphoto1234"
+          datetime: "2022-02-02T13:30:15"
+          nlikes: 10
+          ncomments: 3
+        photo2:
+          username: francesco
+          idphoto: idphoto4321
+          photourl: "http:/0.0.0.0:3000/photos/idphoto4321"
+          datetime: "2022-03-09T17:20:24"
+          nlikes: 5
+          ncomments: 2
+    postObject:
       description: |
         An object with the original photo (not thumbnail), likes number
         and comment list
       type: object
       properties:
         originalImage:
-          # image url
+          description: The image url
           type: string
         nLikes:
+          description: The likes number referred to the photo
           type: integer
         comments:
+          description: The comments list referred to the photo
           type: array
           items:
             $ref: "#/components/schemas/comment"
+          minItems: 0
+          maxItems: 1000
     comment:
       description: |
-        A comment by one user to one image, it contains che userId of the
+        A comment by one user to one image, it contains che username of the
         comment owner and the comment itself
       type: object
       properties:
-        userId:
+        username:
+          description: The username of the comment
           type: string
         comment:
+          description: The comment content
           type: string
+      example:
+        comment1:
+          username: "pippo"
+          comment: "wow!"
+        comment2:
+          username: "pluto"
+          comment: "woof!"
+    generalError:
+      description: An object describing an error
+      type: object
+      properties:
+        error:
+          description: The message content of the error
+          type: string
+          example: "error description"
+    generalFeedback:
+      description: The feedback provided from a response
+      type: object
+      properties:
+        feedback:
+          description: The content of the feedback
+          type: string
+          example: "feedback description"
+
   responses:
     UnauthorizedError:
       description: Access identifier is missing or invalid
-      
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/generalError"
+
 security:
  - bearerAuth: []

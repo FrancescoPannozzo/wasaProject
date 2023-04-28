@@ -1,14 +1,12 @@
 package database
 
 import (
-	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
 )
 
-// @todo: e' l'handler che decide che tipo di http status code mandare, nelle data abse functions ritornare solo la roba richiesta ed err
-func (db *appdbimpl) GetUsernames(targetUser string) ([]utilities.Username, error) {
-
-	var usernames []utilities.Username
+// Get a list of usernames
+func (db *appdbimpl) GetUsernames(targetUser string) ([]string, error) {
+	var usernames []string
 
 	querytStmt := fmt.Sprintf("SELECT Nickname FROM User WHERE Nickname LIKE '%%%s%%';", targetUser)
 
@@ -17,9 +15,9 @@ func (db *appdbimpl) GetUsernames(targetUser string) ([]utilities.Username, erro
 		return nil, fmt.Errorf("error execution query: %w", err)
 	}
 
-	var username utilities.Username
+	var username string
 	for rows.Next() {
-		rows.Scan(&username.Name)
+		rows.Scan(&username)
 		usernames = append(usernames, username)
 	}
 

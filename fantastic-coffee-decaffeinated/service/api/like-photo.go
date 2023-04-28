@@ -14,9 +14,14 @@ import (
 func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Posting a like to the photo..")
 	errId := database.VerifyUserId(r, ps)
-
 	if errId != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
+		return
+	}
+
+	if !utilities.IsPhotoIdValid(ps.ByName("idPhoto")) {
+		logrus.Warn("photo id not valid")
+		utilities.WriteResponse(http.StatusBadRequest, "Invalid photoID", w)
 		return
 	}
 
@@ -34,12 +39,6 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	if database.DBcon.CheckBan(loggedUser, targetUser) {
 		logrus.Warn("Banned user found")
 		utilities.WriteResponse(http.StatusUnauthorized, "the logged user is banned for the specific request", w)
-		return
-	}
-
-	if !utilities.IsPhotoIdValid(ps.ByName("idPhoto")) {
-		logrus.Warn("photo not found")
-		utilities.WriteResponse(http.StatusBadRequest, "Invalid photoID", w)
 		return
 	}
 

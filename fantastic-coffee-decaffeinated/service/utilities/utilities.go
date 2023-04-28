@@ -18,7 +18,7 @@ import (
 // a rappresentation of a thubnail image with informations
 type Thumbnail struct {
 	Username       string `json:"username"`
-	PhotoId        string `json:"photoId"`
+	PhotoId        string `json:"photoid"`
 	PhotoURL       string `json:"photourl"`
 	DateTime       string `json:"datetime"`
 	LikesNumber    int    `json:"nlikes"`
@@ -55,8 +55,8 @@ type Post struct {
 type Profile struct {
 	Username    string      `json:"username"`
 	PhotoNumber int         `json:"nphoto"`
-	Followers   []Username  `json:"followers"`
-	Followed    []Username  `json:"followed"`
+	Followers   []string    `json:"followers"`
+	Followed    []string    `json:"followed"`
 	Thumbnail   []Thumbnail `json:"thumbnails"`
 }
 

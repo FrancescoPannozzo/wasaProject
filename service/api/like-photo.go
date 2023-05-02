@@ -25,8 +25,14 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	// GetNameById is called in VerifyUserId,the error is already managed, no needs to do the same here
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
+	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
+	if errNameId != nil {
+		message := "Unauthorized user"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		return
+	}
+
 	targetUser, errPhoto := rt.db.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if errPhoto != nil {
 		message := "Photo id to like not found"

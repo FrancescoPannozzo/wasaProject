@@ -28,7 +28,14 @@ func (rt *_router) getPost(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
+	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
+	if errNameId != nil {
+		message := "Unauthorized user"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		return
+	}
+
 	targetUser, errPhoto := database.DBcon.GetNameFromPhotoId(idPhoto)
 	if errPhoto != nil {
 		rt.baseLogger.Warningln(errPhoto.Error())

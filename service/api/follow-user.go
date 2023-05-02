@@ -40,7 +40,14 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	//Check if the user is trying to follow himself
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
+	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
+	if errNameId != nil {
+		message := "Unauthorized user"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		return
+	}
+
 	if loggedUser == userToFollow {
 		utilities.WriteResponse(http.StatusConflict, "Warning, you cannot follow yourself", w)
 		return

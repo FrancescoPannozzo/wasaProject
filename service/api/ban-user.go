@@ -20,7 +20,13 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
+	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
+	if errNameId != nil {
+		message := "Unauthorized user"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		return
+	}
 
 	type Banned struct {
 		Username string `json:"name"`

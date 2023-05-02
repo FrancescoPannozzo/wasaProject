@@ -24,7 +24,14 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 
 	var comments []utilities.Comment
 
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
+	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
+	if errNameId != nil {
+		message := "Unauthorized user"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		return
+	}
+
 	idPhoto := ps.ByName("idPhoto")
 	if !utilities.IsPhotoIdValid(idPhoto) {
 		logrus.Warn("Invalid photo ID")

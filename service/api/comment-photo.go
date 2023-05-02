@@ -20,7 +20,14 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	loggedUser, _ := rt.db.GetNameByID(utilities.GetBearerID(r))
+	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
+	if errNameId != nil {
+		message := "Unauthorized user"
+		logrus.Warn(message)
+		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		return
+	}
+
 	targetUser, errID := database.DBcon.GetNameFromPhotoId(ps.ByName("idPhoto"))
 	if errID != nil {
 		utilities.WriteResponse(http.StatusBadRequest, "The photo id provided is not in the DB", w)

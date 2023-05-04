@@ -3,7 +3,6 @@ package utilities
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"path/filepath"
@@ -34,11 +33,6 @@ type Username struct {
 	Name string `json:"name"`
 }
 
-// An Interfece to be able to set the right type of payload message, error or feedback
-type PayloadFeedback interface {
-	PrintFeedback(s string) string
-}
-
 // A rappresentation of a comment
 type Comment struct {
 	CommentId string `json:"commentid"`
@@ -46,7 +40,7 @@ type Comment struct {
 	Content   string `json:"comment"`
 }
 
-// a rappresentation of a thubnail image with informations
+// a rappresentation of a thumbnail image with informations
 type Post struct {
 	Username    string    `json:"username"`
 	PhotoURL    string    `json:"photourl"`
@@ -64,12 +58,7 @@ type Profile struct {
 	Thumbnail   []Thumbnail `json:"thumbnails"`
 }
 
-// A rappresentation of a 4XX/500 message error in string format
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-// A rappresentation of a 2XX message error in string format
+// A feedback message rappresentation in string format
 type FeedbackResponse struct {
 	Feedback string `json:"feedback"`
 }
@@ -81,16 +70,6 @@ type DbBadRequestError struct{}
 
 func (e *DbBadRequestError) Error() string {
 	return "Bad request for the provided DB operation"
-}
-
-func (er *ErrorResponse) PrintFeedback(s string) string {
-	response := fmt.Sprint("Error response:", s)
-	return response
-}
-
-func (fr *FeedbackResponse) PrintFeedback(s string) string {
-	response := fmt.Sprint("Feedback response:", s)
-	return response
 }
 
 // Get the username from a request, return the username and nil if successful.
@@ -111,12 +90,8 @@ func GetNameFromReq(r *http.Request) (string, error) {
 func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(httpStatus)
-	var response PayloadFeedback
-	if httpStatus >= 400 {
-		response = &ErrorResponse{Error: payload}
-	} else {
-		response = &FeedbackResponse{Feedback: payload}
-	}
+
+	response := &FeedbackResponse{Feedback: payload}
 
 	err := json.NewEncoder(w).Encode(&response)
 	if err != nil {

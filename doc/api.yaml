@@ -69,7 +69,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         '500':
@@ -77,7 +77,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /profiles:
     parameters:
       - in: query
@@ -112,7 +112,7 @@ paths:
           content:
            application/json:
             schema:
-              $ref: "#/components/schemas/generalError"
+              $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
@@ -128,7 +128,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
                 
   /profiles/{username}:
     parameters:
@@ -187,7 +187,7 @@ paths:
           content:
            application/json:
             schema:
-              $ref: "#/components/schemas/generalError"
+              $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
@@ -195,13 +195,13 @@ paths:
           content:
            application/json:
             schema:
-              $ref: "#/components/schemas/generalError"
+              $ref: "#/components/schemas/generalFeedback"
         '500':
           description: The server cannot elaborate the request to get the profile
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
     put:
       tags: ["user"]
       operationId: setMyUserName
@@ -239,7 +239,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         '500':
@@ -247,7 +247,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         
   /my-stream:
     get:
@@ -274,7 +274,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /posts/{idPhoto}:
     parameters:
       - $ref: "#/components/parameters/idPhoto"
@@ -297,7 +297,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         
@@ -306,13 +306,13 @@ paths:
           content:
            application/json:
             schema:
-              $ref: "#/components/schemas/generalError"
+              $ref: "#/components/schemas/generalFeedback"
         '500':
           description: The server cannot elaborate the getPost request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /photos/{idPhoto}:
     parameters:
       - $ref: "#/components/parameters/idPhoto"
@@ -336,7 +336,7 @@ paths:
           content:
            application/json:
             schema:
-              $ref: "#/components/schemas/generalError"
+              $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
@@ -344,13 +344,13 @@ paths:
           content:
            application/json:
             schema:
-              $ref: "#/components/schemas/generalError"
+              $ref: "#/components/schemas/generalFeedback"
         '500':
           description: The server cannot elaborate the getPhoto request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
     delete:
       tags: ["photo"]
       operationId: deletePhoto
@@ -369,7 +369,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
@@ -377,13 +377,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "500":
           description: The server cannot proces the deletePhoto request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /photos:
     post:
       tags: ["photo"]
@@ -420,7 +420,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         '500':
@@ -428,7 +428,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
           
   /follows:
     post:
@@ -468,7 +468,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "409":
@@ -478,7 +478,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "422":
           description: |
             provided user to follow not in DB
@@ -486,13 +486,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "500":
           description: The server cannot proces the followUser request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /follows/{username}:
     parameters:
       - $ref: "#/components/parameters/username"
@@ -514,7 +514,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
@@ -522,13 +522,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "500":
           description: The server cannot proces the unfollowUser request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /photos/{idPhoto}/likes:
     parameters:
       - $ref: "#/components/parameters/idPhoto"
@@ -551,7 +551,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "409":
@@ -559,13 +559,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "500":
           description: The server cannot proces the likePhoto request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /photos/{idPhoto}/likes/{username}:
     parameters:
       - $ref: "#/components/parameters/idPhoto"
@@ -588,7 +588,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
@@ -596,13 +596,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "500":
           description: The server cannot proces the removePhoto request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /photos/{idPhoto}/comments:
     parameters:
       - $ref: "#/components/parameters/idPhoto"
@@ -641,7 +641,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "500":
@@ -649,7 +649,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
     get: 
       tags: ["photo"]
       operationId: getComments
@@ -678,7 +678,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
@@ -686,13 +686,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "500":
           description: The server cannot proces the getComment request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /photos/{idPhoto}/comments/{idComment}:
     parameters:
       - $ref: "#/components/parameters/idPhoto"
@@ -715,7 +715,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
@@ -723,13 +723,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "500":
           description: The server cannot proces the remove comment request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /bans:
     post: 
       tags: ["user"]
@@ -768,7 +768,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "409":
@@ -778,7 +778,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "422":
           description: |
             user to ban not in the DB,
@@ -786,13 +786,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "500":
           description: The server cannot proces the banUser request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
   /bans/{username}:
     parameters:
       - $ref: "#/components/parameters/username" 
@@ -814,7 +814,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
@@ -822,13 +822,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
         "500":
           description: The server cannot proces the unbanUser request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/generalError"
+                $ref: "#/components/schemas/generalFeedback"
 components:
   securitySchemes:
     bearerAuth:   
@@ -935,14 +935,6 @@ components:
         comment2:
           username: "pluto"
           comment: "woof!"
-    generalError:
-      description: An object describing an error
-      type: object
-      properties:
-        error:
-          description: The message content of the error
-          type: string
-          example: "error description"
     generalFeedback:
       description: The feedback provided from a response
       type: object
@@ -958,7 +950,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/generalError"
+            $ref: "#/components/schemas/generalFeedback"
 
 security:
  - bearerAuth: []

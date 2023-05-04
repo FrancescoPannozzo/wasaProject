@@ -79,7 +79,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	//Adding the photo data into the DB
+	// Adding the photo data into the DB
 	feedback, errPhoto := database.DBcon.InsertPhoto(username, idphoto)
 	if errPhoto != nil {
 		rt.baseLogger.WithError(errNameId).Warning(feedback)
@@ -101,5 +101,4 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	logrus.Info("Done!")
-	return
 }

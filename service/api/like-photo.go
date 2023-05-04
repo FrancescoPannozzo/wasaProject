@@ -27,9 +27,8 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 
 	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if errNameId != nil {
-		message := "Unauthorized user"
-		logrus.Warn(message)
-		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		logrus.Warn(utilities.Unauthorized)
+		utilities.WriteResponse(http.StatusUnauthorized, utilities.Unauthorized, w)
 		return
 	}
 
@@ -49,7 +48,7 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	feedback, err := database.DBcon.LikePhoto(loggedUser, ps.ByName("idPhoto"))
-	if errors.Is(err, &utilities.DbBadRequest{}) {
+	if errors.Is(err, &utilities.DbBadRequestError{}) {
 		rt.baseLogger.WithError(err).Warning(feedback)
 		utilities.WriteResponse(http.StatusConflict, feedback, w)
 		return
@@ -62,5 +61,4 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 
 	utilities.WriteResponse(http.StatusCreated, feedback, w)
 	logrus.Infoln("Done!")
-	return
 }

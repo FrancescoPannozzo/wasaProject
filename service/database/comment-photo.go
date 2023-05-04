@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fantastic-coffee-decaffeinated/service/utilities"
 	"fmt"
 )
 
@@ -12,7 +13,7 @@ func (db *appdbimpl) CommentPhoto(username string, idphoto string, comment strin
 
 	if err != nil {
 		// 500 Internal server error
-		return "error execution query in DB", fmt.Errorf("error execution query: %w", err)
+		return utilities.ErrorExecutionQuery, fmt.Errorf("error execution query: %w", err)
 	}
 	// 200 status created
 	return "comment added, ok", nil

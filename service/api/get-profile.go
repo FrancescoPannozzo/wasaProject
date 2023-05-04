@@ -16,16 +16,15 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 	errId := database.VerifyUserId(r, ps)
 
 	if errId != nil {
-		logrus.Warn("Unauthorized user")
+		logrus.Warn(utilities.Unauthorized)
 		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
 	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if errNameId != nil {
-		message := "Unauthorized user"
-		logrus.Warn(message)
-		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		logrus.Warn(utilities.Unauthorized)
+		utilities.WriteResponse(http.StatusUnauthorized, utilities.Unauthorized, w)
 		return
 	}
 
@@ -85,5 +84,4 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 	logrus.Infoln("Done!")
-	return
 }

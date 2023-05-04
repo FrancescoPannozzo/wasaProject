@@ -12,7 +12,7 @@ func (db *appdbimpl) InsertFollower(follower string, followed string) (string, e
 	var user string
 	rows := db.c.QueryRow("SELECT Follower FROM Follow WHERE Follower=? AND Followed=?", follower, followed).Scan(&user)
 	if !errors.Is(rows, sql.ErrNoRows) {
-		return "Warning, the user already follow the target user", &utilities.DbBadRequest{}
+		return "Warning, the user already follow the target user", &utilities.DbBadRequestError{}
 	}
 
 	sqlStmt := fmt.Sprintf("INSERT INTO Follow (Follower, Followed) VALUES('%s','%s');", follower, followed)
@@ -20,10 +20,10 @@ func (db *appdbimpl) InsertFollower(follower string, followed string) (string, e
 
 	if err != nil {
 		// 500 Internal server error
-		return "error execution query in DB", fmt.Errorf("error execution query: %w", err)
+		return utilities.ErrorExecutionQuery, fmt.Errorf("error execution query: %w", err)
 	}
 
-	//201
+	// http status 201
 	return "follow added, ok", nil
 
 }

@@ -14,14 +14,18 @@ import (
 func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	logrus.Infoln("Following the user..")
 	errId := database.VerifyUserId(r, ps)
-
 	if errId != nil {
 		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
 
-	//name is the user to follow
-	userToFollow, _ := utilities.GetNameFromReq(r)
+	// name is the user to follow
+	userToFollow, errName := utilities.GetNameFromReq(r)
+	if errName != nil {
+		logrus.Warn("Error while getting the username from the client request")
+		utilities.WriteResponse(http.StatusBadRequest, "Error: requestBody not valid", w)
+		return
+	}
 
 	errUser := utilities.CheckUsername(userToFollow)
 	if errUser != nil {
@@ -31,7 +35,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	//check if the user to follow is in the DB
+	// check if the user to follow is in the DB
 	if !(database.DBcon.UsernameInDB(userToFollow)) {
 		message := "Warning, the user provided is not in the DB"
 		logrus.Warn(message)
@@ -39,12 +43,11 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	//Check if the user is trying to follow himself
+	// Check if the user is trying to follow himself
 	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if errNameId != nil {
-		message := "Unauthorized user"
-		logrus.Warn(message)
-		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		logrus.Warn(utilities.Unauthorized)
+		utilities.WriteResponse(http.StatusUnauthorized, utilities.Unauthorized, w)
 		return
 	}
 
@@ -53,9 +56,9 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	//Insert the user to follow in the DB
+	// Insert the user to follow in the DB
 	feedback, errIns := database.DBcon.InsertFollower(loggedUser, userToFollow)
-	if errors.Is(errIns, &utilities.DbBadRequest{}) {
+	if errors.Is(errIns, &utilities.DbBadRequestError{}) {
 		logrus.Warn(feedback)
 		utilities.WriteResponse(http.StatusConflict, feedback, w)
 		return
@@ -69,5 +72,4 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 
 	utilities.WriteResponse(http.StatusCreated, feedback, w)
 	logrus.Infoln("Done!")
-	return
 }

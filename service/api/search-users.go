@@ -16,7 +16,7 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 	errId := database.VerifyUserId(r, ps)
 
 	if errId != nil {
-		logrus.Warn("Unauthorized user")
+		logrus.Warn(utilities.Unauthorized)
 		utilities.WriteResponse(http.StatusUnauthorized, errId.Error(), w)
 		return
 	}
@@ -51,5 +51,4 @@ func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 	logrus.Println("Done!")
-	return
 }

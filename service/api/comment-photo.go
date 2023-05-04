@@ -22,9 +22,8 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 
 	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if errNameId != nil {
-		message := "Unauthorized user"
-		logrus.Warn(message)
-		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		logrus.Warn(utilities.Unauthorized)
+		utilities.WriteResponse(http.StatusUnauthorized, utilities.Unauthorized, w)
 		return
 	}
 
@@ -46,7 +45,11 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	var content Comment
-	_ = json.NewDecoder(r.Body).Decode(&content)
+	errDec := json.NewDecoder(r.Body).Decode(&content)
+	if errDec != nil {
+		utilities.WriteResponse(http.StatusInternalServerError, errDec.Error(), w)
+		return
+	}
 
 	if len(content.Comment) > 100 {
 		utilities.WriteResponse(http.StatusBadRequest, "Comment provided is longer than 100 characters", w)
@@ -66,6 +69,4 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 
 	utilities.WriteResponse(http.StatusCreated, feedback, w)
 	logrus.Infoln("Done!")
-	return
-
 }

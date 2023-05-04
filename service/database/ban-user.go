@@ -13,16 +13,16 @@ func (db *appdbimpl) BanUser(banner string, banned string) (string, error) {
 	var user string
 	rows := db.c.QueryRow("SELECT Banner FROM Ban WHERE Banner=? AND Banned=?", banner, banned).Scan(&user)
 	if !errors.Is(rows, sql.ErrNoRows) {
-		return "Warning, the user is already banned from the logged user", &utilities.DbBadRequest{}
+		return "Warning, the user is already banned from the logged user", &utilities.DbBadRequestError{}
 	}
 
 	sqlStmt := fmt.Sprintf("INSERT INTO Ban (Banner, Banned) VALUES('%s','%s');", banner, banned)
 	_, err := db.c.Exec(sqlStmt)
 
 	if err != nil {
-		//500
+		// http status 500
 		return "cannot insert the ban into the DB", fmt.Errorf("error execution query: %w", err)
 	}
-	//201
+	// http status 201
 	return "Banned user inserted in the DB", nil
 }

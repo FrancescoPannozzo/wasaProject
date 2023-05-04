@@ -15,17 +15,17 @@ func (db *appdbimpl) RemoveComment(idcomment string) (string, error) {
 
 	if errors.Is(rows, sql.ErrNoRows) {
 		// 404 comment not found
-		return "comment not found", &utilities.DbBadRequest{}
+		return "comment not found", &utilities.DbBadRequestError{}
 	}
 
 	_, err := db.c.Exec("DELETE FROM Comment WHERE Id_comment = ?;", idcomment)
 
 	if err != nil {
 		// 500 Internal server error
-		return "error execution query in DB", fmt.Errorf("error execution query: %w", err)
+		return utilities.ErrorExecutionQuery, fmt.Errorf("error execution query: %w", err)
 	}
 
-	//200
+	// http status 200
 	return "comment removed, ok", nil
 
 }

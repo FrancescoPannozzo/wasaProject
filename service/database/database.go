@@ -43,11 +43,6 @@ var DBcon AppDatabase
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
-	//Base example
-	GetName() (string, error)
-	//Base example
-	SetName(name string) error
-
 	// Get a username if present in the DB. If not present, the username provided will
 	// be inserted in the DB. Returns the username and nil if successfull
 	GetOrInsertUser(name string) (string, error)
@@ -150,16 +145,19 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 	if errors.Is(err, sql.ErrNoRows) {
 		// Getting absolute path of db_schema.sql
-		abs, err := filepath.Abs("./service/database/db_schema.sql")
+		abs, errAbs := filepath.Abs("./service/database/db_schema.sql")
+		if errAbs != nil {
+			return nil, fmt.Errorf("error creating filepath: %w", err)
+		}
 
 		dat, errFile := ioutil.ReadFile(abs)
 		if errFile != nil {
-			return nil, fmt.Errorf("error reading database structure from file: %v", err)
+			return nil, fmt.Errorf("error reading database structure from file: %w", err)
 		}
 
 		sqlStmt := string(dat)
-		_, err = db.Exec(sqlStmt)
-		if err != nil {
+		_, errEx := db.Exec(sqlStmt)
+		if errEx != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
 	}

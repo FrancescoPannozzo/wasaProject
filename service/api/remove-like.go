@@ -40,7 +40,7 @@ func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	feedback, err := database.DBcon.RemoveLike(ps.ByName("username"), ps.ByName("idPhoto"))
-	if errors.Is(err, &utilities.DbBadRequest{}) {
+	if errors.Is(err, &utilities.DbBadRequestError{}) {
 		rt.baseLogger.WithError(err).Warning(feedback)
 		utilities.WriteResponse(http.StatusNotFound, feedback, w)
 		return
@@ -53,5 +53,4 @@ func (rt *_router) removeLike(w http.ResponseWriter, r *http.Request, ps httprou
 
 	utilities.WriteResponse(http.StatusOK, feedback, w)
 	logrus.Warn("Done!")
-	return
 }

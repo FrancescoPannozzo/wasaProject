@@ -32,9 +32,8 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 
 	loggedUser, errNameId := rt.db.GetNameByID(utilities.GetBearerID(r))
 	if errNameId != nil {
-		message := "Unauthorized user"
-		logrus.Warn(message)
-		utilities.WriteResponse(http.StatusUnauthorized, message, w)
+		logrus.Warn(utilities.Unauthorized)
+		utilities.WriteResponse(http.StatusUnauthorized, utilities.Unauthorized, w)
 		return
 	}
 
@@ -63,7 +62,10 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 	}
 
 	w.Header().Set("Content-Type", "image/png")
-	w.Write(buf)
+	_, errWrite := w.Write(buf)
+	if errWrite != nil {
+		logrus.Warn(errWrite.Error())
+		utilities.WriteResponse(http.StatusInternalServerError, errWrite.Error(), w)
+	}
 	logrus.Infoln("Done!")
-	return
 }

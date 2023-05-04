@@ -8,10 +8,6 @@ import (
 func (rt *_router) Handler() http.Handler {
 	// Register routes
 
-	// example
-	//rt.router.GET("/", rt.getHelloWorld)
-	rt.router.GET("/context", rt.wrap(rt.getContextReply))
-
 	// loggin
 	rt.router.POST("/session", rt.doLogin)
 	// Get searched usernames list
@@ -48,9 +44,6 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/bans", rt.banUser)
 	// unban a user
 	rt.router.DELETE("/bans/:username", rt.unbanUser)
-
-	// Special routes
-	rt.router.GET("/liveness", rt.liveness)
 
 	return rt.router
 }

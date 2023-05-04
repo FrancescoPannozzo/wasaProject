@@ -31,8 +31,14 @@ func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	//check if the user is the comment owner
-	loggedUser, _ := database.DBcon.GetNameByID(utilities.GetBearerID(r))
+	// check if the user is the comment owner
+	loggedUser, errNameId := database.DBcon.GetNameByID(utilities.GetBearerID(r))
+	if errNameId != nil {
+		logrus.Warn(utilities.Unauthorized)
+		utilities.WriteResponse(http.StatusUnauthorized, utilities.Unauthorized, w)
+		return
+	}
+
 	commentOwner, errUser := database.DBcon.GetNameFromCommentId(ps.ByName("idComment"))
 	if errUser != nil {
 		message := "comment not found"
@@ -47,7 +53,7 @@ func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	feedback, err := database.DBcon.RemoveComment(ps.ByName("idComment"))
-	if errors.Is(err, &utilities.DbBadRequest{}) {
+	if errors.Is(err, &utilities.DbBadRequestError{}) {
 		utilities.WriteResponse(http.StatusNotFound, feedback, w)
 		return
 	}
@@ -60,5 +66,4 @@ func (rt *_router) removeComment(w http.ResponseWriter, r *http.Request, ps http
 
 	utilities.WriteResponse(http.StatusOK, feedback, w)
 	logrus.Infoln("Done!")
-	return
 }

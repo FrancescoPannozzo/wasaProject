@@ -10,7 +10,7 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 
 	rows, err := db.c.Query("SELECT Id_comment, User, Content FROM Comment WHERE Photo =?;", photoID)
 	if err != nil {
-		//500
+		// http status 500
 		return nil, fmt.Errorf("error while getting the comment list: %w", err)
 	}
 
@@ -18,7 +18,10 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 	for rows.Next() {
 
 		var commentId, user, content string
-		rows.Scan(&commentId, &user, &content)
+		errScan := rows.Scan(&commentId, &user, &content)
+		if errScan != nil {
+			return nil, fmt.Errorf("error while scanning the comment list: %w", errScan)
+		}
 		if db.CheckBan(loggedUser, user) {
 			continue
 		}
@@ -28,6 +31,6 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 		comments = append(comments, comment)
 	}
 
-	//200
+	// http status 200
 	return comments, nil
 }

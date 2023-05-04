@@ -12,16 +12,16 @@ func (db *appdbimpl) DeleteFollowed(follower string, followed string) (string, e
 	var user string
 	rows := db.c.QueryRow("SELECT Follower FROM Follow WHERE Follower=? AND Followed=?", follower, followed).Scan(&user)
 	if errors.Is(rows, sql.ErrNoRows) {
-		return "warning: user not found in the Followers list", &utilities.DbBadRequest{}
+		return "warning: user not found in the Followers list", &utilities.DbBadRequestError{}
 	}
 
 	_, err := db.c.Exec("DELETE FROM Follow WHERE Follower = ? AND Followed = ?", follower, followed)
 	if err != nil {
 		// 500 Internal server error
-		return "error execution query in DB", fmt.Errorf("error execution query: %w", err)
+		return utilities.ErrorExecutionQuery, fmt.Errorf("error execution query: %w", err)
 	}
 
-	//200
+	// http status 200
 	return "unfollow done, ok", err
 
 }

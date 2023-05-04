@@ -12,14 +12,17 @@ func (db *appdbimpl) GetFollowedThumbnails(loggedUser string) ([]utilities.Thumb
 
 	rows, err := db.c.Query("SELECT Id_photo, User, Date, Time FROM Photo JOIN Follow ON Follow.Followed = Photo.User WHERE Follow.Follower =? ORDER BY Date DESC, Time Desc;", loggedUser)
 	if err != nil {
-		//500
+		// http status 500
 		return nil, fmt.Errorf("error execution query: %w", err)
 	}
 
 	var thumbnail utilities.Thumbnail
 	for rows.Next() {
 		var idphoto, user, date, time string
-		rows.Scan(&idphoto, &user, &date, &time)
+		errScan := rows.Scan(&idphoto, &user, &date, &time)
+		if errScan != nil {
+			return nil, fmt.Errorf("error while scanning Follow: %w", errScan)
+		}
 		if db.CheckBan(loggedUser, user) {
 			continue
 		}
@@ -27,17 +30,17 @@ func (db *appdbimpl) GetFollowedThumbnails(loggedUser string) ([]utilities.Thumb
 		thumbnail.PhotoId = idphoto
 		thumbnail.PhotoURL = utilities.CreatePhotoURL(idphoto)
 		thumbnail.DateTime = fmt.Sprintf("%sT%s", date, time)
-		rows := db.c.QueryRow("SELECT COUNT(*) FROM Like WHERE Photo = ?;", idphoto).Scan(&thumbnail.LikesNumber)
-		if errors.Is(rows, sql.ErrNoRows) {
-			return nil, fmt.Errorf("error execution query: %w", rows)
+		rowsLike := db.c.QueryRow("SELECT COUNT(*) FROM Like WHERE Photo = ?;", idphoto).Scan(&thumbnail.LikesNumber)
+		if errors.Is(rowsLike, sql.ErrNoRows) {
+			return nil, fmt.Errorf("error execution query: %w", rowsLike)
 		}
-		rows = db.c.QueryRow("SELECT COUNT(*) FROM Comment WHERE Photo = ?;", idphoto).Scan(&thumbnail.CommentsNumber)
-		if errors.Is(rows, sql.ErrNoRows) {
-			return nil, fmt.Errorf("error execution query: %w", rows)
+		rowsComment := db.c.QueryRow("SELECT COUNT(*) FROM Comment WHERE Photo = ?;", idphoto).Scan(&thumbnail.CommentsNumber)
+		if errors.Is(rowsComment, sql.ErrNoRows) {
+			return nil, fmt.Errorf("error execution query: %w", rowsComment)
 		}
 		thumbnails = append(thumbnails, thumbnail)
 	}
 
-	//200
+	// http status 200
 	return thumbnails, nil
 }

@@ -16,6 +16,10 @@ import (
 // ----- ENTITIES ------
 
 // a rappresentation of a thubnail image with informations
+
+const Unauthorized = "Unauthorized user"
+const ErrorExecutionQuery = "error execution query in DB"
+
 type Thumbnail struct {
 	Username       string `json:"username"`
 	PhotoId        string `json:"photoid"`
@@ -71,11 +75,11 @@ type FeedbackResponse struct {
 }
 
 // Custom Error type
-type DbBadRequest struct{}
+type DbBadRequestError struct{}
 
 // ----- FUNCTIONS -----
 
-func (e *DbBadRequest) Error() string {
+func (e *DbBadRequestError) Error() string {
 	return "Bad request for the provided DB operation"
 }
 
@@ -117,7 +121,13 @@ func WriteResponse(httpStatus int, payload string, w http.ResponseWriter) {
 	err := json.NewEncoder(w).Encode(&response)
 	if err != nil {
 		logrus.Errorln("wrong JSON processed")
-		json.NewEncoder(w).Encode("{\"error\":\"wrong JSON processed\"}")
+		message := "{\"error\":\"wrong JSON processed\"}"
+		w.WriteHeader(http.StatusInternalServerError)
+		_, errWrite := w.Write([]byte(message))
+		if errWrite != nil {
+			logrus.Warn("Cannot write in the ResponseWriter")
+			return
+		}
 		return
 	}
 }

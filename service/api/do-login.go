@@ -25,16 +25,14 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 
 	errCheckUser := utilities.CheckUsername(username.Name)
-
-	if err != nil {
+	if errCheckUser != nil {
 		utilities.WriteResponse(http.StatusBadRequest, errCheckUser.Error(), w)
 		return
 	}
 
 	testUserID, errUser := database.DBcon.GetOrInsertUser(username.Name)
-
 	if errUser != nil {
-		fmt.Printf("Cannot send the ID: %v\n", errUser)
+		logrus.Warnf("Cannot send the ID: %v\n", errUser)
 		utilities.WriteResponse(http.StatusInternalServerError, fmt.Sprintf("Cannot send the ID: %v\n", errUser), w)
 		return
 	}
@@ -54,5 +52,4 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 
 	logrus.Infoln("User logged!")
-	return
 }

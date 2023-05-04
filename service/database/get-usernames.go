@@ -17,7 +17,10 @@ func (db *appdbimpl) GetUsernames(targetUser string) ([]string, error) {
 
 	var username string
 	for rows.Next() {
-		rows.Scan(&username)
+		errScan := rows.Scan(&username)
+		if errScan != nil {
+			return nil, fmt.Errorf("error while scanning the comment list: %w", errScan)
+		}
 		usernames = append(usernames, username)
 	}
 

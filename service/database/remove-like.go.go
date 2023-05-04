@@ -15,17 +15,17 @@ func (db *appdbimpl) RemoveLike(loggedUser string, idphoto string) (string, erro
 
 	if errors.Is(rows, sql.ErrNoRows) {
 		// 404 like not found
-		return "like not found", &utilities.DbBadRequest{}
+		return "like not found", &utilities.DbBadRequestError{}
 	}
 
 	_, err := db.c.Exec("DELETE FROM Like WHERE User = ? AND Photo = ?", username, idphoto)
 
 	if err != nil {
 		// 500 Internal server error
-		return "error execution query in DB", fmt.Errorf("error execution query: %w", err)
+		return utilities.ErrorExecutionQuery, fmt.Errorf("error execution query in Like: %w", err)
 	}
 
-	//200
+	// http status 200
 	return "like removed done, ok", nil
 
 }

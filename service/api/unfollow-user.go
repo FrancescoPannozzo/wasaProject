@@ -33,14 +33,19 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	loggedUser, _ := database.DBcon.GetNameByID(utilities.GetBearerID(r))
+	loggedUser, errNameId := database.DBcon.GetNameByID(utilities.GetBearerID(r))
+	if errNameId != nil {
+		logrus.Warn(utilities.Unauthorized)
+		utilities.WriteResponse(http.StatusUnauthorized, utilities.Unauthorized, w)
+		return
+	}
 
 	if ps.ByName("username") == loggedUser {
 		utilities.WriteResponse(http.StatusBadRequest, "Warning, logged cannot unfollow himself", w)
 	}
 
 	feedback, err := database.DBcon.DeleteFollowed(loggedUser, ps.ByName("username"))
-	if errors.Is(err, &utilities.DbBadRequest{}) {
+	if errors.Is(err, &utilities.DbBadRequestError{}) {
 		logrus.Warn(feedback)
 		utilities.WriteResponse(http.StatusNotFound, feedback, w)
 		return
@@ -53,5 +58,4 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 
 	utilities.WriteResponse(http.StatusOK, feedback, w)
 	logrus.Infoln("Done!")
-	return
 }

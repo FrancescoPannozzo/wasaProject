@@ -9,15 +9,13 @@ import (
 
 // Get user thumbnails objects.
 func (db *appdbimpl) GetPost(loggedUser string, photoId string) (utilities.Post, error) {
-	//var idphoto string
-
 	var post utilities.Post
 	var date, time string
 
 	rows := db.c.QueryRow("SELECT User, Date, Time, Photo_url FROM Photo WHERE Id_photo = ?;", photoId).Scan(&post.Username, &date, &time, &post.PhotoURL)
 
 	if errors.Is(rows, sql.ErrNoRows) {
-		//500
+		// http status 500
 		return post, fmt.Errorf("Error execution query: %w", rows)
 	}
 
@@ -25,7 +23,7 @@ func (db *appdbimpl) GetPost(loggedUser string, photoId string) (utilities.Post,
 
 	rows = db.c.QueryRow("SELECT COUNT(*) FROM Like WHERE Photo = ?;", photoId).Scan(&post.LikesNumber)
 	if errors.Is(rows, sql.ErrNoRows) {
-		//500
+		// http status 500
 		return post, fmt.Errorf("error execution query: %w", rows)
 	}
 
@@ -36,7 +34,7 @@ func (db *appdbimpl) GetPost(loggedUser string, photoId string) (utilities.Post,
 
 	post.Comments = comments
 
-	//200
+	// http status 200
 	return post, nil
 
 }

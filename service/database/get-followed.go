@@ -16,7 +16,10 @@ func (db *appdbimpl) GetFollowed(loggedUser string) ([]string, error) {
 
 	var username string
 	for rows.Next() {
-		rows.Scan(&username)
+		errScan := rows.Scan(&username)
+		if errScan != nil {
+			return nil, fmt.Errorf("error while scanning Follow: %w", errScan)
+		}
 		followed = append(followed, username)
 	}
 

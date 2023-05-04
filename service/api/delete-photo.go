@@ -55,6 +55,4 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	utilities.WriteResponse(http.StatusOK, feedback, w)
 	logrus.Infoln("Done!")
-	return
-
 }

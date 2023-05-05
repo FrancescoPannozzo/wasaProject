@@ -10,7 +10,7 @@ import (
 
 // Verify the user id from a request with a Baerer Authorization Header, return the http status number and the message related to it
 func VerifyUserId(r *http.Request, ps httprouter.Params) error {
-	authHeader := r.Header.Get(("Authorization"))
+	authHeader := r.Header.Get("Authorization")
 	baererUserID := utilities.GetBearerID(r)
 
 	if authHeader == "" || baererUserID == authHeader {

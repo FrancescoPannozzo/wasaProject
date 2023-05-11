@@ -39,7 +39,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	if !(database.DBcon.UsernameInDB(userToFollow)) {
 		message := "Warning, the user provided is not in the DB"
 		logrus.Warn(message)
-		utilities.WriteResponse(http.StatusUnprocessableEntity, message, w)
+		utilities.WriteResponse(http.StatusBadRequest, message, w)
 		return
 	}
 

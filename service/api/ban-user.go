@@ -57,7 +57,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	if !database.DBcon.UsernameInDB(banned.Username) {
 		message := "User to ban not found"
 		logrus.Warn(message)
-		utilities.WriteResponse(http.StatusUnprocessableEntity, message, w)
+		utilities.WriteResponse(http.StatusBadRequest, message, w)
 		return
 	}
 

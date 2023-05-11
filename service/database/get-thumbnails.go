@@ -40,6 +40,11 @@ func (db *appdbimpl) GetThumbnails(username string) ([]utilities.Thumbnail, erro
 		thumbnails = append(thumbnails, thumbnail)
 	}
 
+	errScan := rows.Err()
+	if errScan != nil {
+		return nil, fmt.Errorf("Error while scanning for GetThumbnails operation: %w", errScan)
+	}
+
 	// http status 200
 	return thumbnails, nil
 

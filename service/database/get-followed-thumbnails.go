@@ -40,6 +40,10 @@ func (db *appdbimpl) GetFollowedThumbnails(loggedUser string) ([]utilities.Thumb
 		}
 		thumbnails = append(thumbnails, thumbnail)
 	}
+	errScan := rows.Err()
+	if errScan != nil {
+		return nil, fmt.Errorf("Error while scanning for GetFollowedThumbnails operation: %w", errScan)
+	}
 
 	// http status 200
 	return thumbnails, nil

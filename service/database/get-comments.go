@@ -30,6 +30,10 @@ func (db *appdbimpl) GetComments(loggedUser string, photoID string) ([]utilities
 		comment.Content = content
 		comments = append(comments, comment)
 	}
+	errScan := rows.Err()
+	if errScan != nil {
+		return nil, fmt.Errorf("Error while scanning for GetComments operation: %w", errScan)
+	}
 
 	// http status 200
 	return comments, nil

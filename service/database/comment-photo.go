@@ -6,7 +6,7 @@ import (
 )
 
 // Insert the comment on the photoID provided in the DB.
-// Return a feedback message and nil if successfull.
+// Return a feedback message and nil if successful.
 // Return a feedback message and an error excetution query otherwise.
 func (db *appdbimpl) CommentPhoto(username string, idphoto string, comment string) (string, error) {
 	_, err := db.c.Exec("INSERT INTO Comment (User, Photo, Content) VALUES(?, ?, ?);", username, idphoto, comment)

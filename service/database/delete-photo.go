@@ -28,7 +28,7 @@ func (db *appdbimpl) DeletePhoto(idphoto string) (string, error) {
 	_, errQuery := db.c.Exec(sqlStmt)
 
 	if errQuery != nil {
-		return "error execution query", fmt.Errorf("error execution query: %w", errQuery)
+		return "error execution query", fmt.Errorf("error execution DeletePhoto query: %w", errQuery)
 	}
 
 	return "Image deleted, everything ok", nil

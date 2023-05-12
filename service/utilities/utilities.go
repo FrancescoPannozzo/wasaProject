@@ -14,11 +14,10 @@ import (
 
 // ----- ENTITIES ------
 
-// a rappresentation of a thubnail image with informations
-
 const Unauthorized = "Unauthorized user"
 const ErrorExecutionQuery = "error execution query in DB"
 
+// A rappresentation of a thumbnail image with informations
 type Thumbnail struct {
 	Username       string `json:"username"`
 	PhotoId        string `json:"photoid"`
@@ -155,8 +154,5 @@ func CreatePhotoURL(idPhoto string) string {
 // Check if the photo ID format length is valid
 func IsPhotoIdValid(idphoto string) bool {
 	const idphotoLenghts = 18
-	if len(idphoto) != idphotoLenghts {
-		return false
-	}
-	return true
+	return len(idphoto) == idphotoLenghts
 }

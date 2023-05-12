@@ -44,10 +44,10 @@ var DBcon AppDatabase
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	// Get a username if present in the DB. If not present, the username provided will
-	// be inserted in the DB. Returns the username and nil if successfull
+	// be inserted in the DB. Returns the username and nil if successful
 	GetOrInsertUser(name string) (string, error)
 
-	// Insert a user into the DB. Returns a feedback string and nil if succesfull
+	// Insert a user into the DB. Returns a feedback string and nil if succesful
 	InsertUser(name string) (string, error)
 
 	// Get the userId by the provided username
@@ -62,7 +62,7 @@ type AppDatabase interface {
 	// Insert photo data into the DB
 	InsertPhoto(name string, idphoto string) (string, error)
 
-	// Delete a photo, return a feedback string an nil if successfull
+	// Delete a photo, return a feedback string an nil if successful
 	DeletePhoto(idphoto string) (string, error)
 
 	// Check if the provided username is in the DB
@@ -71,53 +71,53 @@ type AppDatabase interface {
 	// Insert the user as follower into the DB. Return a
 	InsertFollower(follower string, followed string) (string, error)
 
-	// Delete a followed user. Return a feedback string an nil if successfull
+	// Delete a followed user. Return a feedback string an nil if successful
 	DeleteFollowed(follower string, followed string) (string, error)
 
-	// Insert the Like data into the DB. Return a feedback string an nil if successfull
+	// Insert the Like data into the DB. Return a feedback string an nil if successful
 	LikePhoto(username string, idphoto string) (string, error)
 
-	// Remove a like data drom the DB. Return a feedback string an nil if successfull
+	// Remove a like data drom the DB. Return a feedback string an nil if successful
 	RemoveLike(username string, idphoto string) (string, error)
 
 	// Insert the comment to the photo(idphoto) in the DB.
-	// Return a feedback message and nil if successfull.
+	// Return a feedback message and nil if successful.
 	CommentPhoto(username string, idphoto string, comment string) (string, error)
 
-	// Get the comments list of the provided photoId. Return nil if successfull
+	// Get the comments list of the provided photoId. Return nil if successful
 	GetComments(loggedUser string, photoID string) ([]utilities.Comment, error)
 
-	// Delete a comment. Return a feedback string an nil if successfull
+	// Delete a comment. Return a feedback string an nil if successful
 	RemoveComment(idcomment string) (string, error)
 
 	// Check the username profile ownership
 	CheckOwnership(userId string, username string) bool
 
-	// Get the username from a photoId. Return the username and nil if successfull
+	// Get the username from a photoId. Return the username and nil if successful
 	GetNameFromPhotoId(photoId string) (string, error)
 
-	// Get the username from a commentId. Return the username and nil if successfull
+	// Get the username from a commentId. Return the username and nil if successful
 	GetNameFromCommentId(commentId string) (string, error)
 
-	// Ban the provided user. Return a feedback string an nil if successfull
+	// Ban the provided user. Return a feedback string an nil if successful
 	BanUser(banner string, banned string) (string, error)
 
-	// Unban the provided user. Return a feedback string an nil if successfull
+	// Unban the provided user. Return a feedback string an nil if successful
 	UnbanUser(banner string, banned string) (string, error)
 
 	// Check if the target user is banned from the logged user.
 	CheckBan(loggedUser string, targetUser string) bool
 
-	// Get user thumbnails objects. Returns the thumbnailsObject list and nil if successfull
+	// Get user thumbnails objects. Returns the thumbnailsObject list and nil if successful
 	GetThumbnails(username string) ([]utilities.Thumbnail, error)
 
-	// Get a post. Returns the postObject and nil if successfull
+	// Get a post. Returns the postObject and nil if successful
 	GetPost(loggedUser string, photoId string) (utilities.Post, error)
 
-	// Get followed thumbnails objects (the own stream). Returns the thumbnailsObject list and nil if successfull
+	// Get followed thumbnails objects (the own stream). Returns the thumbnailsObject list and nil if successful
 	GetFollowedThumbnails(loggedUser string) ([]utilities.Thumbnail, error)
 
-	// Get a username list by searching with the provided tergetUSer. Returns the usernames and nil if successfull
+	// Get a username list by searching with the provided tergetUSer. Returns the usernames and nil if successful
 	GetUsernames(targetUser string) ([]string, error)
 	// Get the followed users by the provided loggedUser
 	GetFollowed(loggedUser string) ([]string, error)

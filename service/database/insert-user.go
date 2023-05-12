@@ -12,7 +12,7 @@ import (
 // If there is an internal error it return empty userID and error != nil (http status code 500)
 func (db *appdbimpl) InsertUser(name string) (string, error) {
 	// create user id
-	userID := utilities.GenerateUserID(name)
+	userID := utilities.GenerateUserID()
 
 	logrus.Infof("User id created: %s, inserting the new user in the db..\n", userID)
 

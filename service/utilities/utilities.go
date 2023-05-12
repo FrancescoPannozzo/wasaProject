@@ -115,8 +115,8 @@ func CheckUsername(name string) error {
 	return nil
 }
 
-// Create a user id composed by characters + timestamp
-func GenerateUserID(name string) string {
+// Create a user id composed by random characters + timestamp
+func GenerateUserID() string {
 	s1 := rand.NewSource(time.Now().UnixNano())
 	r1 := rand.New(s1)
 	var s string

@@ -12,7 +12,7 @@ import (
 )
 
 // Do the loggin with the username provided in the requestBody
-func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	logrus.Infoln("Logging the user..")
 
 	var username utilities.Username

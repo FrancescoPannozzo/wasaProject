@@ -35,7 +35,12 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	result, errConv := json.Marshal(thumbnails)
+	var myStream utilities.MyStream
+
+	myStream.LoggedUsername = loggedUser
+	myStream.Thumbnails = thumbnails
+
+	result, errConv := json.Marshal(myStream)
 	if errConv != nil {
 		logrus.Warn(errConv.Error())
 		utilities.WriteResponse(http.StatusInternalServerError, errConv.Error(), w)

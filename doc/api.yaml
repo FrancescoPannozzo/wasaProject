@@ -148,12 +148,16 @@ paths:
             application/json:
               schema:
                 description: |
-                  an object with thfe profile username, the uploaded photo number,
+                  an object with the profile username, the uploaded photo number,
                   the followers list, the followed list and an array of thumbnailObjects
                 type: object
                 properties:
-                  username:
-                    description: the user profile
+                  visitedUsername:
+                    description: the visited user username
+                    type: string
+                    example: francesco
+                  loggedUsername:
+                    description: the logged user username
                     type: string
                     example: francesco
                   nphoto:
@@ -183,6 +187,14 @@ paths:
                       $ref: "#/components/schemas/thumbnailObject"
                     minItems: 0
                     maxItems: 1000
+                  loggedUserBanned:
+                    description: telling if the logged user is banned from the visited one
+                    type: boolean
+                    example: true
+                  visitedUserBanned:
+                    description: telling if the visited user is banned from the logged one
+                    type: boolean
+                    example: true
         "400":
           description: |
             the username provided for the user profile is not valid
@@ -264,12 +276,20 @@ paths:
           content:
             application/json:
               schema:
-                description: A thumbnailObjects list
-                type: array
-                items:
-                  $ref: "#/components/schemas/thumbnailObject"
-                minItems: 0
-                maxItems: 1000
+                description: A rapresentation of my-stream informations and thumbnails
+                type: object
+                properties:
+                  loggedUsername:
+                    description: the logged username
+                    type: string
+                    example: Francesco
+                  thumbnails:
+                    description: a list of thumbnails with images and informations
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/thumbnailObject"
+                    minItems: 0
+                    maxItems: 1000
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         '500':
@@ -891,9 +911,16 @@ components:
         and comment list
       type: object
       properties:
+        username:
+          description: the visited username profile
+          type: string
         originalImage:
           description: The image url
           type: string
+        datetime:
+          description: the photo upload date and time
+          type: string
+          format: date-time
         nLikes:
           description: The likes number referred to the photo
           type: integer
@@ -904,6 +931,12 @@ components:
             $ref: "#/components/schemas/comment"
           minItems: 0
           maxItems: 1000
+        likethis:
+          description: the like/not like of the logged user to the visited post
+          type: boolean
+        loggedusername:
+          description: the logged user username
+          type: string
     comment:
       description: |
         A comment by one user to one image, it contains che username of the

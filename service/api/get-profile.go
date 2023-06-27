@@ -44,8 +44,11 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	// check if the user is banned
-	if database.DBcon.CheckBan(loggedUser, targetUser) {
+	// check if the logged user is banned
+	var loggedUserBanned = database.DBcon.CheckBan(loggedUser, targetUser)
+	var visitedUserBanned = database.DBcon.CheckBan(targetUser, loggedUser)
+
+	if loggedUserBanned {
 		utilities.WriteResponse(http.StatusUnauthorized, "the logged user is banned for the specific request", w)
 		return
 	}
@@ -58,18 +61,21 @@ func (rt *_router) getProfile(w http.ResponseWriter, r *http.Request, ps httprou
 
 	var profile utilities.Profile
 
-	profile.Username = loggedUser
+	profile.VisitedUsername = targetUser
+	profile.LoggedUsername = loggedUser
 	profile.PhotoNumber = len(thumbnails)
 	profile.Thumbnail = thumbnails
+	profile.LoggedUserBanned = loggedUserBanned
+	profile.VisitedUserBanned = visitedUserBanned
 	var errFollowed error
-	profile.Followed, errFollowed = database.DBcon.GetFollowed(loggedUser)
+	profile.Followed, errFollowed = database.DBcon.GetFollowed(targetUser)
 	if errFollowed != nil {
 		message := "cannot get the followed list from the DB"
 		rt.baseLogger.WithError(errFollowed).Warning(message)
 		utilities.WriteResponse(http.StatusInternalServerError, message, w)
 	}
 	var errFollowers error
-	profile.Followers, errFollowers = database.DBcon.GetFollowers(loggedUser)
+	profile.Followers, errFollowers = database.DBcon.GetFollowers(targetUser)
 	if errFollowers != nil {
 		message := "cannot get the followers list from the DB"
 		rt.baseLogger.WithError(errFollowed).Warning(message)

@@ -41,20 +41,31 @@ type Comment struct {
 
 // a rappresentation of a thumbnail image with informations
 type Post struct {
-	Username    string    `json:"username"`
-	PhotoURL    string    `json:"photourl"`
-	DateTime    string    `json:"datetime"`
-	LikesNumber int       `json:"nlikes"`
-	Comments    []Comment `json:"comments"`
+	Username       string    `json:"username"`
+	PhotoURL       string    `json:"photourl"`
+	DateTime       string    `json:"datetime"`
+	LikesNumber    int       `json:"nlikes"`
+	Comments       []Comment `json:"comments"`
+	LikeThis       bool      `json:"likethis"`
+	LoggedUsername string    `json:"loggedusername"`
 }
 
 // a rappresentation of a user profile
 type Profile struct {
-	Username    string      `json:"username"`
-	PhotoNumber int         `json:"nphoto"`
-	Followers   []string    `json:"followers"`
-	Followed    []string    `json:"followed"`
-	Thumbnail   []Thumbnail `json:"thumbnails"`
+	VisitedUsername   string      `json:"visitedUsername"`
+	LoggedUsername    string      `json:"loggedUsername"`
+	PhotoNumber       int         `json:"nphoto"`
+	Followers         []string    `json:"followers"`
+	Followed          []string    `json:"followed"`
+	Thumbnail         []Thumbnail `json:"thumbnails"`
+	LoggedUserBanned  bool        `json:"loggedUserBanned"`
+	VisitedUserBanned bool        `json:"visitedUserBanned"`
+}
+
+// a rappresentation of a my-stream page with informations
+type MyStream struct {
+	LoggedUsername string      `json:"loggedUsername"`
+	Thumbnails     []Thumbnail `json:"thumbnails"`
 }
 
 // A feedback message rappresentation in string format

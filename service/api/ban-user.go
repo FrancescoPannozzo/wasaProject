@@ -38,7 +38,10 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
+	logrus.Infoln(banned.Username)
+
 	errUsername := utilities.CheckUsername(banned.Username)
+
 	if errUsername != nil {
 		message := "User ID not allowed"
 		logrus.Warn(message)

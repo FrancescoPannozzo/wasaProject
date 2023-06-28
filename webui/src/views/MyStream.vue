@@ -57,7 +57,7 @@ export default {
 
         <p>USER STREAM PAGE, WELCOME {{ loggedUsername.toUpperCase() }} !</p>
         <p>User stream contents:</p>
-        <ul v-for="item in resp.thumbnails ">
+        <ul v-for="(item, index) in resp.thumbnails" :key="index">
             <Thumbnail :thumbnail="item"></Thumbnail>
         </ul>
     </div>

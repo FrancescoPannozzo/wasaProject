@@ -52,7 +52,7 @@ func (rt *_router) setMyUsername(w http.ResponseWriter, r *http.Request, ps http
 	if errNewUsername == nil {
 		message := fmt.Sprintf("WARNING, the username %s is already taken, please choose another one", newUsername)
 		logrus.Warn(message)
-		utilities.WriteResponse(http.StatusBadRequest, message, w)
+		utilities.WriteResponse(http.StatusConflict, message, w)
 		return
 	}
 

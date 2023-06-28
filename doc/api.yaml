@@ -256,6 +256,12 @@ paths:
                 $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "409":
+          description: The username provided It's the same
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         '500':
           description: The server cannot elaborate the username update request
           content:

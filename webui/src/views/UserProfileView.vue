@@ -124,16 +124,18 @@ export default {
 
             <label for="followed"> Followed:</label>
             <select name="followed" id="followed" v-model="selected">
-                <option v-for="item in resp.followed" :value="item" @click="visitProfile(item)"> {{ item }} </option>
+                <option v-for="(item, index) in resp.followed" :key="index" :value="item" @click="visitProfile(item)"> {{
+                    item }} </option>
             </select>
 
             <label for="followers"> Followers:</label>
             <select name="followers" id="followers" v-model="selected">
-                <option v-for="item in resp.followers" :value="item" @click="visitProfile(item)"> {{ item }} </option>
+                <option v-for="(item, index) in resp.followers" :key="index" :value="item" @click="visitProfile(item)"> {{
+                    item }} </option>
             </select>
 
 
-            <ul v-for="item in resp.thumbnails ">
+            <ul v-for="(item, index) in resp.thumbnails" :key="index">
                 <Thumbnail :thumbnail="item"></Thumbnail>
             </ul>
         </div>

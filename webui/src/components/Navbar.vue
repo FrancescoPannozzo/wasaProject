@@ -3,7 +3,6 @@
 import HomeButton from '../components/HomeButton.vue';
 import SearchButton from '../components/SearchButton.vue';
 import LogoutButton from '../components/LogoutButton.vue';
-import LoggedUserButton from '../components/LoggedUserButton.vue';
 
 export default {
     name: 'Userprofile',
@@ -15,8 +14,7 @@ export default {
     components: {
         SearchButton,
         HomeButton,
-        LogoutButton,
-        LoggedUserButton
+        LogoutButton
     }
 }
 

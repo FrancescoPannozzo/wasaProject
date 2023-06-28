@@ -34,7 +34,7 @@ export default {
         SEARCH USERS:<input type="text" v-model="username" minlength="3" maxlength="13" required /><button
             @click="search()">GO</button>
 
-        <ul id="cards" v-for="item in resp">
+        <ul id="cards" v-for="(item, index) in resp" :key="index">
 
             <router-link :to='"/profiles/" + item'> {{ item }}
 

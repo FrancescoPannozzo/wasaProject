@@ -65,6 +65,7 @@ export default {
                 this.feedbackMsg = response.data.feedback;
                 this.loadPost()
                 window.alert(this.feedbackMsg)
+                this.comment = ""
             } catch (e) {
                 this.errormsg = e.toString();
                 console.log(this.errormsg)
@@ -108,7 +109,7 @@ export default {
 
         </div>
         <br />
-        <li v-for=" item  in  resp.comments  ">
+        <li v-for=" (item, index)  in  resp.comments" :key="index">
             <p>{{ item.name }} : {{ item.comment }}<button v-show="resp.loggedusername == item.name"
                     @click="cancelComment(item.commentid)">CANCEL</button>
             </p>

@@ -43,10 +43,13 @@ export default {
 
             reader.addEventListener("load", async () => {
                 try {
-                    const prefix = "data:image/png;base64,"
+                    const prefix = "data:" + selectedFile.type + ";base64,"
                     const photodata = reader.result.substring(prefix.length)
+
                     await this.$axios.post("/photos", photodata, {
-                        headers: "image/png"
+                        headers: {
+                            "Content-Type": selectedFile.type
+                        }
                     })
                     window.alert("photo uploaded")
                     await this.loadProfile()
@@ -90,17 +93,12 @@ export default {
             try {
                 let response = await this.$axios.put("/profiles/" + this.loggedUsername, { name: this.newName });
                 this.feedbackMsg = response.data.feedback
-
                 window.alert(this.feedbackMsg)
-
                 this.$router.push("/my-stream");
-
-
-
             } catch (error) {
                 if (error.response) {
                     this.errormsg = error.toString();
-                    window.alert(error.data)
+                    window.alert(error.response.data.feedback)
                     this.$router.push("/my-stream");
                 } else {
                     console.log(error.toString())
@@ -132,16 +130,18 @@ export default {
 
         <label for="followed">Followed:</label>
         <select name="followed" id="followed" v-model="selected">
-            <option v-for="item in resp.followed" :value="item" @click="visitProfile(item)"> {{ item }} </option>
+            <option v-for="(item, index) in resp.followed" :key="index" :value="item" @click="visitProfile(item)"> {{ item
+            }} </option>
         </select>
 
         <label for="followers"> Followers:</label>
         <select name="followers" id="followers" v-model="selected">
-            <option v-for="item in resp.followers" :value="item" @click="visitProfile(item)"> {{ item }} </option>
+            <option v-for="(item, index) in resp.followers" :key="index" :value="item" @click="visitProfile(item)"> {{ item
+            }} </option>
         </select>
 
         <div id="upload">
-            <p>UPLOAD A NEW PHOTO (.png):</p><input type="file" accept="image/*" class="local" ref="userphoto"
+            <p>UPLOAD A NEW PHOTO:</p><input type="file" accept="image/*" class="local" ref="userphoto"
                 v-on:change="uploadButtonDis = false" />
             <button @click="loadPhoto" :disabled="uploadButtonDis">UPLOAD PHOTO</button>
         </div>
@@ -151,7 +151,7 @@ export default {
         <br />
         <p>-----------------</p>
         <br />
-        <Thumbnail v-for="item in resp.thumbnails" :thumbnail="item" :loggedusername="resp.loggedUsername"
+        <Thumbnail v-for="(item, index) in resp.thumbnails" :thumbnail="item" :loggedusername="resp.loggedUsername"
             :key="item.photoid" @deletephoto="deletePhoto(item.photoid)">
         </Thumbnail>
     </div>

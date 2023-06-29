@@ -164,6 +164,7 @@ func CreatePhotoURL(idPhoto string) string {
 
 // Check if the photo ID format length is valid
 func IsPhotoIdValid(idphoto string) bool {
+	data := strings.Split(idphoto, ".")
 	const idphotoLenghts = 18
-	return len(idphoto) == idphotoLenghts
+	return len(data[0]) == idphotoLenghts
 }

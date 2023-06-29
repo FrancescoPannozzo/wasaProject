@@ -60,7 +60,7 @@ type AppDatabase interface {
 	ModifyUsername(oldName string, newName string) error
 
 	// Insert photo data into the DB
-	InsertPhoto(name string, idphoto string) (string, error)
+	InsertPhoto(name string, idphoto string, extension string) (string, error)
 
 	// Delete a photo, return a feedback string an nil if successful
 	DeletePhoto(idphoto string) (string, error)

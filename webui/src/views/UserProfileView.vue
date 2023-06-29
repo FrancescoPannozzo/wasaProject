@@ -31,7 +31,7 @@ export default {
             } catch (error) {
                 if (error.response) {
                     this.errormsg = error.toString();
-                    window.alert(error.data)
+                    window.alert(error.response.data.feedback)
                     this.$router.push("/my-stream");
                 } else {
                     console.log(error.toString())

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
@@ -51,8 +52,15 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	fileName := idphoto + ".png"
-	filePath := filepath.Join("storage", fileName)
+	absPath, err := filepath.Abs("./storage")
+
+	if err != nil {
+		logrus.Error("Can't get the path for the photo storage")
+		utilities.WriteResponse(http.StatusInternalServerError, "error with the storing path of the photo", w)
+		return
+	}
+
+	filePath := filepath.Join(absPath, idphoto)
 
 	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -61,7 +69,11 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	w.Header().Set("Content-Type", "image/png")
+	photoData := strings.Split(idphoto, ".")
+
+	contentType := "image/" + photoData[1]
+
+	w.Header().Set("Content-Type", contentType)
 	_, errWrite := w.Write(buf)
 	if errWrite != nil {
 		logrus.Warn(errWrite.Error())

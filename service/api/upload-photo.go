@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
@@ -34,7 +35,33 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	dec, errDec := base64.StdEncoding.DecodeString(string(reqBody))
+	base64data := string(reqBody)
+
+	data := strings.Split(base64data, ",")
+	var extension string
+
+	switch data[0] {
+	case "data:image/jpeg;base64":
+		extension = ".jpeg"
+		break
+	case "data:image/png;base64":
+		extension = ".png"
+		break
+	case "data:image/jpg;base64":
+		extension = ".jpg"
+		break
+	default:
+		extension = "unknown"
+		break
+	}
+
+	if extension == "unknown" {
+		message := "Warning the photo extension is not supported, please load .jpeg, .png or .jpg files"
+		utilities.WriteResponse(http.StatusUnsupportedMediaType, message, w)
+		return
+	}
+
+	dec, errDec := base64.StdEncoding.DecodeString(data[1])
 	if errDec != nil {
 		message := "Server Error while decoding the photo"
 		rt.baseLogger.WithError(errDec).Warning(message)
@@ -45,8 +72,17 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	userId := utilities.GetBearerID(r)
 
 	idphoto := userId[:4] + utilities.GenerateTimestamp()
-	fileName := idphoto + ".png"
-	filePath := filepath.Join("storage", fileName)
+	fileName := idphoto + extension
+
+	absPath, err := filepath.Abs("./storage")
+	if err != nil {
+		logrus.Error("Can't get the path for the photo storage")
+		utilities.WriteResponse(http.StatusInternalServerError, "error with the storing path of the photo", w)
+		return
+	}
+
+	filePath := filepath.Join(absPath, fileName)
+
 	tmpfile, errCreate := os.Create(filePath)
 	if errCreate != nil {
 		message := "Error with the creation of the file to store"
@@ -80,7 +116,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Adding the photo data into the DB
-	feedback, errPhoto := database.DBcon.InsertPhoto(username, idphoto)
+	feedback, errPhoto := database.DBcon.InsertPhoto(username, idphoto, extension)
 	if errPhoto != nil {
 		rt.baseLogger.WithError(errNameId).Warning(feedback)
 		utilities.WriteResponse(http.StatusInternalServerError, feedback, w)

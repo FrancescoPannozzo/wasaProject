@@ -43,17 +43,13 @@ export default {
 
             reader.addEventListener("load", async () => {
                 try {
-                    const prefix = "data:" + selectedFile.type + ";base64,"
-                    const photodata = reader.result.substring(prefix.length)
-
-                    await this.$axios.post("/photos", photodata, {
+                    await this.$axios.post("/photos", reader.result, {
                         headers: {
                             "Content-Type": selectedFile.type
                         }
                     })
                     window.alert("photo uploaded")
                     await this.loadProfile()
-
                 } catch (error) {
                     if (error.response) {
                         this.errormsg = error.toString();
@@ -63,19 +59,14 @@ export default {
                         console.log(error.toString())
                     }
                 }
-
             })
-
 
             try {
                 reader.readAsDataURL(selectedFile)
-
             } catch (e) {
                 console.log(e.toString())
             }
-
             this.uploadButtonDis = true
-
         },
         async deletePhoto(idPhoto) {
             try {
@@ -151,7 +142,7 @@ export default {
         <br />
         <p>-----------------</p>
         <br />
-        <Thumbnail v-for="(item, index) in resp.thumbnails" :thumbnail="item" :loggedusername="resp.loggedUsername"
+        <Thumbnail v-for="item in resp.thumbnails" :thumbnail="item" :loggedusername="resp.loggedUsername"
             :key="item.photoid" @deletephoto="deletePhoto(item.photoid)">
         </Thumbnail>
     </div>

@@ -446,13 +446,19 @@ paths:
                   value:
                     idphoto: abcd20132303151010
         "400":
-          description: photo format not valid for uploadPhoto operation
+          description: error while reading the request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/generalFeedback"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+        "415":
+          description: photo format not valid for uploadPhoto operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/generalFeedback"
         '500':
           description: The server cannot elaborate deconding photo file request
           content:

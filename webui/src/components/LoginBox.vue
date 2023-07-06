@@ -14,6 +14,7 @@ export default {
                     throw new Error("Warning,  accepted usernames are min 3 up to 13 characters")
                 }
                 let response = await this.$axios.post("/session", { name: this.username });
+                localStorage.clear();
                 localStorage.setItem("token", response.data.identifier);
                 this.$router.push("/my-stream");
             } catch (e) {

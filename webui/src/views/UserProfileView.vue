@@ -12,7 +12,8 @@ export default {
             // Check if the visited user is banned from the logged user
             isBanned: false,
             isFollowing: false,
-            selected: ""
+            selected: "",
+            loggedUser: ""
         }
     },
     components: {
@@ -26,6 +27,7 @@ export default {
                 let response = await this.$axios.get("/profiles/" + this.visitedUsername);
                 this.resp = response.data;
                 this.visitedUsername = this.resp.visitedUsername;
+                this.loggedUser = this.resp.loggedUsername
                 this.isBanned = this.resp.visitedUserBanned;
                 this.isFollowing = response.data.followers.includes(response.data.loggedUsername)
             } catch (error) {
@@ -117,7 +119,7 @@ export default {
         <p>{{ visitedUsername.toUpperCase() }} PROFILE</p>
 
         <div class="content">
-            <div v-show="visitedUsername != resp.loggedUsername" class="followersinfo">
+            <div v-show="visitedUsername != loggedUser" class="followersinfo">
                 <button v-if="isFollowing" @click="unfollow">UNFOLLOW</button>
                 <button v-else @click="follow">FOLLOW</button>
                 <button v-if="isBanned" @click="unBanUser">UNBAN USER</button>

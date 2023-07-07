@@ -52,7 +52,6 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		break
 	default:
 		extension = "unknown"
-		break
 	}
 
 	if extension == "unknown" {
@@ -74,7 +73,8 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	idphoto := userId[:4] + utilities.GenerateTimestamp()
 	fileName := idphoto + extension
 
-	absPath, err := filepath.Abs("./storage")
+	absPath, err := filepath.Abs("storage")
+
 	if err != nil {
 		logrus.Error("Can't get the path for the photo storage")
 		utilities.WriteResponse(http.StatusInternalServerError, "error with the storing path of the photo", w)
@@ -85,7 +85,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	tmpfile, errCreate := os.Create(filePath)
 	if errCreate != nil {
-		message := "Error with the creation of the file to store"
+		message := "Error with the creation of the file to store, path:" + filePath
 		rt.baseLogger.WithError(errCreate).Warning(message)
 		utilities.WriteResponse(http.StatusInternalServerError, message, w)
 		return

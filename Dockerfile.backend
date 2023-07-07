@@ -1,0 +1,11 @@
+# build: docker build -t wasa-backend:latest -f Dockerfile.backend .
+# run: docker run -it -p 3000:3000 --rm wasa-backend:latest
+
+FROM golang:1.19.4 as builder
+WORKDIR /src/
+COPY . .
+RUN go build -o /src/ ./cmd/webapi
+
+FROM debian:stable
+COPY --from=builder /src/ .
+CMD ["./webapi"]

@@ -1,0 +1,10 @@
+# build: docker build -t wasa-frontend -f Dockerfile.frontend .
+# run: docker run -it -p 8080:80 --rm wasa-frontend:latest
+
+FROM node:lts as builder
+WORKDIR /src/webui
+COPY webui .
+RUN npm run build-prod
+
+FROM nginx:latest
+COPY --from=builder /src/webui/dist /usr/share/nginx/html

@@ -73,15 +73,15 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	idphoto := userId[:4] + utilities.GenerateTimestamp()
 	fileName := idphoto + extension
 
-	absPath, err := filepath.Abs("storage")
+	pathStorage := "/tmp/media"
 
-	if err != nil {
-		logrus.Error("Can't get the path for the photo storage")
+	if errDir := os.MkdirAll(pathStorage, os.ModePerm); errDir != nil {
+		logrus.Error("Can't create a media storage directory for the photo storage")
 		utilities.WriteResponse(http.StatusInternalServerError, "error with the storing path of the photo", w)
 		return
 	}
 
-	filePath := filepath.Join(absPath, fileName)
+	filePath := filepath.Join(pathStorage, fileName)
 
 	tmpfile, errCreate := os.Create(filePath)
 	if errCreate != nil {

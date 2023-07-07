@@ -52,15 +52,9 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	absPath, err := filepath.Abs("./storage")
+	pathStorage := "/tmp/media"
 
-	if err != nil {
-		logrus.Error("Can't get the path for the photo storage")
-		utilities.WriteResponse(http.StatusInternalServerError, "error with the storing path of the photo", w)
-		return
-	}
-
-	filePath := filepath.Join(absPath, idphoto)
+	filePath := filepath.Join(pathStorage, idphoto)
 
 	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {

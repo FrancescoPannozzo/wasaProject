@@ -117,22 +117,27 @@ export default {
         <p>{{ visitedUsername.toUpperCase() }} PROFILE</p>
 
         <div class="content">
-            <button v-if="isFollowing" @click="unfollow">UNFOLLOW</button>
-            <button v-else @click="follow">FOLLOW</button>
-            <button v-if="isBanned" @click="unBanUser">UNBAN USER</button>
-            <button v-else @click="banUser">BAN USER</button>
-
+            <div v-show="visitedUsername != resp.loggedUsername" class="followersinfo">
+                <button v-if="isFollowing" @click="unfollow">UNFOLLOW</button>
+                <button v-else @click="follow">FOLLOW</button>
+                <button v-if="isBanned" @click="unBanUser">UNBAN USER</button>
+                <button v-else @click="banUser">BAN USER</button>
+            </div>
             <label for="followed"> Followed:</label>
             <select name="followed" id="followed" v-model="selected">
-                <option v-for="(item, index) in resp.followed" :key="index" :value="item" @click="visitProfile(item)"> {{
-                    item }} </option>
+                <option v-for="(item, index) in resp.followed" :key="index" :value="item" @click="visitProfile(item)">
+                    {{
+                        item }} </option>
             </select>
 
             <label for="followers"> Followers:</label>
             <select name="followers" id="followers" v-model="selected">
-                <option v-for="(item, index) in resp.followers" :key="index" :value="item" @click="visitProfile(item)"> {{
-                    item }} </option>
+                <option v-for="(item, index) in resp.followers" :key="index" :value="item" @click="visitProfile(item)">
+                    {{
+                        item }} </option>
             </select>
+
+
 
 
             <ul v-for="(item, index) in resp.thumbnails" :key="index">

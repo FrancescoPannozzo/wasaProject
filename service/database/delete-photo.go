@@ -10,7 +10,7 @@ import (
 // Return a payload feedback message and error
 func (db *appdbimpl) DeletePhoto(idphoto string) (string, error) {
 
-	abs, errPath := filepath.Abs("./storage")
+	abs, errPath := filepath.Abs("/tmp/media")
 	if errPath != nil {
 		// http status 500
 		return "error processing abs path", errPath

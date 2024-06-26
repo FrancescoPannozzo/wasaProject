@@ -29,7 +29,7 @@ export default {
 
 <template>
     <div>
-        <p>LOGGIN</p>
+        <p>LOGIN</p>
         <input type="text" v-model="username" /><button @click="login">GO</button>
     </div>
 </template>

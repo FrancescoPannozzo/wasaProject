@@ -1,5 +1,4 @@
-Traccia progetto
-Functional design specifications
+## Functional design specifications
 Each user will be presented with a stream of photos (images) in reverse chronological order, with
 information about when each photo was uploaded (date and time) and how many likes and comments
 it has. The stream is composed by photos from “following” (other users that the user follows). Users

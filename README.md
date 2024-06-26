@@ -1,3 +1,15 @@
+## NOTA
+Il progetto è stato suddiviso in quattro parti: documentazione API, golang, javascript-html-css-vue e docker.
+La base del progetto è stata fornita come struttura sulla quale svolgere i 4 homework necessari a passare l'esame, ciascun homework
+riguardava una parte del corso. I files sviluppati per il progetto si trovano nelle seguenti cartelle:
+* `doc/`
+* `service/api`
+* `service/database`
+* `service/utilities`
+* `webui/src`
+
+La votazione finale dell'esame per il progetto è stata di 28/30.
+
 # Fantastic coffee (decaffeinated)
 
 This repository contains the basic structure for [Web and Software Architecture](http://gamificationlab.uniroma1.it/en/wasa/) homework project.
